@@ -2,15 +2,39 @@
 ### Autonomous Multimodal Citizen Action & Civic Entitlements Agent for Tamil Nadu
 **Built for the Meta AI Developer Hackathon 2026 — Indie Developer Track ($150,000 USD Target)**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](https://opensource.org/licenses/MIT)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-HTTPS%20Cloud-emerald.svg)](https://brighton-decorative-opposite-attendance.trycloudflare.com)
 [![Meta Model API](https://img.shields.io/badge/Meta%20AI-Muse%20Spark%20%7C%20Muse%20Wonder%20%7C%20SAM%203.1-0081FB.svg)](https://dev.meta.ai)
 [![Meta Open Weight](https://img.shields.io/badge/Baseten-Muse%20Spark%20Open%201026-teal.svg)](https://baseten.co)
-[![AWS Cloud](https://img.shields.io/badge/AWS%20EC2-52.66.255.113%3A8001-FF9900.svg)](http://52.66.255.113:8001)
-[![WhatsApp Business](https://img.shields.io/badge/Meta%20WhatsApp-Cloud%20API%20Bot-25D366.svg)](#-meta-whatsapp-cloud-api-integration)
+[![AWS Cloud](https://img.shields.io/badge/AWS%20EC2-Production%20Host-FF9900.svg)](https://brighton-decorative-opposite-attendance.trycloudflare.com)
+[![WhatsApp Cloud](https://img.shields.io/badge/Meta%20WhatsApp-Cloud%20API%20Bot-25D366.svg)](#-meta-whatsapp-cloud-api-integration)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 🌟 The Human Story: Bridging the 80-Million Citizen Divide
+## 🌐 Live Application Links
+
+- 🚀 **Live Production Web Portal (HTTPS):** [https://brighton-decorative-opposite-attendance.trycloudflare.com](https://brighton-decorative-opposite-attendance.trycloudflare.com)
+- 🩺 **Health Check API:** [https://brighton-decorative-opposite-attendance.trycloudflare.com/health](https://brighton-decorative-opposite-attendance.trycloudflare.com/health)
+- 📱 **Meta WhatsApp Webhook:** `https://brighton-decorative-opposite-attendance.trycloudflare.com/api/whatsapp/webhook`
+- 🖥️ **AWS EC2 Production Host:** `52.66.255.113` (Ubuntu 24.04 LTS, Multi-Worker FastAPI Engine)
+
+---
+
+## 🛡️ Hackathon Rule Compliance: Strict Evasion of "Anti-Projects"
+
+The Meta AI Hackathon 2026 judging panel explicitly instructed participants to **skip overdone "Anti-Projects"**. Makkal Agent AI was architected from the ground up to strictly avoid every prohibited category:
+
+| Hackathon Prohibited "Anti-Project" | Why Competitors Get Disqualified | How Makkal Agent AI Complies & Excels |
+| :--- | :--- | :--- |
+| ❌ **Streamlit apps** | Shallow prototyping with boilerplate components | **100% Custom Production Web Engine:** Built with FastAPI + mobile-first TailwindCSS, featuring responsive touch cards, SpeechSynthesis audio, and zero Streamlit dependencies. |
+| ❌ **Dashboards as the main feature** | Passive analytics without real-world utility | **Zero Dashboard Fluff:** Direct citizen action portal. Executes statutory legal actions, audits deeds, and dispatches court-ready petitions. |
+| ❌ **Basic RAG apps** | Trivial prompt wrappers over generic vector search | **Deep Agentic Action Loop:** Multi-step autonomous decision engine incorporating computer vision (`sam-3.1`), voice transcription (`muse-voice-transcribe-1.0`), and legal PDF execution. |
+| ❌ **"AI for Education" chatbots** | Generic classroom Q&A bots | **Civic Rights & Governance:** Solves an authentic constitutional problem: land mutation rights and welfare entitlements for 80M citizens. |
+| ❌ **AI medical advice / nutrition** | Regulatory and ethical violations | **Civic Legal Guidance Only:** Operates purely on official Tamil Nadu Revenue Standing Orders (RSO 31), G.O.s, and e-Sevai citizen rules. |
+
+---
+
+## 🌟 The Human Problem: 80 Million Citizens vs Bureaucracy
 
 In Tamil Nadu, India, over **80 million citizens** depend on state welfare systems, land registries, and legal certificates for their daily livelihood. However, for a rural farmer in Madurai, a weaver in Kanchipuram, or an elderly grandmother in Thanjavur:
 - **Literacy Barriers:** Over 25% of rural citizens struggle with reading bureaucratic jargon in English or archaic administrative Tamil.
@@ -18,13 +42,42 @@ In Tamil Nadu, India, over **80 million citizens** depend on state welfare syste
 - **Complex Statutory Red Tape:** Navigating the Tamil Nadu Revenue Standing Orders (RSO 31), the Patta Passbook Act 1983, or Kalaignar Magalir Urimai Thittam (KMUT) appeals requires legal acumen that rural citizens simply do not have.
 
 ### 💡 The Solution: Makkal Agent AI
-**Makkal Agent AI (மக்கள் Agent)** is not another passive "Q&A chatbot" or basic RAG retrieval system (explicitly discouraged by hackathon guidelines). It is a **Sovereign Autonomous Multimodal Action Agent** that transforms any citizen's phone into an incorruptible Digital Revenue Officer.
+**Makkal Agent AI (மக்கள் Agent)** is a **Sovereign Autonomous Multimodal Action Agent** that transforms any citizen's phone into an incorruptible Digital Revenue Officer.
 
 With **zero typing required**, citizens can:
-1. Speak naturally in colloquial regional Tamil dialects (Madurai, Kongu, Nellai, Chennai Tamil).
-2. Take a camera picture of their paper land deeds to verify authenticity via **Meta SAM 3.1 visual segmentation**.
-3. Use a single touch on high-contrast visual tiles to trigger statutory legal actions.
-4. Interact seamlessly via **Meta WhatsApp Cloud API voice notes** and receive court-ready, printable legal petitions (`.pdf`) complete with government barcodes directly in their WhatsApp chat.
+1. **Speak naturally** in colloquial regional Tamil dialects (Madurai, Kongu, Nellai, Chennai Tamil).
+2. **Audit paper deeds** via **Meta SAM 3.1 visual segmentation** to verify Sub-Registrar seals and survey boundaries.
+3. **Use 1-Click visual touch tiles** to trigger statutory legal actions.
+4. **Interact over WhatsApp voice notes** and receive court-ready, printable legal petitions (`.pdf`) complete with government barcodes directly in their WhatsApp chat.
+
+---
+
+## 🏆 Alignment with the $50,000 Bonus Prizes
+
+```
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                   BONUS PRIZES ALIGNMENT MATRIX                                       ║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║  🔥 $20,000 — Most Viral Project:                                                                    ║
+║     Designed for viral demonstration on X/Twitter & WhatsApp. A 60-second video of a rural farmer    ║
+║     sending a Tamil voice note on WhatsApp and receiving an official court petition PDF instantly     ║
+║     resonates massively across social channels.                                                       ║
+║                                                                                                       ║
+║  🔓 $10,000 — Best Build on Meta Open Weights:                                                       ║
+║     Native integration with Meta's open-weight muse-spark-open-1026 via Baseten partner inference,   ║
+║     enabling sovereign, privacy-preserving governance data processing.                                ║
+║                                                                                                       ║
+║  👥 $10,000 — Community Vote Winner:                                                                  ║
+║     High emotional and practical appeal solving a real-world problem known firsthand by 80M people.   ║
+║                                                                                                       ║
+║  ⚡ $5,000 — Best Agentic Use-Case:                                                                   ║
+║     Judges evaluate autonomy and usefulness: Voice Input → Colloquial Transcription → RSO 31         ║
+║     Reasoning → SAM 3.1 Stamp Audit → Official Petition PDF Generation → Direct WhatsApp Dispatch.   ║
+║                                                                                                       ║
+║  🎨 $5,000 — Best Creative Build:                                                                     ║
+║     Original pairing of Muse Wonder (statutory legal reasoning) and Muse Image (infographic cards).  ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝
+```
 
 ---
 
@@ -52,11 +105,11 @@ flowchart TD
         WebUI["💻 1-Click Accessible Web Portal<br/>(Tamil ⇄ English, Zero-Typing Icons, Audio Read-Aloud)"]
     end
 
-    subgraph AWS_Cloud["☁️ AWS Cloud Infrastructure (EC2 52.66.255.113)"]
-        Nginx["🛡️ Nginx Reverse Proxy / SSL Gateway"]
+    subgraph Cloud_Infra["☁️ Cloud Infrastructure (AWS EC2 + Cloudflare SSL)"]
+        Tunnel["🛡️ Cloudflare HTTPS Tunnel / SSL Gateway"]
         FastAPI["⚡ FastAPI Application Hub (Port 8001)<br/>(Bilingual Router, State Machine)"]
         WA_Agent["📲 WhatsApp Webhook & Media Pipeline<br/>(Voice Download, Photo Processor)"]
-        S3_Local["📂 Document Vault & PDF Repository<br/>(Generated Petitions, SAM Audit Reports)"]
+        Vault["📂 Document Vault & PDF Repository<br/>(Generated Petitions, SAM Audit Reports)"]
     end
 
     subgraph Meta_AI_Suite["🧠 Meta AI API & Open-Weight Suite"]
@@ -70,14 +123,14 @@ flowchart TD
 
     subgraph Action_Output["📜 Autonomous Action Deliverables"]
         PDF["📄 Court-Ready Legal Petition PDF<br/>(District Collector / Tehsildar with Barcode)"]
-        AudioOut["🔊 Spoken Tamil Audio Guidance<br/>(Natural Edge-TTS ta-IN Speech)"]
+        AudioOut["🔊 Spoken Tamil Audio Guidance<br/>(Natural SpeechSynthesis ta-IN Speech)"]
         WADispatch["📨 Direct WhatsApp Document Return<br/>(Interactive Attachment to Citizen's Phone)"]
     end
 
-    WApp --> Nginx
-    WebUI --> Nginx
-    Nginx --> FastAPI
-    Nginx --> WA_Agent
+    WApp --> Tunnel
+    WebUI --> Tunnel
+    Tunnel --> FastAPI
+    Tunnel --> WA_Agent
 
     WA_Agent --> Voice
     WA_Agent --> Vision
@@ -89,9 +142,9 @@ flowchart TD
 
     Reasoning --> Action_Output
     Vision --> Action_Output
-    Action_Output --> S3_Local
-    S3_Local --> WADispatch
-    S3_Local --> PDF
+    Action_Output --> Vault
+    Vault --> WADispatch
+    Vault --> PDF
     FastAPI --> AudioOut
 ```
 
@@ -126,27 +179,12 @@ To ensure true universal accessibility across Tamil Nadu's diverse demographics:
 
 ## 📱 Meta WhatsApp Cloud API Integration
 
-Rural citizens don't need to install a new app—they already use WhatsApp every day. Makkal Agent AI provides full citizen ingress and egress over the official Meta WhatsApp Business Cloud API:
-
+Rural citizens don't need to install a new app—they already use WhatsApp every day:
 1. **Voice Note Ingress:** A citizen sends a 15-second Tamil voice message (*"வணக்கம், என் நிலத்துல கூட்டு பட்டா இருக்கு, தனி பட்டாவா மாற்ற மனு வேண்டும்"*).
 2. **Meta Muse Voice Transcription:** Ingested via webhook and transcribed using `muse-voice-transcribe-1.0`.
 3. **Deed Photo Verification:** Citizen snaps a photo of their old registration deed. Meta `sam-3.1` segments the Sub-Registrar stamp and survey number.
 4. **Autonomous PDF Dispatch:** The agent drafts an official legal petition addressed to the Taluk Tehsildar and delivers the `.pdf` document directly back into WhatsApp chat within seconds.
-
----
-
-## ☁️ Production AWS Cloud Deployment
-
-Makkal Agent AI is deployed on a dedicated **AWS EC2 production instance**:
-- **Public URL:** `http://52.66.255.113:8001`
-- **WhatsApp Webhook:** `http://52.66.255.113:8001/api/whatsapp/webhook`
-- **Health Check:** `http://52.66.255.113:8001/health`
-- **Architecture:** Ubuntu 24.04 LTS • Python 3.14 • FastAPI • Uvicorn • Multi-worker daemon managed via `tmux`.
-
-To deploy updates to AWS EC2 in one command:
-```bash
-python deploy_aws.py
-```
+5. **Interactive Testing Drawer:** Judges can test the entire WhatsApp citizen pipeline directly in the web UI using the built-in **"WhatsApp டெமோ"** simulator button.
 
 ---
 
@@ -163,12 +201,6 @@ cd makkal-agent-ai
 cp .env.example .env
 ```
 
-Edit `.env` to include your Meta API Key:
-```env
-META_MODEL_API_KEY=LLM_990342790810056_iON2l7AZGGH7rLtRZUPjWc-1kvA
-PORT=8001
-```
-
 ### 2. Install Dependencies
 ```bash
 python -m venv .venv
@@ -180,18 +212,7 @@ pip install -r requirements.txt
 ```bash
 python -m uvicorn app:app --host 0.0.0.0 --port 8001 --reload
 ```
-Open your browser at **`http://localhost:8001`** to access the interactive portal.
-
----
-
-## 🏆 Hackathon Scoring Alignment (Indie Developer Track — $150,000)
-
-| Judging Criterion | Weight | How Makkal Agent AI Dominates the Score |
-| :--- | :---: | :--- |
-| **Impact** | 25% | Directly empowers 80+ million citizens in Tamil Nadu. Eradicates middleman bribes, prevents fraudulent land registry, and unlocks constitutional welfare rights. |
-| **Use of Meta AI Tooling** | 25% | Deeply integrates the complete Meta suite: `muse-spark-1.3`, `muse-wonder-1.0`, `sam-3.1`, `muse-voice-transcribe-1.0`, `muse-image-1.0`, and open-weight `muse-spark-open-1026` via Baseten. |
-| **Technical Depth & Execution** | 25% | Multimodal visual document segmentation, deep legal ontology modeling (TN RSO 31), autonomous legal PDF petition generation, Meta WhatsApp Cloud API bot, and AWS cloud deployment. |
-| **Demo Quality** | 25% | Polished 1-click UI with Tamil/English toggle, live audio playback for illiterate users, real WhatsApp simulation testing drawer, and immediate court-ready printable petition output. |
+Open **`http://localhost:8001`** (or your live tunnel URL) to access the interactive portal.
 
 ---
 
