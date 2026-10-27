@@ -508,7 +508,7 @@ def run_tests():
         results.append(("Heart Anatomy & Blood Circulation", "FAIL"))
 
     # Test 23: KG Kids Tamil Rhyme Voice Coach & Repeat-After-Me Mode
-    print("\n[23/26] Testing /api/education/learn (KG Kids Rhyme Voice Coach)...")
+    print("\n[23/30] Testing /api/education/learn (KG Kids Rhyme Voice Coach)...")
     try:
         payload = {"topic": "kids_tamil_rhymes"}
         res = requests.post(f"{TARGET_URL}/api/education/learn", json=payload, timeout=8)
@@ -527,7 +527,7 @@ def run_tests():
         results.append(("KG Kids Rhyme Voice Coach", "FAIL"))
 
     # Test 24: WhatsApp Secret PIN Magic Token Generation (POST /api/auth/simulate-whatsapp-login)
-    print("\n[24/26] Testing WhatsApp Secret PIN Magic Token Generation...")
+    print("\n[24/30] Testing WhatsApp Secret PIN Magic Token Generation...")
     magic_test_token = None
     try:
         payload = {"phone": "919840012345", "pin": "7890", "action": "login"}
@@ -548,7 +548,7 @@ def run_tests():
         results.append(("WhatsApp PIN Magic Token Dispatch", "FAIL"))
 
     # Test 25: Magic Token Verification & Active Web Session Activation
-    print("\n[25/26] Testing Magic Token Verification & Web Session Activation...")
+    print("\n[25/30] Testing Magic Token Verification & Web Session Activation...")
     try:
         assert magic_test_token is not None, "Prior test did not generate a token"
         verify_payload = {"token": magic_test_token, "phone": "919840012345"}
@@ -574,7 +574,7 @@ def run_tests():
         results.append(("WhatsApp Magic Token Activation", "FAIL"))
 
     # Test 26: WhatsApp Remote CLOSE Kill-Switch Execution & Session Invalidation
-    print("\n[26/26] Testing WhatsApp Remote CLOSE Kill-Switch & Session Invalidation...")
+    print("\n[26/30] Testing WhatsApp Remote CLOSE Kill-Switch & Session Invalidation...")
     try:
         assert magic_test_token is not None, "Prior test did not generate a token"
         kill_payload = {"phone": "919840012345", "action": "close"}
@@ -596,6 +596,88 @@ def run_tests():
         print(f"  ✗ FAIL: {e}")
         results.append(("WhatsApp Remote CLOSE Kill-Switch", "FAIL"))
 
+
+
+    # Test 27: Meta Ads Mastery Curriculum & Campaign Hierarchy SVG
+    print("\n[27/30] Testing /api/education/learn (Meta Ads Digital Business Academy)...")
+    try:
+        payload = {"topic": "meta_ads_mastery"}
+        res = requests.post(f"{TARGET_URL}/api/education/learn", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        topic = data.get("topic", {})
+        assert topic.get("topic_id") == "meta_ads_mastery"
+        assert "<svg" in topic.get("svg_diagram", "")
+        assert "Campaign Objective" in topic.get("svg_diagram", "")
+        assert "Click-to-WhatsApp" in topic.get("theoretical_explanation_ta", "")
+        assert len(topic.get("verified_video_guides", [])) >= 3
+        print(f"  ✓ PASS: Synthesized Meta Ads Hierarchy SVG Diagram ({len(topic.get('svg_diagram'))} chars) + Official Playbook Videos")
+        results.append(("Meta Ads Digital Business Academy", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Meta Ads Digital Business Academy", "FAIL"))
+
+    # Test 28: Meta Ads Localized Budget & WhatsApp Lead ROI Calculator
+    print("\n[28/30] Testing /api/education/ad-roi-calculator (Live ROI & Lead Engine)...")
+    try:
+        payload = {
+            "daily_budget": 250.0,
+            "business_type": "சேலை & ஆடை கடை (Clothing & Textiles)",
+            "district": "Madurai"
+        }
+        res = requests.post(f"{TARGET_URL}/api/education/ad-roi-calculator", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert data.get("daily_budget_inr") == 250.0
+        assert "18,750" in data.get("estimated_daily_reach", "")
+        assert "27 - 42" in data.get("estimated_daily_whatsapp_leads", "")
+        assert "Click-to-WhatsApp" in data.get("recommended_objective", "")
+        print(f"  ✓ PASS: Calculated ROI for ₹250 Budget: {data.get('estimated_daily_reach')} Reach, {data.get('estimated_daily_whatsapp_leads')} Leads, Cost/Lead: {data.get('cost_per_whatsapp_lead_inr')}")
+        results.append(("Meta Ads Live ROI Calculator", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Meta Ads Live ROI Calculator", "FAIL"))
+
+    # Test 29: Spoken English & Speech Therapy Articulation SVG
+    print("\n[29/30] Testing /api/education/learn (Spoken English & Speech Therapy)...")
+    try:
+        payload = {"topic": "spoken_english_speech_coach"}
+        res = requests.post(f"{TARGET_URL}/api/education/learn", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        topic = data.get("topic", {})
+        assert topic.get("topic_id") == "spoken_english_speech_coach"
+        assert "<svg" in topic.get("svg_diagram", "")
+        assert "Articulatory Phonetics" in topic.get("svg_diagram", "")
+        assert "Think" in topic.get("theoretical_explanation_ta", "")
+        assert len(topic.get("verified_video_guides", [])) >= 3
+        print(f"  ✓ PASS: Synthesized Speech Articulation Mouth/Tongue SVG ({len(topic.get('svg_diagram'))} chars) + Phonetics Drills")
+        results.append(("Spoken English & Speech Therapy", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Spoken English & Speech Therapy", "FAIL"))
+
+    # Test 30: Spoken English Fluency & Phonetic Assessment Engine
+    print("\n[30/30] Testing /api/education/speech-assess (Speech Scoring & Phoneme Therapy)...")
+    try:
+        payload = {
+            "target_text": "Good morning sir, I am eager to introduce my skills.",
+            "spoken_transcript": "Good morning sir, I am eager to introduce my skills."
+        }
+        res = requests.post(f"{TARGET_URL}/api/education/speech-assess", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert data.get("fluency_score_pct") >= 85
+        assert len(data.get("speech_therapy_tips", [])) >= 1
+        print(f"  ✓ PASS: Assessed Speech Fluency ({data.get('fluency_score_pct')}%) + Diagnostic Phonetic Advice: {data.get('speech_therapy_tips')[0][:60]}...")
+        results.append(("Speech Pronunciation Assessment", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Speech Pronunciation Assessment", "FAIL"))
 
     # Summary
     print("\n" + "=" * 70)
