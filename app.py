@@ -29,6 +29,7 @@ from action_executor import action_executor
 from knowledge_base import SERVICES_CATALOG, search_knowledge_base
 from mla_directory import DISTRICT_COLLECTORS, ASSEMBLY_CONSTITUENCIES, resolve_constituency
 from petition_directory import PETITION_TIERS, resolve_authority_for_tier
+from civic_solution_media_engine import match_solution_package, get_all_solutions_catalog
 from whatsapp_agent import (
     verify_webhook,
     process_incoming_whatsapp_message,
@@ -128,6 +129,10 @@ class UniversalPetitionSubmitRequest(BaseModel):
     grievance_category: str
     grievance_details: str
     dispatch_channel: Optional[str] = 'both'
+
+
+class SolutionSearchRequest(BaseModel):
+    query: str
 
 
 class WhatsAppSimulateRequest(BaseModel):
@@ -268,12 +273,14 @@ async def chat_endpoint(req: ChatRequest):
             res = meta_client.chat_completion(messages=messages, model=target_model)
             reply_text = res["choices"][0]["message"]["content"]
 
+        solution_package = match_solution_package(user_msg)
         return {
             "status": "success",
             "model_used": target_model,
             "reply": reply_text,
             "reasoning_steps": reasoning_steps,
-            "matched_services": [s["title_ta"] for s in matched_kb]
+            "matched_services": [s["title_ta"] for s in matched_kb],
+            "solution_package": solution_package
         }
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
@@ -639,6 +646,38 @@ async def submit_universal_petition_endpoint(req: UniversalPetitionSubmitRequest
         }
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+
+# ==============================================================================
+# Verified Multimedia Civic Knowledge & Action Roadmap Endpoints
+# Includes Facebook Videos, Instagram Reels, YouTube Explainers & Step-by-Step Roadmaps
+# ==============================================================================
+
+@app.get("/api/issue-solutions")
+async def get_issue_solutions_endpoint():
+    """
+    Returns the comprehensive catalog of verified civic issue solutions,
+    complete with statutory frameworks, 4-step action roadmaps, and verified video guides.
+    """
+    return {
+        "status": "success",
+        "total_solutions": len(get_all_solutions_catalog()),
+        "solutions": get_all_solutions_catalog()
+    }
+
+
+@app.post("/api/issue-solutions/search")
+async def search_issue_solutions_endpoint(req: SolutionSearchRequest):
+    """
+    Intelligently maps citizen problems to statutory rules, 4-step visual action roadmaps,
+    and authentic verified video explainers from Facebook, Instagram, and YouTube.
+    """
+    pkg = match_solution_package(req.query)
+    return {
+        "status": "success",
+        "solution": pkg
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -1505,6 +1544,14 @@ async def serve_ui():
                 await loadSampleDeed();
             } else if (type === 'fmb_plot') {
                 openFmbModal('142/3');
+            } else if (type === 'patta_video_roadmap') {
+                if (deepReasonToggle) deepReasonToggle.checked = true;
+                userInput.value = 'கூட்டு பட்டாவில் உள்ள நிலத்தை தனி பட்டாவாக பிரிக்க அரசு விதிமுறை என்ன? செயல் வரைபடம் மற்றும் வீடியோ விளக்கம் தேவை.';
+                sendMessage();
+            } else if (type === 'land_grab_video') {
+                if (deepReasonToggle) deepReasonToggle.checked = true;
+                userInput.value = 'போலி பத்திரம் பதிவு செய்து நிலத்தை அபகரித்து விட்டனர். பதிவுச் சட்டம் 77A மற்றும் காவல் துறை மூலம் ரத்து செய்ய வீடியோ மற்றும் வழிகாட்டல் தரவும்.';
+                sendMessage();
             } else if (type === 'collector_petition') {
                 openUniversalPetitionModal('collector');
             } else if (type === 'police_sp_complaint') {
@@ -1547,7 +1594,7 @@ async def serve_ui():
                 removeLoading(loadingId);
 
                 if (data.status === 'success') {
-                    appendMessage(data.reply, 'assistant', data.model_used, data.reasoning_steps);
+                    appendMessage(data.reply, 'assistant', data.model_used, data.reasoning_steps, data.solution_package);
                     chatHistory.push({ role: 'user', content: query });
                     chatHistory.push({ role: 'assistant', content: data.reply });
                     speakText(data.reply);
@@ -1564,7 +1611,7 @@ async def serve_ui():
             }
         }
 
-        function appendMessage(text, role, model, reasoningSteps) {
+        function appendMessage(text, role, model, reasoningSteps, solutionPackage) {
             const div = document.createElement('div');
             div.className = role === 'user' ? 'flex justify-end' : 'flex items-start space-x-3';
 
@@ -1580,6 +1627,91 @@ async def serve_ui():
                 try { formatted = marked.parse(text); } catch (e) { formatted = text.replace(/\n/g, '<br>'); }
                 
                 // Enhancement 1: Render Meta Muse Wonder 1.0 Legal Reasoning Tree
+                // Enhancement: Step-by-Step Action Roadmap
+                let roadmapHtml = '';
+                let videosHtml = '';
+
+                if (solutionPackage && solutionPackage.action_roadmap && solutionPackage.action_roadmap.length > 0) {
+                    const stepsList = solutionPackage.action_roadmap.map(st => `
+                        <div class="flex items-start gap-2.5 p-2 bg-slate-950/80 rounded-lg border border-slate-800 text-xs">
+                            <div class="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/60 text-emerald-400 font-bold flex items-center justify-center text-[11px] flex-shrink-0 mt-0.5">
+                                ${st.step_no}
+                            </div>
+                            <div class="flex-1 space-y-0.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-200 text-[11px]">${st.title_ta}</span>
+                                    <span class="text-[9px] bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">${st.official_fee}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400">${st.desc_ta}</p>
+                                <div class="text-[10px] text-teal-400/90 font-mono">⏱️ கால வரம்பு: ${st.timeline}</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    roadmapHtml = `
+                        <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-teal-500/40 rounded-xl p-3 my-2 shadow-lg">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                                <div class="flex items-center gap-1.5 font-bold text-teal-300 text-xs">
+                                    <span>🗺️</span>
+                                    <span>தீர்வுக்கான நேரடி செயல் வரைபடம் (Action Roadmap)</span>
+                                </div>
+                                <span class="text-[10px] bg-teal-500/10 text-teal-300 border border-teal-500/30 px-2 py-0.5 rounded-full font-mono">4 Milestones</span>
+                            </div>
+                            <div class="space-y-1.5">
+                                ${stepsList}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (solutionPackage && solutionPackage.verified_video_guides && solutionPackage.verified_video_guides.length > 0) {
+                    const videoCards = solutionPackage.verified_video_guides.map(v => {
+                        let platformBadge = 'bg-blue-600 text-white';
+                        let platformIcon = '📘 Facebook';
+                        if (v.platform === 'Instagram') {
+                            platformBadge = 'bg-gradient-to-r from-pink-500 via-purple-500 to-amber-500 text-white';
+                            platformIcon = '📸 Insta Reel';
+                        } else if (v.platform === 'YouTube') {
+                            platformBadge = 'bg-red-600 text-white';
+                            platformIcon = '▶️ YouTube';
+                        }
+
+                        return `
+                            <div class="bg-slate-950/90 border border-slate-800 hover:border-indigo-500/60 p-2.5 rounded-xl space-y-1.5 transition flex flex-col justify-between shadow">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] ${platformBadge} px-2 py-0.5 rounded-full font-bold font-sans flex items-center gap-1">
+                                        ${platformIcon}
+                                    </span>
+                                    <span class="text-[9px] bg-slate-800 text-cyan-300 px-1.5 py-0.5 rounded font-mono font-bold">${v.duration}</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-[11px] font-bold text-slate-100 line-clamp-2">${v.title_ta}</h5>
+                                    <p class="text-[10px] text-slate-400 pt-0.5">👤 ${v.creator} • <span class="text-emerald-400 font-semibold">${v.verified_badge}</span></p>
+                                </div>
+                                <p class="text-[10px] text-slate-300 line-clamp-2">${v.summary_ta}</p>
+                                <a href="${v.url}" target="_blank" class="mt-1 w-full py-1.5 px-2 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/50 hover:border-indigo-500 text-indigo-300 hover:text-white rounded-lg text-center text-[10px] font-bold transition flex items-center justify-center gap-1">
+                                    <span>▶️ வீடியோ காண்க (Watch ${v.platform})</span>
+                                </a>
+                            </div>
+                        `;
+                    }).join('');
+
+                    videosHtml = `
+                        <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/30 border border-indigo-500/40 rounded-xl p-3 my-2 shadow-lg">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                                <div class="flex items-center gap-1.5 font-bold text-indigo-300 text-xs">
+                                    <span>🎬</span>
+                                    <span>நிரூபிக்கப்பட்ட வீடியோ வழிகாட்டிகள் & ரீல்கள் (Verified Video Guides)</span>
+                                </div>
+                                <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono">Meta & YouTube</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                ${videoCards}
+                            </div>
+                        </div>
+                    `;
+                }
+
                 let reasoningHtml = '';
                 if (reasoningSteps && reasoningSteps.length > 0) {
                     const stepsHtml = reasoningSteps.map(s => `
@@ -1651,6 +1783,8 @@ async def serve_ui():
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none p-4 max-w-[88%] text-slate-200 text-sm leading-relaxed shadow-md space-y-2">
                         ${reasoningHtml}
                         <div class="markdown-body">${formatted}</div>
+                        ${roadmapHtml}
+                        ${videosHtml}
                         ${actionShortcuts ? `<div class="pt-1">${actionShortcuts}</div>` : ''}
                         <div class="text-[10px] text-emerald-400/80 font-mono pt-1.5 border-t border-slate-800 flex items-center justify-between">
                             <span>⚡ Meta Model: ${model || 'muse-spark-1.3'}</span>

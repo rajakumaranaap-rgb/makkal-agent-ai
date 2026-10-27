@@ -427,6 +427,50 @@ def run_tests():
         print(f"  ✗ FAIL: {e}")
         results.append(("Police SP Land Grabbing PDF", "FAIL"))
 
+    # Test 19: Civic Issue Solutions & Video Guides Catalog
+    print("\n[19/20] Testing /api/issue-solutions (Multimedia Solutions & Video Catalog)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/issue-solutions", timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        sols = data.get("solutions", [])
+        assert len(sols) >= 5
+        first_sol = sols[0]
+        assert "action_roadmap" in first_sol
+        assert len(first_sol["action_roadmap"]) >= 4
+        assert "verified_video_guides" in first_sol
+        assert len(first_sol["verified_video_guides"]) >= 3
+        print(f"  ✓ PASS: Loaded {len(sols)} Civic Solution Packages with 4-Step Roadmaps and Facebook/Insta/YouTube Videos")
+        results.append(("Multimedia Solution Catalog", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Multimedia Solution Catalog", "FAIL"))
+
+    # Test 20: Intelligent Solution & Video Search
+    print("\n[20/20] Testing /api/issue-solutions/search (Semantic Roadmap & Video Matcher)...")
+    try:
+        payload = {"query": "போலி பத்திரம் ரத்து செய்வது எப்படி"}
+        res = requests.post(f"{TARGET_URL}/api/issue-solutions/search", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        sol = data.get("solution", {})
+        assert "77A" in sol.get("governing_statute", "")
+        assert len(sol.get("action_roadmap", [])) >= 4
+        assert len(sol.get("verified_video_guides", [])) >= 3
+        
+        # Verify video platforms are present
+        platforms = [v["platform"] for v in sol["verified_video_guides"]]
+        assert "Facebook" in platforms
+        assert "Instagram" in platforms
+        assert "YouTube" in platforms
+        print(f"  ✓ PASS: Matched [{sol.get('title_ta')}] Statute: {sol.get('governing_statute')[:40]}... with Facebook, Insta & YouTube videos")
+        results.append(("Semantic Video & Roadmap Matcher", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Semantic Video & Roadmap Matcher", "FAIL"))
+
     # Summary
     print("\n" + "=" * 70)
     print("📊 TEST EXECUTION SUMMARY:")
