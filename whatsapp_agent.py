@@ -28,6 +28,12 @@ from meta_client import (
 from sam_document_auditor import sam_auditor
 from action_executor import action_executor
 from knowledge_base import search_knowledge_base
+from whatsapp_auth_manager import (
+    create_magic_auth_token,
+    terminate_session_by_whatsapp,
+    verify_magic_auth_token,
+    get_session_status
+)
 
 logger = logging.getLogger("makkal.whatsapp")
 logging.basicConfig(level=logging.INFO)
@@ -38,7 +44,8 @@ META_WHATSAPP_PHONE_ID = os.getenv("META_WHATSAPP_PHONE_ID", "100645472849201")
 META_VERIFY_TOKEN = os.getenv("META_VERIFY_TOKEN", "makkal_agent_meta_2026")
 GRAPH_API_VERSION = "v21.0"
 BASE_GRAPH_URL = f"https://graph.facebook.com/{GRAPH_API_VERSION}"
-PUBLIC_BASE_URL = os.getenv("AWS_PUBLIC_URL", "http://52.66.255.113:8001")
+PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL") or os.getenv("AWS_PUBLIC_URL") or "https://brighton-decorative-opposite-attendance.trycloudflare.com"
+
 
 
 def verify_webhook(mode: str, token: str, challenge: str) -> Optional[str]:
@@ -215,8 +222,55 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
 
         if msg_type == "text":
             user_text = msg.get("text", {}).get("body", "").strip()
-            # Multi-step legal triage using Muse Spark & Wonder
-            reply_text = handle_text_query(user_text, sender_phone)
+            clean_upper = user_text.upper().strip()
+
+            # 1. Remote Session Kill-Switch Trigger ('CLOSE', 'LOGOUT', 'EXIT', 'QUIT', 'முடி', 'வெளியேறு')
+            if any(clean_upper.startswith(k) or clean_upper == k for k in ["CLOSE", "LOGOUT", "EXIT", "QUIT", "LOCK", "முடி", "வெளியேறு", "லாக் அவுட்"]):
+                term_res = terminate_session_by_whatsapp(sender_phone)
+                if term_res.get("success"):
+                    reply_text = (
+                        f"🔒 *Makkal AI இணைய அமர்வு மூடப்பட்டது (Session Terminated)*\n\n"
+                        f"வணக்கம்! உங்கள் தொலைபேசி எண் (*+{sender_phone}*) உடன் இணைக்கப்பட்ட அனைத்து இணைய உலாவிகளின் அமர்வுகளும் "
+                        f"WhatsApp ரிமோட் கில்-சுவிட்ச் (Remote Kill-Switch) மூலம் உடனடியாக முடக்கப்பட்டுவிட்டன.\n\n"
+                        f"🛡️ கணினித் திரை இப்போது தானாகவே பூட்டப்பட்டுவிட்டது. உங்கள் தரவுகள் பாதுகாப்பாக உள்ளன.\n\n"
+                        f"மீண்டும் நுழைய: *LOGIN* அல்லது உங்கள் ரகசிய *PIN* எண்ணை அனுப்பவும்."
+                    )
+                else:
+                    reply_text = (
+                        f"ℹ️ *செயலில் உள்ள அமர்வுகள் ஏதுமில்லை.*\n"
+                        f"உங்கள் எண் (+{sender_phone}) மூலம் தற்போது இணைய அமர்வு எதுவும் இயங்கவில்லை.\n"
+                        f"உள்நுழைய: *LOGIN* என்று அனுப்பவும்."
+                    )
+
+            # 2. WhatsApp Secret PIN Magic Login Trigger ('LOGIN', 'PIN 7890', '7890', 4-8 digit numeric code)
+            elif (
+                clean_upper.startswith("PIN") or
+                clean_upper == "LOGIN" or
+                clean_upper.startswith("LOGIN ") or
+                clean_upper in ["லாகின்", "உள்நுழை"] or
+                (clean_upper.isdigit() and 4 <= len(clean_upper) <= 8)
+            ):
+                pin_digits = "".join([c for c in clean_upper if c.isdigit()])
+                secret_pin = pin_digits if pin_digits else "7890"
+
+                session_data = create_magic_auth_token(phone=sender_phone, secret_pin=secret_pin)
+                magic_url = f"{PUBLIC_BASE_URL}/auth/magic?token={session_data['token']}&phone={session_data['phone']}"
+
+                reply_text = (
+                    f"🔐 *Makkal AI நேரடி கடவுச்சொல் இல்லா உள்நுழைவு (1-Click Magic Login)*\n\n"
+                    f"வணக்கம்! உங்கள் மொபைல் எண் (*+{sender_phone}*) Meta WhatsApp API மூலம் வெற்றிகரமாக சரிபார்க்கப்பட்டது.\n"
+                    f"ரகசிய PIN: *{secret_pin}*\n\n"
+                    f"கீழே உள்ள அதிகாரப்பூர்வ இணைப்பைத் தொட்டு 1-Click-ல் உங்கள் Makkal AI குடிமக்கள் இணையதளத்தில் பாதுகாப்பாக நுழையலாம்:\n"
+                    f"👉 {magic_url}\n\n"
+                    f"⏱️ *கால அவகாசம்:* இந்த ஒருமுறை இணைப்பு 15 நிமிடங்களுக்கு மட்டுமே செல்லுபடியாகும்.\n\n"
+                    f"🛑 *ரிமோட் பாதுகாப்பு (Remote Kill-Switch):* நீங்கள் பிரவுசரில் வேலையை முடித்தவுடன், உங்கள் தனியுரிமையைப் பாதுகாக்க "
+                    f"இந்த வாட்ஸ்அப் எண்ணிற்கு *CLOSE* அல்லது *LOGOUT* என்று மெசேஜ் அனுப்பினால் போதும் - உங்கள் கணினி அமர்வு நொடியில் துண்டிக்கப்படும்!"
+                )
+
+            else:
+                # Multi-step legal triage using Muse Spark & Wonder
+                reply_text = handle_text_query(user_text, sender_phone)
+
 
         elif msg_type == "audio":
             audio_info = msg.get("audio", {})

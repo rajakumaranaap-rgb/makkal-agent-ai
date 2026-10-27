@@ -508,7 +508,7 @@ def run_tests():
         results.append(("Heart Anatomy & Blood Circulation", "FAIL"))
 
     # Test 23: KG Kids Tamil Rhyme Voice Coach & Repeat-After-Me Mode
-    print("\n[23/23] Testing /api/education/learn (KG Kids Rhyme Voice Coach)...")
+    print("\n[23/26] Testing /api/education/learn (KG Kids Rhyme Voice Coach)...")
     try:
         payload = {"topic": "kids_tamil_rhymes"}
         res = requests.post(f"{TARGET_URL}/api/education/learn", json=payload, timeout=8)
@@ -525,6 +525,77 @@ def run_tests():
     except Exception as e:
         print(f"  ✗ FAIL: {e}")
         results.append(("KG Kids Rhyme Voice Coach", "FAIL"))
+
+    # Test 24: WhatsApp Secret PIN Magic Token Generation (POST /api/auth/simulate-whatsapp-login)
+    print("\n[24/26] Testing WhatsApp Secret PIN Magic Token Generation...")
+    magic_test_token = None
+    try:
+        payload = {"phone": "919840012345", "pin": "7890", "action": "login"}
+        res = requests.post(f"{TARGET_URL}/api/auth/simulate-whatsapp-login", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert data.get("phone") == "919840012345"
+        assert data.get("secret_pin") == "7890"
+        magic_test_token = data.get("magic_token")
+        assert magic_test_token.startswith("makkal_magic_")
+        assert "/auth/magic?token=" in data.get("magic_url")
+        assert "1-Click Magic Login" in data.get("whatsapp_reply")
+        print(f"  ✓ PASS: Dispatched WhatsApp Magic Token [{magic_test_token[:20]}...] with 1-Click Auth Link")
+        results.append(("WhatsApp PIN Magic Token Dispatch", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("WhatsApp PIN Magic Token Dispatch", "FAIL"))
+
+    # Test 25: Magic Token Verification & Active Web Session Activation
+    print("\n[25/26] Testing Magic Token Verification & Web Session Activation...")
+    try:
+        assert magic_test_token is not None, "Prior test did not generate a token"
+        verify_payload = {"token": magic_test_token, "phone": "919840012345"}
+        res = requests.post(f"{TARGET_URL}/api/auth/verify-magic-token", json=verify_payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert data.get("authenticated") is True
+        assert data.get("phone") == "919840012345"
+        assert data.get("expires_in_secs") > 800
+
+        # Heartbeat verification
+        status_res = requests.post(f"{TARGET_URL}/api/auth/session-status", json={"token": magic_test_token}, timeout=8)
+        status_data = status_res.json()
+        assert status_res.status_code == 200
+        sess = status_data.get("session", {})
+        assert sess.get("status") == "ACTIVE"
+        assert sess.get("active") is True
+        print(f"  ✓ PASS: Activated Session for +91 98400 12345 (Status: ACTIVE, TTL: {sess.get('time_remaining_secs')}s)")
+        results.append(("WhatsApp Magic Token Activation", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("WhatsApp Magic Token Activation", "FAIL"))
+
+    # Test 26: WhatsApp Remote CLOSE Kill-Switch Execution & Session Invalidation
+    print("\n[26/26] Testing WhatsApp Remote CLOSE Kill-Switch & Session Invalidation...")
+    try:
+        assert magic_test_token is not None, "Prior test did not generate a token"
+        kill_payload = {"phone": "919840012345", "action": "close"}
+        res = requests.post(f"{TARGET_URL}/api/auth/simulate-whatsapp-login", json=kill_payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "terminated"
+
+        # Verify session is now TERMINATED
+        status_res = requests.post(f"{TARGET_URL}/api/auth/session-status", json={"token": magic_test_token}, timeout=8)
+        status_data = status_res.json()
+        assert status_res.status_code == 200
+        sess = status_data.get("session", {})
+        assert sess.get("status") == "TERMINATED"
+        assert sess.get("active") is False
+        print(f"  ✓ PASS: Remote Kill-Switch Invalidation Verified (Session Status: TERMINATED, Active: False)")
+        results.append(("WhatsApp Remote CLOSE Kill-Switch", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("WhatsApp Remote CLOSE Kill-Switch", "FAIL"))
+
 
     # Summary
     print("\n" + "=" * 70)
