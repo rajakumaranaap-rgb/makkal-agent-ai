@@ -242,7 +242,7 @@ def run_tests():
         results.append(("Cadastral FMB Plot Synthesis", "FAIL"))
 
     # Test 11: Sample Deed Vision Endpoint for Judges
-    print("\n[11/11] Testing /api/sample-deed (Judges 1-Click Computer Vision Test)...")
+    print("\n[11/14] Testing /api/sample-deed (Judges 1-Click Computer Vision Test)...")
     try:
         res = requests.get(f"{TARGET_URL}/api/sample-deed", timeout=8)
         assert res.status_code == 200
@@ -253,6 +253,71 @@ def run_tests():
     except Exception as e:
         print(f"  ✗ FAIL: {e}")
         results.append(("Sample Deed Vision Generator", "FAIL"))
+
+    # Test 12: MLA Constituencies & District Directory
+    print("\n[12/14] Testing /api/mla/constituencies (TN 234 Assembly Directory)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/mla/constituencies", timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert data.get("districts_count") == 38
+        assert data.get("total_constituencies") >= 20
+        print(f"  ✓ PASS: Loaded {data.get('total_constituencies')} Assembly Constituencies across all {data.get('districts_count')} Districts")
+        results.append(("MLA Constituencies Directory", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("MLA Constituencies Directory", "FAIL"))
+
+    # Test 13: MLA Constituency Real-Time Semantic Resolution
+    print("\n[13/14] Testing /api/mla/resolve (Intelligent Village -> MLA Mapping)...")
+    try:
+        payload = {"query": "மேலூர் கிராமத்தில் உள்ளோம்", "district": "Madurai"}
+        res = requests.post(f"{TARGET_URL}/api/mla/resolve", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        r = data.get("result", {})
+        assert r.get("ac_no") == 188
+        assert "Melur" in r.get("constituency_en", "")
+        assert "mla.melur@tn.gov.in" in r.get("mla_email", "")
+        print(f"  ✓ PASS: Resolved village to AC {r.get('ac_no')} [{r.get('constituency_ta')}] MLA: {r.get('mla_name_ta')}")
+        results.append(("MLA Constituency Resolver", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("MLA Constituency Resolver", "FAIL"))
+
+    # Test 14: Automated MLA Grievance Petition PDF Synthesis & Dispatch
+    print("\n[14/14] Testing /api/mla/submit-petition (Court-Ready MLA Petition Dispatch)...")
+    try:
+        payload = {
+            "applicant_name": "மு. செல்லத்துரை",
+            "phone": "9840198765",
+            "district": "Madurai",
+            "taluk": "மேலூர்",
+            "village": "திருவாதவூர்",
+            "constituency": "மேலூர்",
+            "grievance_category": "பாசன வாய்க்கால் தூர்வாருதல்",
+            "grievance_details": "விவசாய பாசன வாய்க்கால் பல ஆண்டுகளாக தூர்வாரப்படவில்லை. உடனடியாக தூர்வாரி தர வேண்டுகிறேன்.",
+            "dispatch_channel": "both"
+        }
+        res = requests.post(f"{TARGET_URL}/api/mla/submit-petition", json=payload, timeout=12)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert "TN-MLA-2026" in data.get("acknowledgement_id")
+        assert "pdf_download_url" in data
+        assert "whatsapp_share_url" in data
+        
+        # Verify downloading generated MLA PDF
+        pdf_res = requests.get(f"{TARGET_URL}{data['pdf_download_url']}", timeout=8)
+        assert pdf_res.status_code == 200
+        assert len(pdf_res.content) > 1000
+        print(f"  ✓ PASS: Synthesized Court-Ready MLA Petition PDF [{data['filename']}] ({len(pdf_res.content)} bytes) Ack ID: {data['acknowledgement_id']}")
+        results.append(("MLA Petition Synthesis & Dispatch", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("MLA Petition Synthesis & Dispatch", "FAIL"))
 
     # Summary
     print("\n" + "=" * 70)
