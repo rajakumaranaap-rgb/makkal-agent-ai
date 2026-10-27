@@ -18,7 +18,7 @@ import uuid
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, Request, File, UploadFile, Form, HTTPException, Query
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, PlainTextResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -262,6 +262,14 @@ async def audit_document_endpoint(file: UploadFile = File(...)):
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
+
+@app.get("/api/sample-deed")
+async def get_sample_deed():
+    """Generates an authentic synthetic land deed image for 1-click SAM 3.1 computer vision testing."""
+    from test_makkal_agent_suite import create_sample_deed_image
+    deed_bytes = create_sample_deed_image()
+    return Response(content=deed_bytes, media_type="image/jpeg")
+
 @app.post("/api/generate-petition")
 async def generate_petition_endpoint(req: PetitionRequest):
     """Generates ready-to-print official Tamil Nadu legal petition PDF."""
@@ -390,9 +398,18 @@ async def serve_ui():
     <title>Makkal Agent (மக்கள் Agent) - Meta AI Hackathon 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Mukta Malar', 'Inter', sans-serif; }
+        body {
+            font-family: 'Mukta Malar', 'Inter', sans-serif;
+            background: #060a12;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 10% 30%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 90% 70%, rgba(245, 158, 11, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
         .markdown-body h1, .markdown-body h2, .markdown-body h3 {
             font-weight: 700;
             color: #34d399;
@@ -416,32 +433,51 @@ async def serve_ui():
             padding-bottom: 0.25rem;
         }
         .touch-card {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(12px);
         }
         .touch-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 14px 28px -6px rgba(16, 185, 129, 0.25);
         }
         .touch-card:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
         @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.15); opacity: 0.3; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 18px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
-        .pulse-recording {
-            animation: pulse-ring 1.5s infinite;
+        @keyframes sound-wave {
+            0%, 100% { height: 6px; }
+            50% { height: 28px; }
+        }
+        .mic-pulsing {
+            animation: pulse-ring 1.8s infinite;
+        }
+        .wave-bar {
+            animation: sound-wave 1s ease-in-out infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 9999px;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between p-2 sm:p-4">
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-2 sm:p-4">
 
-    <!-- Top Status Banner -->
-    <div class="w-full max-w-4xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-teal-950/80 border border-emerald-500/30 rounded-xl px-3 py-1.5 mb-2 flex items-center justify-between text-xs">
+    <!-- Top Status Bar & Quick Controls -->
+    <div class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-md border border-emerald-500/30 rounded-xl px-3 py-2 mb-2 flex flex-wrap items-center justify-between gap-2 text-xs shadow-lg">
         <div class="flex items-center gap-2">
-            <span class="flex h-2 w-2 relative">
+            <span class="flex h-2.5 w-2.5 relative">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
             <span class="text-slate-300 font-mono text-[11px]">
                 ☁️ <strong class="text-emerald-400">AWS Cloud:</strong> 52.66.255.113:8001
@@ -452,46 +488,51 @@ async def serve_ui():
             </span>
         </div>
         <div class="flex items-center gap-2">
-            <a href="https://github.com/rajakumaranaap-rgb/makkal-agent-ai" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1 font-mono text-[11px] bg-slate-800/80 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 transition">
-                <span>⭐ GitHub Repo</span>
+            <!-- Audio Auto-Play Toggle -->
+            <button id="audioToggleBtn" onclick="toggleAudioSpeech()" title="குரல் ஒலிபரப்பு (Voice Audio Readout)" 
+                    class="bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-2 py-1 rounded-lg text-emerald-400 text-xs flex items-center gap-1 transition">
+                <span id="audioIcon">🔊</span> <span id="audioStatusText" class="hidden sm:inline text-[11px]">குரல் இயக்கம்</span>
+            </button>
+            <a href="https://github.com/rajakumaranaap-rgb/makkal-agent-ai" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1 font-mono text-[11px] bg-slate-800/90 hover:bg-slate-700 px-2 py-1 rounded-lg border border-slate-700 transition">
+                <span>⭐ GitHub</span>
             </a>
             <!-- Language Toggle Switch -->
-            <button id="langToggleBtn" onclick="toggleLanguage()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-2.5 py-0.5 rounded-lg text-[11px] shadow transition flex items-center gap-1">
+            <button id="langToggleBtn" onclick="toggleLanguage()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] shadow transition flex items-center gap-1">
                 <span id="langFlag">🌐</span> <span id="langName">English</span>
             </button>
         </div>
     </div>
 
     <!-- Live Anti-Corruption & Civic Economic Impact Counter -->
-    <div class="w-full max-w-4xl bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-2.5 mb-2.5 shadow-xl grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+    <div class="w-full max-w-4xl bg-gradient-to-r from-slate-900/95 via-slate-900/90 to-teal-950/90 border border-emerald-500/30 rounded-2xl p-2.5 mb-2.5 shadow-xl grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-2 flex flex-col justify-center">
-            <span class="text-slate-400 text-[10px] uppercase font-semibold">🛡️ இடைத்தரகர் லஞ்சம் தவிர்ப்பு</span>
+            <span id="lblBribeMetric" class="text-slate-400 text-[10px] uppercase font-semibold">🛡️ லஞ்சம் தவிர்ப்பு (Bribe Blocked)</span>
             <span class="text-emerald-400 font-extrabold text-sm sm:text-base font-mono">₹<span id="metricBribe">3,500</span> / மனு</span>
         </div>
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-2 flex flex-col justify-center">
-            <span class="text-slate-400 text-[10px] uppercase font-semibold">🏛️ சட்டப்பூர்வ அரசு கட்டணம்</span>
+            <span id="lblFeeMetric" class="text-slate-400 text-[10px] uppercase font-semibold">🏛️ அரசு கட்டணம் (Statutory Fee)</span>
             <span class="text-cyan-400 font-extrabold text-sm sm:text-base font-mono">₹<span id="metricFee">60</span></span>
         </div>
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-2 flex flex-col justify-center">
-            <span class="text-slate-400 text-[10px] uppercase font-semibold">👥 பாதுகாக்கப்பட்ட குடிமக்கள்</span>
+            <span id="lblCitizensMetric" class="text-slate-400 text-[10px] uppercase font-semibold">👥 குடிமக்கள் (Protected)</span>
             <span class="text-amber-400 font-extrabold text-sm sm:text-base font-mono"><span id="metricCitizens">1,842</span>+</span>
         </div>
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-2 flex flex-col justify-center">
-            <span class="text-slate-400 text-[10px] uppercase font-semibold">💰 சேமிக்கப்பட்ட மக்கள் பணம்</span>
+            <span id="lblSavingsMetric" class="text-slate-400 text-[10px] uppercase font-semibold">💰 சேமிப்பு (Public Savings)</span>
             <span class="text-teal-300 font-extrabold text-sm sm:text-base font-mono">₹<span id="metricSavings">64.47</span> L</span>
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-4 mb-3 shadow-2xl flex items-center justify-between">
+    <!-- Header & Brand Identity -->
+    <header class="w-full max-w-4xl bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-3.5 mb-2.5 shadow-2xl flex items-center justify-between">
         <div class="flex items-center space-x-3.5">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20 flex-shrink-0">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20 flex-shrink-0">
                 🏛️
             </div>
             <div>
                 <div class="flex items-center gap-2">
-                    <h1 id="appTitle" class="text-xl font-extrabold bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-300 bg-clip-text text-transparent">Makkal Agent (மக்கள் Agent)</h1>
-                    <span class="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono font-medium hidden sm:inline">Indie Track $150k</span>
+                    <h1 id="appTitle" class="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-300 bg-clip-text text-transparent">Makkal Agent (மக்கள் Agent)</h1>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono font-medium hidden sm:inline">Meta Hackathon $150k</span>
                 </div>
                 <p id="appSubtitle" class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -500,112 +541,191 @@ async def serve_ui():
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <!-- Audio Auto-Play Toggle -->
-            <button id="audioToggleBtn" onclick="toggleAudioSpeech()" title="குரல் ஒலிபரப்பு (Audio Voice Feedback)" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 p-2 rounded-xl text-emerald-400 text-xs flex items-center gap-1 transition">
-                <span id="audioIcon">🔊</span>
-            </button>
             <button onclick="openPetitionModal()" class="text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
                 <span id="petitionBtnText">📑 மனு உருவாக்கம் (PDF)</span>
             </button>
         </div>
     </header>
 
-    <!-- 1-Click Illiterate-First Visual Touch Grid -->
-    <div class="w-full max-w-4xl mb-3">
+    <!-- 🏆 Meta Hackathon Judge Quick-Tours (1-Click Multimodal Demos) -->
+    <div class="w-full max-w-4xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-amber-500/30 rounded-2xl p-2.5 mb-2.5 shadow-lg">
         <div class="flex items-center justify-between mb-1.5 px-1">
-            <span id="touchGridTitle" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">⚡ 1-கிளிக் நேரடி சேவைகள் (1-Click Citizen Entitlements - No Typing Needed)</span>
-            <span class="text-[10px] text-emerald-400 font-mono">Meta Muse Spark Dispatch</span>
+            <span id="judgeTourTitle" class="text-[11px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
+                <span>⚡ Meta Hackathon Judge Quick-Tours (1-Click Multimodal Demos):</span>
+            </span>
+            <span class="text-[10px] text-emerald-400 font-mono hidden sm:inline">Zero Typing Needed</span>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-            <!-- Service 1: Patta Chitta -->
-            <button onclick="triggerServiceFlow('patta')" class="touch-card bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-500/30 hover:border-emerald-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
-                <div class="text-2xl mb-1">🌾</div>
-                <div>
-                    <div id="tile1Title" class="font-bold text-xs text-emerald-300">பட்டா & சிட்டா</div>
-                    <div id="tile1Desc" class="text-[10px] text-slate-400">நில ஆவணம் மாற்றம்</div>
-                </div>
+        <div class="flex flex-wrap gap-1.5 text-xs">
+            <button onclick="runJudgeDemo('patta_reasoning')" class="bg-emerald-950/70 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60 px-2.5 py-1 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
+                <span>🌾 1-Click: RSO 31 Land Mutation & Deep Reasoning</span>
             </button>
-            <!-- Service 2: Legal Heir -->
-            <button onclick="triggerServiceFlow('legal_heir')" class="touch-card bg-gradient-to-br from-teal-950/60 to-slate-900 border border-teal-500/30 hover:border-teal-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
-                <div class="text-2xl mb-1">👨‍👩‍👧‍👦</div>
-                <div>
-                    <div id="tile2Title" class="font-bold text-xs text-teal-300">வாரிசு சான்றிதழ்</div>
-                    <div id="tile2Desc" class="text-[10px] text-slate-400">குடும்ப உரிமை ஆவணம்</div>
-                </div>
+            <button onclick="runJudgeDemo('sam_vision')" class="bg-cyan-950/70 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/60 px-2.5 py-1 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
+                <span>📸 1-Click: SAM 3.1 Deed Vision & Seal Detection</span>
             </button>
-            <!-- Service 3: Ration Card -->
-            <button onclick="triggerServiceFlow('ration')" class="touch-card bg-gradient-to-br from-cyan-950/60 to-slate-900 border border-cyan-500/30 hover:border-cyan-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
-                <div class="text-2xl mb-1">🍚</div>
-                <div>
-                    <div id="tile3Title" class="font-bold text-xs text-cyan-300">ரேஷன் அட்டை</div>
-                    <div id="tile3Desc" class="text-[10px] text-slate-400">புதிய குடும்ப அட்டை</div>
-                </div>
+            <button onclick="runJudgeDemo('fmb_plot')" class="bg-teal-950/70 hover:bg-teal-900 text-teal-300 border border-teal-700/60 px-2.5 py-1 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
+                <span>🗺️ 1-Click: Cadastral FMB Plot Subdivision</span>
             </button>
-            <!-- Service 4: KMUT ₹1000 -->
-            <button onclick="triggerServiceFlow('kmut')" class="touch-card bg-gradient-to-br from-amber-950/60 to-slate-900 border border-amber-500/30 hover:border-amber-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
-                <div class="text-2xl mb-1">👩‍💼</div>
-                <div>
-                    <div id="tile4Title" class="font-bold text-xs text-amber-300">மகளிர் உரிமை</div>
-                    <div id="tile4Desc" class="text-[10px] text-slate-400">மாதம் ₹1,000 திட்டம்</div>
-                </div>
+            <button onclick="runJudgeDemo('whatsapp_webhook')" class="bg-amber-950/70 hover:bg-amber-900 text-amber-300 border border-amber-700/60 px-2.5 py-1 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
+                <span>📱 1-Click: WhatsApp Cloud Bot Simulation</span>
             </button>
-            <!-- Service 5: CMCHIS Insurance -->
-            <button onclick="triggerServiceFlow('cmchis')" class="touch-card bg-gradient-to-br from-rose-950/60 to-slate-900 border border-rose-500/30 hover:border-rose-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
-                <div class="text-2xl mb-1">🏥</div>
-                <div>
-                    <div id="tile5Title" class="font-bold text-xs text-rose-300">மருத்துவக் காப்பீடு</div>
-                    <div id="tile5Desc" class="text-[10px] text-slate-400">₹5 லட்சம் இலவச சிகிச்சை</div>
-                </div>
-            </button>
-            <!-- Service 6: Public Grievance Petition -->
-            <button onclick="openPetitionModal()" class="touch-card bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-500/30 hover:border-purple-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
-                <div class="text-2xl mb-1">⚖️</div>
-                <div>
-                    <div id="tile6Title" class="font-bold text-xs text-purple-300">குறைதீர்ப்பு மனு</div>
-                    <div id="tile6Desc" class="text-[10px] text-slate-400">ஆட்சியர் மனு தயாரிப்பு</div>
-                </div>
+            <button onclick="runJudgeDemo('petition_pdf')" class="bg-purple-950/70 hover:bg-purple-900 text-purple-300 border border-purple-700/60 px-2.5 py-1 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
+                <span>📑 1-Click: Court-Ready Legal Petition PDF</span>
             </button>
         </div>
     </div>
 
-    <!-- Multimodal Action Bar (Voice, SAM 3.1 Vision, FMB Plot, WhatsApp Simulator) -->
-    <div class="w-full max-w-4xl bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3 mb-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div class="flex items-center flex-wrap gap-2">
-            <!-- SAM 3.1 Camera Upload -->
-            <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-1.5 transition">
-                <span>📸 <span id="samBtnLabel">ஆவணம் ஆய்வு (SAM 3.1)</span></span>
-                <input type="file" id="docUpload" accept="image/*" class="hidden" onchange="uploadDocumentForAudit(event)">
-            </label>
-            <!-- FMB Cadastral Sketch Visualizer -->
-            <button onclick="openFmbModal('142/3')" class="bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 px-2.5 py-1.5 rounded-xl text-emerald-300 flex items-center gap-1 transition">
-                <span>🗺️ <span id="fmbBtnLabel">புல வரைபடம் (FMB)</span></span>
-            </button>
-            <!-- Voice Input Button -->
-            <button id="voiceBtn" onclick="toggleVoiceRecording()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-xl text-slate-300 flex items-center gap-1.5 transition">
-                <span id="voiceIcon">🎙️</span> <span id="voiceText">தமிழில் பேசுங்கள்</span>
-            </button>
-            <!-- WhatsApp Simulation Trigger for Judges -->
-            <button onclick="simulateWhatsAppCitizen()" class="bg-teal-950 hover:bg-teal-900 border border-teal-700/60 px-2.5 py-1.5 rounded-xl text-teal-300 flex items-center gap-1 transition">
-                <span>📱 <span id="waSimLabel">WhatsApp டெமோ</span></span>
+    <!-- 🎙️ Rural Tamil Nadu Voice-First Centerpiece (கிராமப்புற குரல் மையம்) -->
+    <div class="w-full max-w-4xl bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-emerald-500/40 rounded-2xl p-4 mb-2.5 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <!-- Ambient Glow -->
+        <div class="absolute -top-12 -left-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="mb-2">
+            <span id="voiceHeroBadge" class="text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                🎙️ கிராமப்புற குரல் வழி சேவை (Voice-First Rural Accessibility)
+            </span>
+        </div>
+
+        <h2 id="voiceHeroTitle" class="text-base sm:text-lg font-extrabold text-slate-100 mb-1">
+            தொடவும்... உங்கள் தாய்மொழியில் பேசி கேளுங்கள்!
+        </h2>
+        <p id="voiceHeroSub" class="text-xs text-slate-400 max-w-lg mb-3">
+            எழுத்தறிவு தேவையில்லை • எந்த வட்டார வழக்கிலும் பேசலாம் (மதுரை, கொங்கு, நெல்லை, சென்னை தமிழ்) • உடனடி ஆடியோ பதில்
+        </p>
+
+        <!-- Big Glowing Mic Button -->
+        <div class="flex items-center gap-3">
+            <button id="heroVoiceBtn" onclick="toggleVoiceRecording()" 
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 text-white flex items-center justify-center text-2xl sm:text-3xl shadow-xl shadow-emerald-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer">
+                <span id="heroVoiceIcon">🎙️</span>
             </button>
         </div>
-        <!-- Model Selection Toggles -->
-        <div class="flex items-center gap-3 text-slate-400">
-            <label class="flex items-center space-x-1.5 cursor-pointer select-none hover:text-emerald-300 transition">
-                <input type="checkbox" id="deepReasonToggle" checked class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0 accent-emerald-500">
-                <span class="text-emerald-300 font-medium">🧠 Muse Wonder (Deep Reasoning)</span>
-            </label>
+
+        <!-- Dynamic Recording Waveform Display (Hidden by default) -->
+        <div id="voiceWaveformBox" class="hidden mt-3 flex items-center gap-1.5 py-1 px-3 rounded-full bg-emerald-950/60 border border-emerald-500/40">
+            <span class="w-1.5 h-3 bg-emerald-400 rounded-full wave-bar"></span>
+            <span class="w-1.5 h-6 bg-emerald-400 rounded-full wave-bar [animation-delay:0.2s]"></span>
+            <span class="w-1.5 h-8 bg-emerald-300 rounded-full wave-bar [animation-delay:0.4s]"></span>
+            <span class="w-1.5 h-5 bg-emerald-400 rounded-full wave-bar [animation-delay:0.6s]"></span>
+            <span class="w-1.5 h-3 bg-emerald-400 rounded-full wave-bar [animation-delay:0.8s]"></span>
+            <span id="voiceListeningText" class="text-xs font-semibold text-emerald-300 ml-2">கேட்கிறது... பேசுங்கள் (Listening)...</span>
+            <button onclick="stopVoiceRecording()" class="ml-2 text-[10px] bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-0.5 rounded-full">நிறுத்து (Stop)</button>
+        </div>
+    </div>
+
+    <!-- ⚡ 1-Tap Tactile Visual Entitlement Cards (Zero Typing Required) -->
+    <div class="w-full max-w-4xl mb-2.5">
+        <div class="flex items-center justify-between mb-1.5 px-1">
+            <span id="touchGridTitle" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                ⚡ 1-கிளிக் நேரடி அரசு உரிமைகள் (1-Click Citizen Entitlements - No Typing Needed)
+            </span>
+            <span class="text-[10px] text-emerald-400 font-mono">Meta Muse Spark Dispatch</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <!-- 1: Patta Chitta -->
+            <button onclick="triggerServiceFlow('patta')" class="touch-card bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-500/30 hover:border-emerald-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">🌾</span>
+                    <span class="text-[10px] font-mono text-emerald-300 bg-emerald-950/80 border border-emerald-700/50 px-1.5 py-0.2 rounded">அரசு: ₹60</span>
+                </div>
+                <div>
+                    <div id="tile1Title" class="font-bold text-xs text-emerald-300">பட்டா & சிட்டா</div>
+                    <div id="tile1Desc" class="text-[10px] text-slate-400">நில பெயர் மாற்றம் / உட்பிரிவு</div>
+                </div>
+            </button>
+            <!-- 2: Legal Heir -->
+            <button onclick="triggerServiceFlow('legal_heir')" class="touch-card bg-gradient-to-br from-teal-950/60 to-slate-900 border border-teal-500/30 hover:border-teal-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">👨‍👩‍👧‍👦</span>
+                    <span class="text-[10px] font-mono text-teal-300 bg-teal-950/80 border border-teal-700/50 px-1.5 py-0.2 rounded">அரசு: ₹60</span>
+                </div>
+                <div>
+                    <div id="tile2Title" class="font-bold text-xs text-teal-300">வாரிசு சான்றிதழ்</div>
+                    <div id="tile2Desc" class="text-[10px] text-slate-400">குடும்ப வாரிசு உரிமை ஆவணம்</div>
+                </div>
+            </button>
+            <!-- 3: Ration Card -->
+            <button onclick="triggerServiceFlow('ration')" class="touch-card bg-gradient-to-br from-cyan-950/60 to-slate-900 border border-cyan-500/30 hover:border-cyan-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">🍚</span>
+                    <span class="text-[10px] font-mono text-cyan-300 bg-cyan-950/80 border border-cyan-700/50 px-1.5 py-0.2 rounded">இலவசம் (₹0)</span>
+                </div>
+                <div>
+                    <div id="tile3Title" class="font-bold text-xs text-cyan-300">ரேஷன் அட்டை</div>
+                    <div id="tile3Desc" class="text-[10px] text-slate-400">புதிய அட்டை / பெயர் சேர்த்தல்</div>
+                </div>
+            </button>
+            <!-- 4: KMUT ₹1,000 Aid -->
+            <button onclick="triggerServiceFlow('kmut')" class="touch-card bg-gradient-to-br from-amber-950/60 to-slate-900 border border-amber-500/30 hover:border-amber-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">👩‍💼</span>
+                    <span class="text-[10px] font-mono text-amber-300 bg-amber-950/80 border border-amber-700/50 px-1.5 py-0.2 rounded">மாதம் ₹1,000</span>
+                </div>
+                <div>
+                    <div id="tile4Title" class="font-bold text-xs text-amber-300">மகளிர் உரிமை</div>
+                    <div id="tile4Desc" class="text-[10px] text-slate-400">மாத உதவித்தொகை & மேல்முறையீடு</div>
+                </div>
+            </button>
+            <!-- 5: CMCHIS Insurance -->
+            <button onclick="triggerServiceFlow('cmchis')" class="touch-card bg-gradient-to-br from-rose-950/60 to-slate-900 border border-rose-500/30 hover:border-rose-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">🏥</span>
+                    <span class="text-[10px] font-mono text-rose-300 bg-rose-950/80 border border-rose-700/50 px-1.5 py-0.2 rounded">₹5 லட்சம்</span>
+                </div>
+                <div>
+                    <div id="tile5Title" class="font-bold text-xs text-rose-300">மருத்துவக் காப்பீடு</div>
+                    <div id="tile5Desc" class="text-[10px] text-slate-400">இலவச சிகிச்சை & மருத்துவமனை</div>
+                </div>
+            </button>
+            <!-- 6: Deed Audit (SAM 3.1) -->
+            <button onclick="runJudgeDemo('sam_vision')" class="touch-card bg-gradient-to-br from-blue-950/60 to-slate-900 border border-blue-500/30 hover:border-blue-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">📸</span>
+                    <span class="text-[10px] font-mono text-blue-300 bg-blue-950/80 border border-blue-700/50 px-1.5 py-0.2 rounded">SAM 3.1 AI</span>
+                </div>
+                <div>
+                    <div id="tile6Title" class="font-bold text-xs text-blue-300">பத்திர தணிக்கை</div>
+                    <div id="tile6Desc" class="text-[10px] text-slate-400">முத்திரை & போலி கண்டறிதல்</div>
+                </div>
+            </button>
+            <!-- 7: FMB Cadastral Plot -->
+            <button onclick="openFmbModal('142/3')" class="touch-card bg-gradient-to-br from-teal-950/60 to-slate-900 border border-teal-500/30 hover:border-teal-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">🗺️</span>
+                    <span class="text-[10px] font-mono text-teal-300 bg-teal-950/80 border border-teal-700/50 px-1.5 py-0.2 rounded">RSO 34</span>
+                </div>
+                <div>
+                    <div id="tile7Title" class="font-bold text-xs text-teal-300">புல வரைபடம்</div>
+                    <div id="tile7Desc" class="text-[10px] text-slate-400">உட்பிரிவு FMB வரைபடம்</div>
+                </div>
+            </button>
+            <!-- 8: Court-Ready Legal Petition -->
+            <button onclick="openPetitionModal()" class="touch-card bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-500/30 hover:border-purple-400/80 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-lg">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-2xl">⚖️</span>
+                    <span class="text-[10px] font-mono text-purple-300 bg-purple-950/80 border border-purple-700/50 px-1.5 py-0.2 rounded">சட்ட மனு</span>
+                </div>
+                <div>
+                    <div id="tile8Title" class="font-bold text-xs text-purple-300">நீதிமன்ற மனு (PDF)</div>
+                    <div id="tile8Desc" class="text-[10px] text-slate-400">வட்டாட்சியர் நேரடி மனு தயார்</div>
+                </div>
+            </button>
         </div>
     </div>
 
     <!-- SAM 3.1 Visual Audit Box (Interactive Document Canvas) -->
-    <div id="samAuditBox" class="hidden w-full max-w-4xl bg-slate-900/90 border border-cyan-500/40 rounded-2xl p-4 mb-2 shadow-xl animate-fade-in">
+    <div id="samAuditBox" class="hidden w-full max-w-4xl bg-slate-900/95 border border-cyan-500/40 rounded-2xl p-4 mb-2.5 shadow-2xl animate-fade-in">
         <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
             <div class="flex items-center gap-2">
                 <span class="text-cyan-400 font-bold text-sm">🎯 Meta SAM 3.1 (Segment Anything) இன்டராக்டிவ் ஆவணத் தணிக்கை</span>
                 <span class="text-[10px] bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono">Computer Vision Canvas</span>
             </div>
-            <button onclick="closeAuditBox()" class="text-slate-400 hover:text-slate-200 text-xs">✕ மூடு</button>
+            <div class="flex items-center gap-2">
+                <button onclick="loadSampleDeed()" class="text-[11px] bg-slate-800 hover:bg-slate-700 border border-cyan-500/40 text-cyan-300 px-2.5 py-1 rounded-lg transition">
+                    📄 மாதிரி பத்திரம் (Sample Deed)
+                </button>
+                <button onclick="closeAuditBox()" class="text-slate-400 hover:text-slate-200 text-xs px-2 py-1">✕ மூடு</button>
+            </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="relative bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center min-h-[220px]">
@@ -615,13 +735,13 @@ async def serve_ui():
             <div class="space-y-2 text-xs">
                 <div id="auditVerdict" class="font-bold text-emerald-400"></div>
                 <p class="text-[11px] text-slate-400">🔍 கீழே உள்ள பகுதியை தொட்டால் (Hover) படத்தில் ஒளிரும்:</p>
-                <div id="auditZones" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+                <div id="auditZones" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar"></div>
             </div>
         </div>
     </div>
 
     <!-- Chat Message Container -->
-    <main id="chatBox" class="w-full max-w-4xl flex-1 bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 overflow-y-auto space-y-4 my-2 shadow-inner">
+    <main id="chatBox" class="w-full max-w-4xl flex-1 bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 overflow-y-auto space-y-4 my-2 shadow-inner custom-scrollbar">
         <!-- Welcome Message -->
         <div class="flex items-start space-x-3">
             <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-base flex-shrink-0 mt-1">
@@ -631,7 +751,7 @@ async def serve_ui():
                 <p id="welcomeGreeting" class="font-bold text-emerald-400 text-base">வணக்கம்! நான் உங்கள் மக்கள் ஏஜென்ட் (Makkal Agent AI).</p>
                 <p id="welcomeBody">நான் வெறும் உரையாடல் செயலி அல்ல; தமிழ்நாடு அரசின் பட்டா மாறுதல், வாரிசு சான்றிதழ், ரேஷன் கார்டு, மகளிர் உரிமைத் திட்டங்களுக்கான உங்கள் **தன்னாட்சி டிஜிட்டல் அலுவலர்**.</p>
                 <div class="pt-2 border-t border-slate-800 text-xs text-slate-400 flex flex-wrap gap-2.5">
-                    <span id="welcomePill1">🎙️ தமிழில் பேசலாம்</span> • 
+                    <span id="welcomePill1">🎙️ பெரிய மைக்ரோபோன் மூலம் தமிழில் பேசலாம்</span> • 
                     <span id="welcomePill2">📸 பத்திரத்தை படம் பிடித்து அனுப்பலாம்</span> • 
                     <span id="welcomePill3">📑 சட்டப்பூர்வ மனுவை பதிவிறக்கலாம்</span> • 
                     <span id="welcomePill4">📱 WhatsApp மூலம் இயக்கலாம்</span>
@@ -640,20 +760,49 @@ async def serve_ui():
         </div>
     </main>
 
-    <!-- Input Footer -->
-    <footer class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-2.5 shadow-2xl flex items-center space-x-2">
-        <input id="userInput" type="text" placeholder="உங்கள் நிலம், பட்டா அல்லது அரசு சேவை பற்றி கேளுங்கள் (அல்லது மேலே 1-கிளிக் அழுத்தவும்)..." 
-               class="flex-1 bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
-               onkeypress="handleKeyPress(event)">
-        <button id="sendBtn" onclick="sendMessage()" 
-                class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center text-sm flex-shrink-0">
-            <span id="sendBtnText">அனுப்பு</span>
+    <!-- Floating Audio Status Pill (Appears when AI is speaking) -->
+    <div id="audioSpeakerBar" class="hidden w-full max-w-4xl bg-emerald-950/80 border border-emerald-500/40 rounded-xl px-3 py-1.5 mb-1.5 flex items-center justify-between text-xs text-emerald-300">
+        <div class="flex items-center gap-2">
+            <span class="animate-pulse">🔊</span>
+            <span id="audioPlayingLabel">குரல் ஒலிபரப்பாகிறது (Speaking in Tamil)...</span>
+        </div>
+        <button onclick="stopSpeechNow()" class="bg-slate-900 hover:bg-slate-800 px-2.5 py-0.5 rounded border border-emerald-700/50 text-[11px] font-bold">
+            ⏹️ நிறுத்து (Stop)
         </button>
+    </div>
+
+    <!-- Input Footer -->
+    <footer class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-2.5 shadow-2xl flex flex-col gap-2">
+        <div class="flex items-center space-x-2">
+            <!-- Camera / Deed Upload Button -->
+            <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 p-3 rounded-xl text-slate-300 flex items-center justify-center transition flex-shrink-0" title="பத்திரம் ஆய்வு (SAM 3.1)">
+                <span>📸</span>
+                <input type="file" id="docUpload" accept="image/*" class="hidden" onchange="uploadDocumentForAudit(event)">
+            </label>
+            <!-- Mic Trigger Button -->
+            <button onclick="toggleVoiceRecording()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 p-3 rounded-xl text-emerald-400 flex items-center justify-center transition flex-shrink-0" title="பேசி கேளுங்கள்">
+                <span>🎙️</span>
+            </button>
+            <input id="userInput" type="text" placeholder="உங்கள் நிலம், பட்டா அல்லது அரசு சேவை பற்றி கேளுங்கள் (அல்லது மேலே 1-கிளிக் அழுத்தவும்)..." 
+                   class="flex-1 bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                   onkeypress="handleKeyPress(event)">
+            <button id="sendBtn" onclick="sendMessage()" 
+                    class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center text-sm flex-shrink-0">
+                <span id="sendBtnText">அனுப்பு</span>
+            </button>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
+            <label class="flex items-center space-x-1.5 cursor-pointer select-none hover:text-emerald-300 transition">
+                <input type="checkbox" id="deepReasonToggle" checked class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0 accent-emerald-500">
+                <span class="text-emerald-300 font-medium">🧠 Meta Muse Wonder (5-Step Deep Statutory Reasoning Trace)</span>
+            </label>
+            <span class="hidden sm:inline text-slate-500 font-mono">Baseten Open-Weight & SAM 3.1 Active</span>
+        </div>
     </footer>
 
     <!-- FMB Cadastral Sketch Modal -->
     <div id="fmbModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xl">🗺️</span>
@@ -690,7 +839,7 @@ async def serve_ui():
 
     <!-- Petition Modal -->
     <div id="petitionModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 id="modalTitle" class="text-base font-bold text-emerald-400">📑 சட்டப்பூர்வ மனு தயாரிப்பு (Court-Ready Legal Petition PDF)</h3>
                 <button onclick="closePetitionModal()" class="text-slate-400 hover:text-slate-200">✕</button>
@@ -751,6 +900,8 @@ async def serve_ui():
         let chatHistory = [];
         let mediaRecorder = null;
         let audioChunks = [];
+        let webSpeechRecognition = null;
+        let isRecording = false;
 
         // SAM 3.1 State
         let currentAuditData = null;
@@ -765,27 +916,35 @@ async def serve_ui():
                 appTitle: 'Makkal Agent (மக்கள் Agent)',
                 appSubtitle: 'தமிழ்நாடு தன்னாட்சி அரசு சேவை & சட்ட நடவடிக்கை ஏஜென்ட்',
                 petitionBtnText: '📑 மனு உருவாக்கம் (PDF)',
-                touchGridTitle: '⚡ 1-கிளிக் நேரடி சேவைகள் (1-Click Citizen Entitlements - No Typing Needed)',
+                judgeTourTitle: '⚡ Meta Hackathon Judge Quick-Tours (1-Click Multimodal Demos):',
+                voiceHeroBadge: '🎙️ கிராமப்புற குரல் வழி சேவை (Voice-First Rural Accessibility)',
+                voiceHeroTitle: 'தொடவும்... உங்கள் தாய்மொழியில் பேசி கேளுங்கள்!',
+                voiceHeroSub: 'எழுத்தறிவு தேவையில்லை • எந்த வட்டார வழக்கிலும் பேசலாம் (மதுரை, கொங்கு, நெல்லை, சென்னை தமிழ்) • உடனடி ஆடியோ பதில்',
+                touchGridTitle: '⚡ 1-கிளிக் நேரடி அரசு உரிமைகள் (1-Click Citizen Entitlements - No Typing Needed)',
                 tile1Title: 'பட்டா & சிட்டா',
-                tile1Desc: 'நில ஆவணம் மாற்றம்',
+                tile1Desc: 'நில பெயர் மாற்றம் / உட்பிரிவு',
                 tile2Title: 'வாரிசு சான்றிதழ்',
-                tile2Desc: 'குடும்ப உரிமை ஆவணம்',
+                tile2Desc: 'குடும்ப வாரிசு உரிமை ஆவணம்',
                 tile3Title: 'ரேஷன் அட்டை',
-                tile3Desc: 'புதிய குடும்ப அட்டை',
+                tile3Desc: 'புதிய அட்டை / பெயர் சேர்த்தல்',
                 tile4Title: 'மகளிர் உரிமை',
-                tile4Desc: 'மாதம் ₹1,000 திட்டம்',
+                tile4Desc: 'மாத உதவித்தொகை & மேல்முறையீடு',
                 tile5Title: 'மருத்துவக் காப்பீடு',
-                tile5Desc: '₹5 லட்சம் இலவச சிகிச்சை',
-                tile6Title: 'குறைதீர்ப்பு மனு',
-                tile6Desc: 'ஆட்சியர் மனு தயாரிப்பு',
-                samBtnLabel: 'ஆவணம் ஆய்வு (SAM 3.1)',
-                fmbBtnLabel: 'புல வரைபடம் (FMB)',
-                voiceText: 'தமிழில் பேசுங்கள்',
-                waSimLabel: 'WhatsApp டெமோ',
+                tile5Desc: 'இலவச சிகிச்சை & மருத்துவமனை',
+                tile6Title: 'பத்திர தணிக்கை',
+                tile6Desc: 'முத்திரை & போலி கண்டறிதல்',
+                tile7Title: 'புல வரைபடம்',
+                tile7Desc: 'உட்பிரிவு FMB வரைபடம்',
+                tile8Title: 'நீதிமன்ற மனு (PDF)',
+                tile8Desc: 'வட்டாட்சியர் நேரடி மனு தயார்',
                 inputPlaceholder: 'உங்கள் நிலம், பட்டா அல்லது அரசு சேவை பற்றி கேளுங்கள் (அல்லது மேலே 1-கிளிக் அழுத்தவும்)...',
                 sendBtnText: 'அனுப்பு',
                 welcomeGreeting: 'வணக்கம்! நான் உங்கள் மக்கள் ஏஜென்ட் (Makkal Agent AI).',
-                welcomeBody: 'நான் வெறும் உரையாடல் செயலி அல்ல; தமிழ்நாடு அரசின் பட்டா மாறுதல், வாரிசு சான்றிதழ், ரேஷன் கார்டு, மகளிர் உரிமைத் திட்டங்களுக்கான உங்கள் **தன்னாட்சி டிஜிட்டல் அலுவலர்**.'
+                welcomeBody: 'நான் வெறும் உரையாடல் செயலி அல்ல; தமிழ்நாடு அரசின் பட்டா மாறுதல், வாரிசு சான்றிதழ், ரேஷன் கார்டு, மகளிர் உரிமைத் திட்டங்களுக்கான உங்கள் **தன்னாட்சி டிஜிட்டல் அலுவலர்**.',
+                lblBribeMetric: '🛡️ லஞ்சம் தவிர்ப்பு (Bribe Blocked)',
+                lblFeeMetric: '🏛️ அரசு கட்டணம் (Statutory Fee)',
+                lblCitizensMetric: '👥 குடிமக்கள் (Protected)',
+                lblSavingsMetric: '💰 சேமிப்பு (Public Savings)'
             },
             en: {
                 flag: '🇮🇳',
@@ -793,27 +952,35 @@ async def serve_ui():
                 appTitle: 'Makkal Agent AI (People’s AI)',
                 appSubtitle: 'Autonomous Tamil Nadu Civic Entitlements & Legal Action Agent',
                 petitionBtnText: '📑 Draft Petition (PDF)',
+                judgeTourTitle: '⚡ Meta Hackathon Judge Quick-Tours (1-Click Multimodal Demos):',
+                voiceHeroBadge: '🎙️ Voice-First Rural Civic Accessibility (Zero Typing Required)',
+                voiceHeroTitle: 'Tap & Speak in your own Voice / Tamil Dialect!',
+                voiceHeroSub: 'Zero typing required • Speak in regional dialects (Madurai, Kongu, Nellai, Chennai) • Instant Audio-Spoken Response',
                 touchGridTitle: '⚡ 1-Click Citizen Entitlements (Zero Typing Required)',
                 tile1Title: 'Patta & Chitta',
-                tile1Desc: 'Land Record Transfer',
+                tile1Desc: 'Land Mutation & Subdivision',
                 tile2Title: 'Legal Heir',
-                tile2Desc: 'Succession Certificate',
+                tile2Desc: 'Class-I Succession Certificate',
                 tile3Title: 'Ration Card',
-                tile3Desc: 'TNPDS Smart Card',
+                tile3Desc: 'TNPDS Smart Card Add/Remove',
                 tile4Title: 'KMUT ₹1,000 Aid',
                 tile4Desc: 'Monthly Women Entitlement',
                 tile5Title: 'CMCHIS Health',
                 tile5Desc: '₹5 Lakh Free Treatment',
-                tile6Title: 'Grievance Petition',
-                tile6Desc: 'District Collector Draft',
-                samBtnLabel: 'Audit Deed (SAM 3.1)',
-                fmbBtnLabel: 'FMB Plot (Cadastral)',
-                voiceText: 'Speak in Tamil / English',
-                waSimLabel: 'WhatsApp Demo',
-                inputPlaceholder: 'Ask about Patta, Land records, or Welfare Schemes (or click a service tile above)...',
+                tile6Title: 'Deed Audit (SAM 3.1)',
+                tile6Desc: 'Seal & Signature CV Audit',
+                tile7Title: 'FMB Cadastral Plot',
+                tile7Desc: 'Subdivision Boundary Sketch',
+                tile8Title: 'Legal Petition (PDF)',
+                tile8Desc: 'Ready-to-Print Court Draft',
+                inputPlaceholder: 'Ask about Patta, Land records, or Welfare Schemes (or tap a 1-click tile above)...',
                 sendBtnText: 'Send',
                 welcomeGreeting: 'Welcome! I am your Makkal Agent AI (Citizen Action Agent).',
-                welcomeBody: 'I am not just a chatbot. I am an **Autonomous Multimodal Action Agent** safeguarding Tamil Nadu citizens from middleman corruption and navigating Patta transfers, Legal Heir, and Ration benefits.'
+                welcomeBody: 'I am not just a chatbot. I am an **Autonomous Multimodal Action Agent** safeguarding Tamil Nadu citizens from middleman corruption and navigating Patta transfers, Legal Heir, and Ration benefits.',
+                lblBribeMetric: '🛡️ Bribe Blocked / Petition',
+                lblFeeMetric: '🏛️ Statutory Govt Fee',
+                lblCitizensMetric: '👥 Citizens Protected',
+                lblSavingsMetric: '💰 Total Public Savings'
             }
         };
 
@@ -846,6 +1013,10 @@ async def serve_ui():
             document.getElementById('appTitle').innerText = t.appTitle;
             document.getElementById('appSubtitle').innerText = t.appSubtitle;
             document.getElementById('petitionBtnText').innerText = t.petitionBtnText;
+            document.getElementById('judgeTourTitle').innerText = t.judgeTourTitle;
+            document.getElementById('voiceHeroBadge').innerText = t.voiceHeroBadge;
+            document.getElementById('voiceHeroTitle').innerText = t.voiceHeroTitle;
+            document.getElementById('voiceHeroSub').innerText = t.voiceHeroSub;
             document.getElementById('touchGridTitle').innerText = t.touchGridTitle;
             document.getElementById('tile1Title').innerText = t.tile1Title;
             document.getElementById('tile1Desc').innerText = t.tile1Desc;
@@ -859,32 +1030,58 @@ async def serve_ui():
             document.getElementById('tile5Desc').innerText = t.tile5Desc;
             document.getElementById('tile6Title').innerText = t.tile6Title;
             document.getElementById('tile6Desc').innerText = t.tile6Desc;
-            document.getElementById('samBtnLabel').innerText = t.samBtnLabel;
-            if (document.getElementById('fmbBtnLabel')) document.getElementById('fmbBtnLabel').innerText = t.fmbBtnLabel;
-            document.getElementById('voiceText').innerText = t.voiceText;
-            document.getElementById('waSimLabel').innerText = t.waSimLabel;
+            document.getElementById('tile7Title').innerText = t.tile7Title;
+            document.getElementById('tile7Desc').innerText = t.tile7Desc;
+            document.getElementById('tile8Title').innerText = t.tile8Title;
+            document.getElementById('tile8Desc').innerText = t.tile8Desc;
             document.getElementById('userInput').placeholder = t.inputPlaceholder;
             document.getElementById('sendBtnText').innerText = t.sendBtnText;
             document.getElementById('welcomeGreeting').innerText = t.welcomeGreeting;
             document.getElementById('welcomeBody').innerHTML = t.welcomeBody;
+            document.getElementById('lblBribeMetric').innerText = t.lblBribeMetric;
+            document.getElementById('lblFeeMetric').innerText = t.lblFeeMetric;
+            document.getElementById('lblCitizensMetric').innerText = t.lblCitizensMetric;
+            document.getElementById('lblSavingsMetric').innerText = t.lblSavingsMetric;
         }
 
         function toggleAudioSpeech() {
             audioSpeechEnabled = !audioSpeechEnabled;
             const icon = document.getElementById('audioIcon');
+            const statusText = document.getElementById('audioStatusText');
             icon.innerText = audioSpeechEnabled ? '🔊' : '🔇';
+            if (statusText) statusText.innerText = audioSpeechEnabled ? 'குரல் இயக்கம்' : 'முடக்கப்பட்டது';
             if (!audioSpeechEnabled && window.speechSynthesis) {
+                stopSpeechNow();
+            }
+        }
+
+        function stopSpeechNow() {
+            if (window.speechSynthesis) {
                 window.speechSynthesis.cancel();
             }
+            const bar = document.getElementById('audioSpeakerBar');
+            if (bar) bar.classList.add('hidden');
         }
 
         function speakText(text) {
             if (!audioSpeechEnabled || !window.speechSynthesis) return;
             window.speechSynthesis.cancel();
-            const cleanText = text.replace(/[*#_`~>]/g, '').replace(/\[(.*?)\]\(.*?\)/g, '$1').slice(0, 300);
+
+            const bar = document.getElementById('audioSpeakerBar');
+            if (bar) bar.classList.remove('hidden');
+
+            const cleanText = text.replace(/[*#_`~>]/g, '').replace(/\[(.*?)\]\(.*?\)/g, '$1').slice(0, 350);
             const utterance = new SpeechSynthesisUtterance(cleanText);
             utterance.lang = currentLang === 'ta' ? 'ta-IN' : 'en-IN';
             utterance.rate = 1.0;
+
+            utterance.onend = () => {
+                if (bar) bar.classList.add('hidden');
+            };
+            utterance.onerror = () => {
+                if (bar) bar.classList.add('hidden');
+            };
+
             window.speechSynthesis.speak(utterance);
         }
 
@@ -908,6 +1105,25 @@ async def serve_ui():
             };
             userInput.value = prompts[service] || '';
             sendMessage();
+        }
+
+        // 🏆 Hackathon Judge Fast-Track Demos
+        async function runJudgeDemo(type) {
+            if (type === 'patta_reasoning') {
+                if (deepReasonToggle) deepReasonToggle.checked = true;
+                userInput.value = currentLang === 'ta'
+                    ? 'கூட்டு பட்டாவில் உள்ள நிலத்தை கிரய பத்திரம் மூலம் வாங்கியுள்ளேன். தனி பட்டா மாற்றம் செய்ய சட்ட விதிமுறை மற்றும் வருவாய் நிலை ஆணை RSO 31 என்ன கூறுகிறது?'
+                    : 'I purchased joint patta land via registered sale deed. What does Tamil Nadu Revenue Standing Order RSO 31 prescribe for individual patta subdivision?';
+                sendMessage();
+            } else if (type === 'sam_vision') {
+                await loadSampleDeed();
+            } else if (type === 'fmb_plot') {
+                openFmbModal('142/3');
+            } else if (type === 'whatsapp_webhook') {
+                simulateWhatsAppCitizen();
+            } else if (type === 'petition_pdf') {
+                openPetitionModal();
+            }
         }
 
         function handleKeyPress(e) {
@@ -1094,19 +1310,66 @@ async def serve_ui():
             }
         }
 
-        // Voice Recording via Muse Voice Transcribe
-        async function toggleVoiceRecording() {
-            const vBtn = document.getElementById('voiceBtn');
-            const vText = document.getElementById('voiceText');
-            const vIcon = document.getElementById('voiceIcon');
+        // 🎙️ Voice Recording & Speech Recognition
+        function toggleVoiceRecording() {
+            if (isRecording) {
+                stopVoiceRecording();
+            } else {
+                startVoiceRecording();
+            }
+        }
 
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                vText.innerText = 'Transcribing...';
-                vIcon.innerText = '⏳';
-                return;
+        function startVoiceRecording() {
+            const waveBox = document.getElementById('voiceWaveformBox');
+            const heroIcon = document.getElementById('heroVoiceIcon');
+            const heroBtn = document.getElementById('heroVoiceBtn');
+
+            isRecording = true;
+            if (waveBox) waveBox.classList.remove('hidden');
+            if (heroBtn) heroBtn.classList.add('mic-pulsing');
+            if (heroIcon) heroIcon.innerText = '🔴';
+
+            // 1. Try Browser Web Speech API First
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRec) {
+                try {
+                    webSpeechRecognition = new SpeechRec();
+                    webSpeechRecognition.lang = currentLang === 'ta' ? 'ta-IN' : 'en-IN';
+                    webSpeechRecognition.continuous = false;
+                    webSpeechRecognition.interimResults = true;
+
+                    webSpeechRecognition.onresult = (event) => {
+                        let transcript = '';
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            transcript += event.results[i][0].transcript;
+                        }
+                        userInput.value = transcript;
+                    };
+
+                    webSpeechRecognition.onend = () => {
+                        stopVoiceRecording();
+                        if (userInput.value.trim()) {
+                            sendMessage();
+                        }
+                    };
+
+                    webSpeechRecognition.onerror = (err) => {
+                        console.warn('SpeechRecognition error, falling back to MediaRecorder:', err);
+                        fallbackMediaRecorder();
+                    };
+
+                    webSpeechRecognition.start();
+                    return;
+                } catch (e) {
+                    console.warn('Web Speech API start error:', e);
+                }
             }
 
+            // 2. Fallback to MediaRecorder & Meta Voice Transcribe Endpoint
+            fallbackMediaRecorder();
+        }
+
+        async function fallbackMediaRecorder() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 audioChunks = [];
@@ -1117,7 +1380,6 @@ async def serve_ui():
                     const formData = new FormData();
                     formData.append('file', audioBlob, 'citizen_voice.mp3');
 
-                    vText.innerText = 'Meta Voice ஆய்வு...';
                     try {
                         const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
                         const data = await res.json();
@@ -1125,24 +1387,62 @@ async def serve_ui():
                             userInput.value = data.transcript;
                             sendMessage();
                         } else {
-                            alert('குரல் கேட்கவில்லை அல்லது பிழை: ' + (data.message || ''));
+                            alert('குரல் கேட்கவில்லை: ' + (data.message || ''));
                         }
                     } catch (e) {
                         alert('Voice Transcribe Error: ' + e.message);
-                    } finally {
-                        vText.innerText = I18N[currentLang].voiceText;
-                        vIcon.innerText = '🎙️';
                     }
                 };
                 mediaRecorder.start();
-                vText.innerText = 'பதிவாகிறது (Stop அழுத்தவும்)...';
-                vIcon.innerText = '🔴';
             } catch (err) {
+                stopVoiceRecording();
                 alert('மைக்ரோபோன் அனுமதி தேவை: ' + err.message);
             }
         }
 
+        function stopVoiceRecording() {
+            isRecording = false;
+            const waveBox = document.getElementById('voiceWaveformBox');
+            const heroIcon = document.getElementById('heroVoiceIcon');
+            const heroBtn = document.getElementById('heroVoiceBtn');
+
+            if (waveBox) waveBox.classList.add('hidden');
+            if (heroBtn) heroBtn.classList.remove('mic-pulsing');
+            if (heroIcon) heroIcon.innerText = '🎙️';
+
+            if (webSpeechRecognition) {
+                try { webSpeechRecognition.stop(); } catch(e) {}
+                webSpeechRecognition = null;
+            }
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                try { mediaRecorder.stop(); } catch(e) {}
+            }
+        }
+
         // Enhancement 2: Interactive SAM 3.1 Document Canvas
+        async function loadSampleDeed() {
+            const auditBox = document.getElementById('samAuditBox');
+            const verdict = document.getElementById('auditVerdict');
+            const zones = document.getElementById('auditZones');
+
+            auditBox.classList.remove('hidden');
+            verdict.innerText = 'மாதிரி பத்திரம் ஏற்றப்படுகிறது & Meta SAM 3.1 ஸ்கேன் செய்கிறது...';
+            zones.innerHTML = '<span class="text-slate-400">அரசு முத்திரை மற்றும் சார்பதிவாளர் கையெழுத்து பகுப்பாய்வு...</span>';
+
+            try {
+                const deedRes = await fetch('/api/sample-deed');
+                const blob = await deedRes.blob();
+                const formData = new FormData();
+                formData.append('file', blob, 'sample_deed.jpg');
+
+                const res = await fetch('/api/audit-document', { method: 'POST', body: formData });
+                const data = await res.json();
+                handleAuditResponse(data, 'sample_deed.jpg');
+            } catch (e) {
+                verdict.innerText = 'மாதிரி பத்திரம் பிழை: ' + e.message;
+            }
+        }
+
         async function uploadDocumentForAudit(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1161,37 +1461,43 @@ async def serve_ui():
             try {
                 const res = await fetch('/api/audit-document', { method: 'POST', body: formData });
                 const data = await res.json();
-
-                if (data.status === 'success') {
-                    currentAuditData = data;
-                    loadedAuditImage = new Image();
-                    loadedAuditImage.onload = () => {
-                        renderAuditCanvas();
-                        setupCanvasHoverEvents();
-                    };
-                    loadedAuditImage.src = data.overlay_image_base64;
-
-                    verdict.innerText = data.audit_summary_ta;
-                    verdict.className = data.is_authentic ? 'font-bold text-emerald-400' : 'font-bold text-amber-400';
-
-                    zones.innerHTML = data.segmented_zones.map((z, idx) => `
-                        <div id="zone-card-${idx}" onmouseenter="highlightZone(${idx})" onmouseleave="unhighlightZone()"
-                             class="bg-slate-950 border border-slate-800 hover:border-cyan-400/80 p-2 rounded-lg flex items-center justify-between cursor-pointer transition">
-                            <div>
-                                <span class="font-semibold text-cyan-300">${z.label}</span>
-                                <p class="text-[11px] text-slate-400">${z.notes_ta}</p>
-                            </div>
-                            <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono">${Math.round(z.confidence * 100)}%</span>
-                        </div>
-                    `).join('');
-
-                    appendMessage(`📸 **ஆவணம் சமர்ப்பிக்கப்பட்டது (${file.name}):**\n\n${data.audit_summary_ta}`, 'assistant', 'sam-3.1');
-                    speakText(data.audit_summary_ta);
-                } else {
-                    verdict.innerText = 'ஆய்வு பிழை: ' + (data.message || '');
-                }
+                handleAuditResponse(data, file.name);
             } catch (err) {
                 verdict.innerText = 'தொடர்பு பிழை: ' + err.message;
+            }
+        }
+
+        function handleAuditResponse(data, filename) {
+            const verdict = document.getElementById('auditVerdict');
+            const zones = document.getElementById('auditZones');
+
+            if (data.status === 'success') {
+                currentAuditData = data;
+                loadedAuditImage = new Image();
+                loadedAuditImage.onload = () => {
+                    renderAuditCanvas();
+                    setupCanvasHoverEvents();
+                };
+                loadedAuditImage.src = data.overlay_image_base64;
+
+                verdict.innerText = data.audit_summary_ta;
+                verdict.className = data.is_authentic ? 'font-bold text-emerald-400' : 'font-bold text-amber-400';
+
+                zones.innerHTML = data.segmented_zones.map((z, idx) => `
+                    <div id="zone-card-${idx}" onmouseenter="highlightZone(${idx})" onmouseleave="unhighlightZone()"
+                         class="bg-slate-950 border border-slate-800 hover:border-cyan-400/80 p-2 rounded-lg flex items-center justify-between cursor-pointer transition">
+                        <div>
+                            <span class="font-semibold text-cyan-300">${z.label}</span>
+                            <p class="text-[11px] text-slate-400">${z.notes_ta}</p>
+                        </div>
+                        <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono">${Math.round(z.confidence * 100)}%</span>
+                    </div>
+                `).join('');
+
+                appendMessage(`📸 **ஆவணம் சமர்ப்பிக்கப்பட்டது (${filename}):**\n\n${data.audit_summary_ta}`, 'assistant', 'sam-3.1');
+                speakText(data.audit_summary_ta);
+            } else {
+                verdict.innerText = 'ஆய்வு பிழை: ' + (data.message || '');
             }
         }
 

@@ -30,6 +30,10 @@
    - Real-time economic dashboard tracking ₹3,500 middleman extortion prevented per citizen, ₹60 statutory government fee lock, 1,842+ protected citizens, and ₹64.47 Lakhs total civic savings.
 4. **🗺️ Cadastral FMB (Field Measurement Book) Subdivision Visualizer:**
    - Generates authentic vector SVG survey subdivision plots showing G-Line triangulation metrics, distinguishing Parent Patta (Plot A) vs Buyer Sub-Division (Plot B) under the Tamil Nadu Survey & Boundaries Act 1923.
+5. **🎙️ Voice-First Rural Civic UI & 1-Click Judge Quick-Tours:**
+   - Big Glowing Center Microphone with real-time Tamil Web Speech API & Meta Muse Voice fallback for illiterate citizens (Zero Typing Required).
+   - 8 Tactile Visual Entitlement Cards with official government fee locks (₹60 vs ₹3,500 middleman extortion blocked).
+   - 5 Instant One-Click Evaluator Fast-Track Tours enabling international hackathon judges to experience full multimodal reasoning, SAM 3.1 computer vision deed audit (`/api/sample-deed`), FMB cadastral graphics, and WhatsApp cloud dispatches in seconds.
 
 ---
 

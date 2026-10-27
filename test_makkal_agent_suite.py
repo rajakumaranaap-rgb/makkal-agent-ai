@@ -227,7 +227,7 @@ def run_tests():
         results.append(("Anti-Corruption Impact Metrics", "FAIL"))
 
     # Test 10: Cadastral FMB Subdivision Plot Visualizer
-    print("\n[10/10] Testing /api/cadastral-fmb/{survey_no} (Cadastral SVG Visualizer)...")
+    print("\n[10/11] Testing /api/cadastral-fmb/{survey_no} (Cadastral SVG Visualizer)...")
     try:
         res = requests.get(f"{TARGET_URL}/api/cadastral-fmb/142-3B", timeout=8)
         data = res.json()
@@ -240,6 +240,19 @@ def run_tests():
     except Exception as e:
         print(f"  ✗ FAIL: {e}")
         results.append(("Cadastral FMB Plot Synthesis", "FAIL"))
+
+    # Test 11: Sample Deed Vision Endpoint for Judges
+    print("\n[11/11] Testing /api/sample-deed (Judges 1-Click Computer Vision Test)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/sample-deed", timeout=8)
+        assert res.status_code == 200
+        assert "image/jpeg" in res.headers.get("content-type", "")
+        assert len(res.content) > 1000
+        print(f"  ✓ PASS: Synthesized authentic deed sample image ({len(res.content)} bytes)")
+        results.append(("Sample Deed Vision Generator", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Sample Deed Vision Generator", "FAIL"))
 
     # Summary
     print("\n" + "=" * 70)
