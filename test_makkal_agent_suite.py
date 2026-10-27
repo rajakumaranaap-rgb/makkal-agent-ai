@@ -66,7 +66,7 @@ def run_tests():
     results = []
 
     # Test 1: Health Endpoint
-    print("[1/8] Testing /health endpoint...")
+    print("[1/10] Testing /health endpoint...")
     try:
         res = requests.get(f"{TARGET_URL}/health", timeout=8)
         data = res.json()
@@ -79,7 +79,7 @@ def run_tests():
         results.append(("Health Check", "FAIL"))
 
     # Test 2: Services Catalog
-    print("\n[2/8] Testing /api/catalog endpoint...")
+    print("\n[2/10] Testing /api/catalog endpoint...")
     try:
         res = requests.get(f"{TARGET_URL}/api/catalog", timeout=8)
         data = res.json()
@@ -93,7 +93,7 @@ def run_tests():
         results.append(("Services Catalog", "FAIL"))
 
     # Test 3: Chat with Muse Spark 1.3 (Tamil)
-    print("\n[3/8] Testing /api/chat with Meta Muse Spark 1.3 (Tamil)...")
+    print("\n[3/10] Testing /api/chat with Meta Muse Spark 1.3 (Tamil)...")
     try:
         payload = {
             "message": "எனக்கு நிலம் சர்வே செய்து பட்டா பெயர் மாற்றம் செய்ய வேண்டும், அரசு கட்டணம் எவ்வளவு?",
@@ -111,7 +111,7 @@ def run_tests():
         results.append(("Muse Spark 1.3 Chat", "FAIL"))
 
     # Test 4: Deep Legal Reasoning with Meta Muse Wonder 1.0
-    print("\n[4/8] Testing /api/chat with Meta Muse Wonder 1.0 (Deep Reasoning)...")
+    print("\n[4/10] Testing /api/chat with Meta Muse Wonder 1.0 (Deep Reasoning)...")
     try:
         payload = {
             "message": "வாரிசு சான்றிதழ் பெறுவதில் வாரிசுகளுக்குள் சர்ச்சை உள்ளது, சட்டப்படியான தீர்வு என்ன?",
@@ -129,7 +129,7 @@ def run_tests():
         results.append(("Muse Wonder 1.0 Deep Reasoning", "FAIL"))
 
     # Test 5: Open-Weight Model Routing on Baseten
-    print("\n[5/8] Testing /api/chat with Baseten Open-Weight Model ($10k Prize Track)...")
+    print("\n[5/10] Testing /api/chat with Baseten Open-Weight Model ($10k Prize Track)...")
     try:
         payload = {
             "message": "நில எல்லை தகராறு தீர்வு சட்டம்",
@@ -147,7 +147,7 @@ def run_tests():
         results.append(("Baseten Open-Weight Engine", "FAIL"))
 
     # Test 6: SAM 3.1 Document Segmentation Audit
-    print("\n[6/8] Testing /api/audit-document with Meta SAM 3.1...")
+    print("\n[6/10] Testing /api/audit-document with Meta SAM 3.1...")
     try:
         deed_bytes = create_sample_deed_image()
         files = {"file": ("deed_test.jpg", deed_bytes, "image/jpeg")}
@@ -164,7 +164,7 @@ def run_tests():
         results.append(("SAM 3.1 Document Audit", "FAIL"))
 
     # Test 7: Court-Ready Legal Petition PDF Generation
-    print("\n[7/8] Testing /api/generate-petition (Autonomous Action Engine)...")
+    print("\n[7/10] Testing /api/generate-petition (Autonomous Action Engine)...")
     try:
         payload = {
             "applicant_name": "T. Murugesan",
@@ -194,7 +194,7 @@ def run_tests():
         results.append(("Legal Petition PDF Synthesis", "FAIL"))
 
     # Test 8: Meta WhatsApp Webhook Handshake & Ingress
-    print("\n[8/8] Testing Meta WhatsApp Cloud API Webhook handshake...")
+    print("\n[8/10] Testing Meta WhatsApp Cloud API Webhook handshake...")
     try:
         params = {
             "hub.mode": "subscribe",
@@ -209,6 +209,37 @@ def run_tests():
     except Exception as e:
         print(f"  ✗ FAIL: {e}")
         results.append(("WhatsApp Webhook Handshake", "FAIL"))
+
+    # Test 9: Live Anti-Corruption & Civic Economic Impact Counter
+    print("\n[9/10] Testing /api/impact-metrics (Real-Time Corruption Prevention)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/impact-metrics", timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert data.get("middleman_extortion_blocked_inr") == 3500
+        assert data.get("official_statutory_fee_inr") == 60
+        assert data.get("total_corruption_prevented_inr") >= 6000000
+        print(f"  ✓ PASS: ₹{data.get('middleman_extortion_blocked_inr')} bribe blocked, ₹{data.get('total_corruption_prevented_inr')} total civic savings")
+        results.append(("Anti-Corruption Impact Metrics", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Anti-Corruption Impact Metrics", "FAIL"))
+
+    # Test 10: Cadastral FMB Subdivision Plot Visualizer
+    print("\n[10/10] Testing /api/cadastral-fmb/{survey_no} (Cadastral SVG Visualizer)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/cadastral-fmb/142-3B", timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert "<svg" in data.get("svg", "")
+        assert "142-3B" in data.get("survey_no")
+        print(f"  ✓ PASS: Successfully synthesized Cadastral FMB SVG plot for Survey No [{data.get('survey_no')}]")
+        results.append(("Cadastral FMB Plot Synthesis", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Cadastral FMB Plot Synthesis", "FAIL"))
 
     # Summary
     print("\n" + "=" * 70)
