@@ -30,6 +30,7 @@ from knowledge_base import SERVICES_CATALOG, search_knowledge_base
 from mla_directory import DISTRICT_COLLECTORS, ASSEMBLY_CONSTITUENCIES, resolve_constituency
 from petition_directory import PETITION_TIERS, resolve_authority_for_tier
 from civic_solution_media_engine import match_solution_package, get_all_solutions_catalog
+from family_education_engine import match_education_topic, get_all_education_topics
 from whatsapp_agent import (
     verify_webhook,
     process_incoming_whatsapp_message,
@@ -129,6 +130,11 @@ class UniversalPetitionSubmitRequest(BaseModel):
     grievance_category: str
     grievance_details: str
     dispatch_channel: Optional[str] = 'both'
+
+
+class EducationLearnRequest(BaseModel):
+    topic: str
+    age_group: Optional[str] = 'all'
 
 
 class SolutionSearchRequest(BaseModel):
@@ -274,13 +280,20 @@ async def chat_endpoint(req: ChatRequest):
             reply_text = res["choices"][0]["message"]["content"]
 
         solution_package = match_solution_package(user_msg)
+        is_education = any(k in user_msg.lower() for k in [
+            "படிப்பு", "குழந்தை", "ரைம்ஸ்", "பாட்டு", "இதயம்", "ஹார்ட்", "ரத்த ஓட்டம்",
+            "ஒளிச்சேர்க்கை", "அறிவியல்", "கல்வி", "மாணவர்", "பள்ளி", "heart", "rhyme", "education", "science", "biology"
+        ])
+        education_package = match_education_topic(user_msg) if is_education else None
+
         return {
             "status": "success",
             "model_used": target_model,
             "reply": reply_text,
             "reasoning_steps": reasoning_steps,
             "matched_services": [s["title_ta"] for s in matched_kb],
-            "solution_package": solution_package
+            "solution_package": solution_package,
+            "education_package": education_package
         }
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
@@ -680,6 +693,38 @@ async def search_issue_solutions_endpoint(req: SolutionSearchRequest):
     }
 
 
+
+# ==============================================================================
+# Family Education & Interactive Learning Studio Endpoints (மக்கள் கல்வி)
+# Supports KG Voice Rhymes, STEM Science Visualizers, and Adult Medical Heart Anatomy
+# ==============================================================================
+
+@app.get("/api/education/catalog")
+async def get_education_catalog_endpoint():
+    """
+    Returns the comprehensive catalog of educational topics,
+    including interactive SVG diagrams, voice-over scripts, quizzes, and verified video guides.
+    """
+    return {
+        "status": "success",
+        "total_topics": len(get_all_education_topics()),
+        "topics": get_all_education_topics()
+    }
+
+
+@app.post("/api/education/learn")
+async def learn_education_topic_endpoint(req: EducationLearnRequest):
+    """
+    Intelligently maps family or student requests to age-appropriate pedagogy,
+    voice-over training scripts, dynamic SVG diagrams, quizzes, and Meta/YouTube video reels.
+    """
+    topic_data = match_education_topic(req.topic)
+    return {
+        "status": "success",
+        "topic": topic_data
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui():
     """Interactive Multimodal Action Portal for Makkal Agent AI."""
@@ -836,7 +881,10 @@ async def serve_ui():
         </div>
         <div class="flex items-center gap-2">
             <button onclick="openUniversalPetitionModal('collector')" class="text-xs bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
-                <span>🏛️ மக்கள் மனு மையம் (Collector / SP / MLA)</span>
+                <span>🏛️ மக்கள் மனு மையம்</span>
+            </button>
+            <button onclick="openEducationModal()" class="text-xs bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+                <span>🎓 மக்கள் கல்வி & பயிற்சி அரங்கம்</span>
             </button>
         </div>
     </header>
@@ -1092,6 +1140,47 @@ async def serve_ui():
             <span class="hidden sm:inline text-slate-500 font-mono">Baseten Open-Weight & SAM 3.1 Active</span>
         </div>
     </footer>
+
+    <!-- 🎓 Family Education Studio Modal (NEW!) -->
+    <div id="educationModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-purple-500/50 rounded-2xl p-5 sm:p-6 max-w-2xl w-full shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🎓</span>
+                    <div>
+                        <h3 id="eduModalTitle" class="text-base font-bold text-purple-300">மக்கள் கல்வி & பயிற்சி அரங்கம் (Family Learning Studio)</h3>
+                        <p id="eduModalAudience" class="text-[11px] text-pink-400 font-mono">Pedagogy, Interactive Diagrams, Voice Coaching & Video Tutorials</p>
+                    </div>
+                </div>
+                <button onclick="closeEducationModal()" class="text-slate-400 hover:text-slate-200 text-sm">✕</button>
+            </div>
+
+            <!-- Age Tiers Selector -->
+            <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-[11px] font-medium border-b border-slate-800">
+                <button type="button" onclick="loadEducationTopic('human_heart_functioning')" class="px-2.5 py-1.5 rounded-lg bg-purple-700 text-white flex-shrink-0 transition shadow">🫀 மனித இதயம் & ரத்த ஓட்டம் (Adults / Science)</button>
+                <button type="button" onclick="loadEducationTopic('kids_tamil_rhymes')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">👶 நிலா நிலா ஓடி வா (KG Rhyme Voice Coach)</button>
+                <button type="button" onclick="loadEducationTopic('plant_photosynthesis')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">🌱 தாவர ஒளிச்சேர்க்கை (School STEM)</button>
+            </div>
+
+            <!-- Voice Coach Play Bar -->
+            <div class="flex items-center justify-between bg-purple-950/60 border border-purple-500/30 p-2.5 rounded-xl">
+                <span class="text-xs text-purple-200 font-medium">🎙️ AI குரல் வழிகாட்டி (Spoken Voice-Over Coach)</span>
+                <button id="eduVoiceBtn" class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1">
+                    <span>🔊 குரல் வழியே கேட்க (Listen)</span>
+                </button>
+            </div>
+
+            <!-- Dynamic SVG Diagram Canvas -->
+            <div id="eduSvgContainer" class="rounded-xl border border-slate-800 flex justify-center bg-slate-950 p-2"></div>
+
+            <!-- Text & Theoretical Content -->
+            <div id="eduTextContainer" class="markdown-body text-xs text-slate-200 leading-relaxed border-t border-slate-800 pt-3"></div>
+
+            <div class="flex justify-end pt-2 border-t border-slate-800">
+                <button onclick="closeEducationModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium">மூடு</button>
+            </div>
+        </div>
+    </div>
 
     <!-- FMB Cadastral Sketch Modal -->
     <div id="fmbModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1544,6 +1633,14 @@ async def serve_ui():
                 await loadSampleDeed();
             } else if (type === 'fmb_plot') {
                 openFmbModal('142/3');
+            } else if (type === 'heart_anatomy') {
+                if (deepReasonToggle) deepReasonToggle.checked = true;
+                userInput.value = 'மனித இதயத்தின் செயல்பாடு எப்படி நடக்கிறது? ரத்த ஓட்ட பாதைக்கான வரைபடம், குரல் விளக்கம் மற்றும் 3D வீடியோ தேவை.';
+                sendMessage();
+            } else if (type === 'kg_rhyme_coach') {
+                if (deepReasonToggle) deepReasonToggle.checked = false;
+                userInput.value = 'என் மழலையர் குழந்தைக்கு நிலா நிலா ஓடி வா ரைம்ஸ் பாட்டு குரல் பயிற்சி மற்றும் வண்ண வரைபடம் சொல்லி கொடுங்கள்.';
+                sendMessage();
             } else if (type === 'patta_video_roadmap') {
                 if (deepReasonToggle) deepReasonToggle.checked = true;
                 userInput.value = 'கூட்டு பட்டாவில் உள்ள நிலத்தை தனி பட்டாவாக பிரிக்க அரசு விதிமுறை என்ன? செயல் வரைபடம் மற்றும் வீடியோ விளக்கம் தேவை.';
@@ -1594,7 +1691,7 @@ async def serve_ui():
                 removeLoading(loadingId);
 
                 if (data.status === 'success') {
-                    appendMessage(data.reply, 'assistant', data.model_used, data.reasoning_steps, data.solution_package);
+                    appendMessage(data.reply, 'assistant', data.model_used, data.reasoning_steps, data.solution_package, data.education_package);
                     chatHistory.push({ role: 'user', content: query });
                     chatHistory.push({ role: 'assistant', content: data.reply });
                     speakText(data.reply);
@@ -1611,7 +1708,7 @@ async def serve_ui():
             }
         }
 
-        function appendMessage(text, role, model, reasoningSteps, solutionPackage) {
+        function appendMessage(text, role, model, reasoningSteps, solutionPackage, educationPackage) {
             const div = document.createElement('div');
             div.className = role === 'user' ? 'flex justify-end' : 'flex items-start space-x-3';
 
@@ -1627,6 +1724,62 @@ async def serve_ui():
                 try { formatted = marked.parse(text); } catch (e) { formatted = text.replace(/\n/g, '<br>'); }
                 
                 // Enhancement 1: Render Meta Muse Wonder 1.0 Legal Reasoning Tree
+                // Enhancement: Family Education & Interactive Learning Studio
+                let eduHtml = '';
+                if (educationPackage) {
+                    const ep = educationPackage;
+                    let quizHtml = '';
+                    if (ep.interactive_quiz && ep.interactive_quiz.length > 0) {
+                        const qItems = ep.interactive_quiz.map((q, idx) => `
+                            <div class="bg-slate-950/90 border border-slate-800 p-2.5 rounded-lg text-xs space-y-1.5">
+                                <div class="font-bold text-slate-200">❓ கேள்வி ${idx + 1}: ${q.question_ta}</div>
+                                <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                                    ${q.options.map(opt => `
+                                        <button type="button" onclick="checkQuizAnswer(this, '${opt === q.correct_answer ? 'correct' : 'wrong'}', '${q.explanation_ta.replace(/'/g, "\'")}')" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-purple-400 text-left text-slate-300 transition">
+                                            ${opt}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                                <div class="quiz-feedback hidden text-[11px] font-semibold pt-1"></div>
+                            </div>
+                        `).join('');
+
+                        quizHtml = `
+                            <div class="border-t border-slate-800/80 pt-2.5 mt-2 space-y-2">
+                                <div class="flex items-center justify-between text-purple-300 font-bold text-xs">
+                                    <span>🎯 நேரடி பயிற்சி & வினாடி வினா (Student Practice Challenge):</span>
+                                    <span class="text-[10px] bg-purple-950 text-purple-400 px-2 py-0.5 rounded font-mono">Interactive Quiz</span>
+                                </div>
+                                ${qItems}
+                            </div>
+                        `;
+                    }
+
+                    eduHtml = `
+                        <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950/40 border border-purple-500/50 rounded-2xl p-3.5 my-2.5 shadow-2xl space-y-3">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xl">🎓</span>
+                                    <div>
+                                        <h4 class="font-bold text-purple-300 text-xs sm:text-sm">${ep.title_ta}</h4>
+                                        <span class="text-[10px] text-pink-400 font-mono">${ep.target_audience_ta}</span>
+                                    </div>
+                                </div>
+                                <button onclick="speakText('${ep.voice_over_script_ta.replace(/'/g, "\'")}')" class="px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow">
+                                    <span>🔊 குரல் வழியே கேட்க (Play Voice Coach)</span>
+                                </button>
+                            </div>
+
+                            <!-- SVG Diagrammatic Visualizer -->
+                            <div class="overflow-hidden rounded-xl border border-slate-800/90 shadow-inner flex justify-center bg-slate-950">
+                                ${ep.svg_diagram}
+                            </div>
+
+                            ${quizHtml}
+                        </div>
+                    `;
+                }
+
                 // Enhancement: Step-by-Step Action Roadmap
                 let roadmapHtml = '';
                 let videosHtml = '';
@@ -1783,6 +1936,7 @@ async def serve_ui():
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none p-4 max-w-[88%] text-slate-200 text-sm leading-relaxed shadow-md space-y-2">
                         ${reasoningHtml}
                         <div class="markdown-body">${formatted}</div>
+                        ${eduHtml}
                         ${roadmapHtml}
                         ${videosHtml}
                         ${actionShortcuts ? `<div class="pt-1">${actionShortcuts}</div>` : ''}
@@ -2249,6 +2403,59 @@ async def serve_ui():
             document.getElementById('mlaResultSection').classList.add('hidden');
             document.getElementById('btnSubmitMla').classList.remove('hidden');
             switchPetitionTier(tier);
+        }
+
+        // 🎓 Family Education Studio Functions
+        function checkQuizAnswer(btn, result, explanation) {
+            const container = btn.closest('.space-y-1.5');
+            const feedback = container.querySelector('.quiz-feedback');
+            feedback.classList.remove('hidden');
+
+            if (result === 'correct') {
+                btn.className = 'p-1.5 rounded-lg bg-emerald-950 border border-emerald-500 text-left text-emerald-300 transition font-bold';
+                feedback.className = 'quiz-feedback text-[11px] font-semibold text-emerald-400 pt-1';
+                feedback.innerText = '✅ மிகச் சரியான விடை! ' + explanation;
+                speakText('மிகச் சரியான விடை! அருமை!');
+            } else {
+                btn.className = 'p-1.5 rounded-lg bg-rose-950 border border-rose-500 text-left text-rose-300 transition';
+                feedback.className = 'quiz-feedback text-[11px] font-semibold text-rose-400 pt-1';
+                feedback.innerText = '❌ தவறான விடை. மீண்டும் முயற்சிக்கவும்! குறிப்பு: ' + explanation;
+                speakText('தவறான விடை. மீண்டும் ஒருமுறை முயற்சியுங்கள்!');
+            }
+        }
+
+        async function openEducationModal(topicId = 'human_heart_functioning') {
+            const modal = document.getElementById('educationModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                await loadEducationTopic(topicId);
+            }
+        }
+
+        function closeEducationModal() {
+            const modal = document.getElementById('educationModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function loadEducationTopic(topicId) {
+            try {
+                const res = await fetch('/api/education/learn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: topicId })
+                });
+                const d = await res.json();
+                if (d.status === 'success' && d.topic) {
+                    const t = d.topic;
+                    document.getElementById('eduModalTitle').innerText = t.title_ta;
+                    document.getElementById('eduModalAudience').innerText = t.target_audience_ta;
+                    document.getElementById('eduSvgContainer').innerHTML = t.svg_diagram;
+                    document.getElementById('eduTextContainer').innerHTML = marked.parse(t.theoretical_explanation_ta);
+                    document.getElementById('eduVoiceBtn').onclick = () => speakText(t.voice_over_script_ta);
+                }
+            } catch (e) {
+                console.warn('Education topic load error:', e);
+            }
         }
 
         function closeUniversalPetitionModal() {

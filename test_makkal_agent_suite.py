@@ -471,6 +471,61 @@ def run_tests():
         print(f"  ✗ FAIL: {e}")
         results.append(("Semantic Video & Roadmap Matcher", "FAIL"))
 
+    # Test 21: Family Education Catalog
+    print("\n[21/23] Testing /api/education/catalog (Family Learning Studio Catalog)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/education/catalog", timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        topics = data.get("topics", [])
+        assert len(topics) >= 3
+        print(f"  ✓ PASS: Loaded {len(topics)} Educational Topics with Interactive SVGs, Voice Scripts & Quizzes")
+        results.append(("Family Education Catalog", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Family Education Catalog", "FAIL"))
+
+    # Test 22: Adult Heart Anatomy Interactive Learning & SVG Generation
+    print("\n[22/23] Testing /api/education/learn (Human Heart Anatomy & SVG Diagram)...")
+    try:
+        payload = {"topic": "human_heart_functioning"}
+        res = requests.post(f"{TARGET_URL}/api/education/learn", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        topic = data.get("topic", {})
+        assert "heart" in topic.get("topic_id", "")
+        assert "<svg" in topic.get("svg_diagram", "")
+        assert "Right Atrium" in topic.get("svg_diagram", "")
+        assert "Left Ventricle" in topic.get("svg_diagram", "")
+        assert len(topic.get("voice_over_script_ta", "")) > 50
+        assert len(topic.get("interactive_quiz", [])) >= 2
+        print(f"  ✓ PASS: Synthesized Interactive Heart SVG Diagram ({len(topic.get('svg_diagram'))} chars) + Clinical Voice Script + 3D Videos")
+        results.append(("Heart Anatomy & Blood Circulation", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Heart Anatomy & Blood Circulation", "FAIL"))
+
+    # Test 23: KG Kids Tamil Rhyme Voice Coach & Repeat-After-Me Mode
+    print("\n[23/23] Testing /api/education/learn (KG Kids Rhyme Voice Coach)...")
+    try:
+        payload = {"topic": "kids_tamil_rhymes"}
+        res = requests.post(f"{TARGET_URL}/api/education/learn", json=payload, timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        topic = data.get("topic", {})
+        assert "rhymes" in topic.get("topic_id", "")
+        assert "<svg" in topic.get("svg_diagram", "")
+        assert "நிலா நிலா" in topic.get("voice_over_script_ta", "")
+        assert len(topic.get("verified_video_guides", [])) >= 3
+        print(f"  ✓ PASS: Loaded KG Rhyme Coach [{topic.get('title_ta')}] with Smiling Moon SVG & Voice Audio Prompt")
+        results.append(("KG Kids Rhyme Voice Coach", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("KG Kids Rhyme Voice Coach", "FAIL"))
+
     # Summary
     print("\n" + "=" * 70)
     print("📊 TEST EXECUTION SUMMARY:")
