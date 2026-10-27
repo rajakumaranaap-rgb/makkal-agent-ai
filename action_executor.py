@@ -316,5 +316,218 @@ class ActionExecutor:
         doc.build(elements)
         return pdf_path
 
+    def generate_statutory_petition_pdf(
+        self,
+        tier: str,
+        applicant_name: str,
+        phone: str,
+        district: str,
+        taluk: str,
+        village: str,
+        authority_name_ta: str,
+        authority_title_ta: str,
+        authority_email: str,
+        authority_phone: str,
+        grievance_category: str,
+        grievance_details: str,
+        statutory_reference: str,
+        verification_id: str,
+        sla_days: int = 15,
+        sla_text: str = "15 வேலை நாட்கள்"
+    ) -> Path:
+        """
+        Synthesizes an official Court-Ready Administrative Grievance Representation PDF
+        for any Tamil Nadu civic governance tier: Collector, RDO Appeal, Police SP,
+        TANGEDCO, Municipal/BDO, or CM Special Cell.
+        """
+        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_id = uuid.uuid4().hex[:8]
+        safe_tier = tier.replace("_", "-").upper()
+        pdf_path = self.output_dir / f"TN_Petition_{safe_tier}_{safe_id}_{timestamp_str}.pdf"
+
+        doc = SimpleDocTemplate(
+            str(pdf_path),
+            pagesize=letter,
+            rightMargin=36,
+            leftMargin=36,
+            topMargin=36,
+            bottomMargin=36
+        )
+
+        styles = getSampleStyleSheet()
+
+        # Tier-specific aesthetic palette & titles
+        tier_configs = {
+            "collector": {
+                "header_top": "GOVERNMENT OF TAMIL NADU / தமிழ்நாடு அரசு - வருவாய்த்துறை",
+                "sub_title": "மாவட்ட ஆட்சித்தலைவர் திங்கள் குறைதீர்க்கும் நாள் முகாம் மனு (Collector Grievance Representation)",
+                "color_primary": "#065f46",
+                "color_bg": "#ecfdf5",
+                "color_border": "#a7f3d0"
+            },
+            "rdo_appeal": {
+                "header_top": "REVENUE DIVISIONAL APPELLATE TRIBUNAL / வருவாய் கோட்டாட்சியர் மேல்முறையீட்டு நீதிமன்றம்",
+                "sub_title": "வருவாய் கோட்டாட்சியர் சட்டப்பூர்வ மேல்முறையீட்டு மனு (RDO Statutory Revenue Appeal)",
+                "color_primary": "#92400e",
+                "color_bg": "#fffbeb",
+                "color_border": "#fde68a"
+            },
+            "police_sp": {
+                "header_top": "TAMIL NADU POLICE DEPARTMENT / தமிழ்நாடு காவல்துறை",
+                "sub_title": "மாவட்ட காவல் கண்காணிப்பாளர் / ஆணையர் நேரடி குறைதீர்ப்பு மனு (SP Police Grievance Petition)",
+                "color_primary": "#1e3a8a",
+                "color_bg": "#eff6ff",
+                "color_border": "#bfdbfe"
+            },
+            "tangedco": {
+                "header_top": "TANGEDCO / தமிழ்நாடு மின் உற்பத்தி மற்றும் பகிர்மானக் கழகம்",
+                "sub_title": "மின்சார விநியோக குறைதீர்ப்பு & சீரமைப்பு மனு (TANGEDCO Electricity Grievance Petition)",
+                "color_primary": "#b91c1c",
+                "color_bg": "#fef2f2",
+                "color_border": "#fecaca"
+            },
+            "municipal_bdo": {
+                "header_top": "MUNICIPAL ADMINISTRATION & PANCHAYAT RAJ / நகராட்சி நிர்வாகம் & ஊரக வளர்ச்சித் துறை",
+                "sub_title": "நகராட்சி ஆணையர் / ஊராட்சி ஒன்றிய வட்டார வளர்ச்சி மனு (Civic Infrastructure Grievance)",
+                "color_primary": "#0f766e",
+                "color_bg": "#f0fdfa",
+                "color_border": "#99f6e4"
+            },
+            "cm_cell": {
+                "header_top": "CHIEF MINISTER'S SPECIAL CELL / முதலமைச்சரின் தனிப்பிரிவு & மக்களுடன் முதல்வர்",
+                "sub_title": "தலைமைச் செயலக சிறப்பு குறைதீர்ப்பு மேல்முறையீடு (CM Special Cell Escalation Petition)",
+                "color_primary": "#6b21a8",
+                "color_bg": "#faf5ff",
+                "color_border": "#e9d5ff"
+            }
+        }
+        cfg = tier_configs.get(tier, tier_configs["collector"])
+
+        title_style = ParagraphStyle(
+            "GovTitle",
+            parent=styles["Heading1"],
+            fontSize=14,
+            leading=17,
+            textColor=colors.HexColor(cfg["color_primary"]),
+            alignment=1,
+            spaceAfter=4
+        )
+
+        subtitle_style = ParagraphStyle(
+            "GovSubtitle",
+            parent=styles["Normal"],
+            fontSize=10.5,
+            leading=14,
+            textColor=colors.HexColor("#1e293b"),
+            alignment=1,
+            fontName="Helvetica-Bold",
+            spaceAfter=10
+        )
+
+        header_label_style = ParagraphStyle(
+            "LabelStyle",
+            parent=styles["Normal"],
+            fontSize=9.5,
+            leading=13,
+            textColor=colors.HexColor("#0f172a"),
+            fontName="Helvetica-Bold"
+        )
+
+        body_style = ParagraphStyle(
+            "BodyStyle",
+            parent=styles["Normal"],
+            fontSize=9.5,
+            leading=14,
+            textColor=colors.HexColor("#1e293b")
+        )
+
+        elements = []
+
+        # Header Title
+        elements.append(Paragraph(cfg["header_top"], title_style))
+        elements.append(Paragraph(cfg["sub_title"], subtitle_style))
+        elements.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor(cfg["color_primary"]), spaceAfter=10))
+
+        # Two-column Header Table: To Authority vs From Citizen
+        to_block = (
+            f"<b>பெறுநர் (TO):</b><br/>"
+            f"<b>{authority_title_ta}</b><br/>"
+            f"{authority_name_ta}<br/>"
+            f"மின்னஞ்சல்: <u>{authority_email}</u><br/>"
+            f"தொடர்பு எண்: {authority_phone}<br/><br/>"
+            f"<b>நகல் (COPY TO):</b><br/>"
+            f"முதலமைச்சரின் தனிப்பிரிவு & கண்காணிப்பு அலுவலர் (Email: cmcell@tn.gov.in)"
+        )
+
+        from_block = (
+            f"<b>மனுதாரர் (APPLICANT):</b><br/>"
+            f"பெயர்: <b>{applicant_name}</b><br/>"
+            f"அலைபேசி: <b>{phone}</b><br/>"
+            f"கிராமம் / வார்டு: {village}<br/>"
+            f"வட்டம்: {taluk}<br/>"
+            f"மாவட்டம்: {district} - தமிழ்நாடு."
+        )
+
+        head_table = Table([[Paragraph(to_block, body_style), Paragraph(from_block, body_style)]], colWidths=[270, 270])
+        head_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(cfg["color_bg"])),
+            ('BOX', (0,0), (-1,-1), 1, colors.HexColor(cfg["color_border"])),
+            ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor(cfg["color_border"])),
+            ('TOPPADDING', (0,0), (-1,-1), 8),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 8),
+            ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ]))
+        elements.append(head_table)
+        elements.append(Spacer(1, 10))
+
+        # Subject & Statutory Reference Block
+        sub_text = (
+            f"<b>பொருள் (Subject):</b> {district} மாவட்டம், {taluk} வட்டம், {village} கிராமத்தில் "
+            f"<b>{grievance_category}</b> தொடர்பாக உடனடி சட்டப்பூர்வ தீர்வு கோருதல் சார்பு.<br/>"
+            f"<b>சட்டப்பிரிவு & நிர்வாக வழிகாட்டுதல் (Statutory Authority):</b> {statutory_reference}"
+        )
+        elements.append(Paragraph(sub_text, body_style))
+        elements.append(Spacer(1, 10))
+
+        # Grievance Summary & Grounds
+        elements.append(Paragraph("<b>கோரிக்கை விவரம் & நியாயமான காரணங்கள் (Grievance Details & Grounds):</b>", header_label_style))
+        elements.append(Spacer(1, 4))
+        elements.append(Paragraph(grievance_details, body_style))
+        elements.append(Spacer(1, 12))
+
+        # Statutory Audit Table
+        stat_table_data = [
+            [Paragraph("<b>அரசு நிர்வாகப் பிரிவு (Department Tier)</b>", header_label_style), Paragraph(f"{cfg['header_top'].split('/')[1].strip() if '/' in cfg['header_top'] else cfg['header_top']}", body_style)],
+            [Paragraph("<b>கோரிக்கை வகை (Grievance Category)</b>", header_label_style), Paragraph(grievance_category, body_style)],
+            [Paragraph("<b>அரசு சேவை கட்டணம் (Statutory Fee)</b>", header_label_style), Paragraph("₹0 (குறைதீர்ப்பு மனு முற்றிலும் இலவசம்)", body_style)],
+            [Paragraph("<b>Makkal AI Audit Tracking ID</b>", header_label_style), Paragraph(f"TN-{safe_tier}-2026-{verification_id}", body_style)],
+            [Paragraph("<b>சட்டப்படியான கால வரம்பு (Statutory SLA)</b>", header_label_style), Paragraph(f"{sla_text} (Citizen Redressal Charter)", body_style)],
+        ]
+        st = Table(stat_table_data, colWidths=[200, 340])
+        st.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#f8fafc")),
+            ('BOX', (0,0), (-1,-1), 1, colors.HexColor("#cbd5e1")),
+            ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor("#e2e8f0")),
+            ('TOPPADDING', (0,0), (-1,-1), 5),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+        ]))
+        elements.append(st)
+        elements.append(Spacer(1, 18))
+
+        # Signature & Date Block
+        sig_data = [
+            [Paragraph(f"இடம்: {village}<br/>நாள்: {datetime.now().strftime('%d-%m-%Y')}<br/>சரிபார்ப்பு எண்: TN-{safe_tier}-2026-{verification_id}", body_style),
+             Paragraph(f"இங்ஙனம்,<br/><br/><br/><b>({applicant_name})</b><br/>மனுதாரர் கையொப்பம்", body_style)]
+        ]
+        sig_table = Table(sig_data, colWidths=[270, 270])
+        sig_table.setStyle(TableStyle([
+            ('ALIGN', (1,0), (1,0), 'RIGHT'),
+            ('VALIGN', (0,0), (-1,-1), 'TOP')
+        ]))
+        elements.append(sig_table)
+
+        doc.build(elements)
+        return pdf_path
+
 
 action_executor = ActionExecutor()

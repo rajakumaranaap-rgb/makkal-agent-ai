@@ -319,6 +319,114 @@ def run_tests():
         print(f"  ✗ FAIL: {e}")
         results.append(("MLA Petition Synthesis & Dispatch", "FAIL"))
 
+    # Test 15: Universal Petition Categories & Statutory Tiers
+    print("\n[15/18] Testing /api/petitions/categories (6-Tier Civic Grievance Registry)...")
+    try:
+        res = requests.get(f"{TARGET_URL}/api/petitions/categories", timeout=8)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        tiers = data.get("tiers", {})
+        assert "collector" in tiers
+        assert "police_sp" in tiers
+        assert "rdo_appeal" in tiers
+        assert "tangedco" in tiers
+        assert len(tiers) >= 6
+        print(f"  ✓ PASS: Loaded {len(tiers)} Statutory Governance Tiers (Collector, Police SP, RDO, TANGEDCO, BDO, CM Cell)")
+        results.append(("Universal Grievance Categories", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Universal Grievance Categories", "FAIL"))
+
+    # Test 16: Authority Resolution for District Collector & Police SP
+    print("\n[16/18] Testing /api/petitions/resolve-authority (Statutory Officer Mapping)...")
+    try:
+        # Test Collector resolution
+        payload_coll = {"tier": "collector", "district": "Madurai"}
+        res_coll = requests.post(f"{TARGET_URL}/api/petitions/resolve-authority", json=payload_coll, timeout=8)
+        data_coll = res_coll.json()
+        assert res_coll.status_code == 200
+        auth_coll = data_coll.get("authority", {})
+        assert "collrmdu@nic.in" in auth_coll.get("official_email", "")
+
+        # Test Police SP resolution
+        payload_sp = {"tier": "police_sp", "district": "Madurai"}
+        res_sp = requests.post(f"{TARGET_URL}/api/petitions/resolve-authority", json=payload_sp, timeout=8)
+        data_sp = res_sp.json()
+        assert res_sp.status_code == 200
+        auth_sp = data_sp.get("authority", {})
+        assert "sp.mdu@tn.gov.in" in auth_sp.get("official_email", "")
+
+        print(f"  ✓ PASS: Resolved Collector [{auth_coll.get('official_email')}] & SP [{auth_sp.get('official_email')}]")
+        results.append(("Authority Resolution Engine", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Authority Resolution Engine", "FAIL"))
+
+    # Test 17: District Collector Monday Grievance Petition PDF Synthesis & Dispatch
+    print("\n[17/18] Testing /api/petitions/submit (District Collector Monday Grievance)...")
+    try:
+        payload = {
+            "tier": "collector",
+            "applicant_name": "ரா. பெருமாள்",
+            "phone": "9840123456",
+            "district": "Madurai",
+            "taluk": "மேலூர்",
+            "village": "திருவாதவூர்",
+            "grievance_category": "நீர்வழி & ஏரி புறம்போக்கு ஆக்கிரமிப்பு அகற்றுதல்",
+            "grievance_details": "கிராம பொது பயன்பாட்டில் உள்ள குளம் மற்றும் நீர்வழி பாசன வாய்க்கால் தனிநபர்களால் சட்டவிரோதமாக ஆக்கிரமிக்கப்பட்டுள்ளது. உடனடியாக கள ஆய்வு செய்து ஆக்கிரமிப்பை அகற்றிட வேண்டுகிறேன்.",
+            "dispatch_channel": "both"
+        }
+        res = requests.post(f"{TARGET_URL}/api/petitions/submit", json=payload, timeout=12)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert "TN-COLLECTOR-2026" in data.get("acknowledgement_id")
+        assert "pdf_download_url" in data
+        assert "whatsapp_share_url" in data
+
+        # Verify downloading generated Collector PDF
+        pdf_res = requests.get(f"{TARGET_URL}{data['pdf_download_url']}", timeout=8)
+        assert pdf_res.status_code == 200
+        assert len(pdf_res.content) > 1000
+        print(f"  ✓ PASS: Synthesized Court-Ready Collector Grievance PDF [{data['filename']}] ({len(pdf_res.content)} bytes) Ack ID: {data['acknowledgement_id']}")
+        results.append(("Collector Monday Grievance PDF", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Collector Monday Grievance PDF", "FAIL"))
+
+    # Test 18: Anti-Land Grabbing Special Cell (ALGC) Police SP Petition PDF Synthesis & Dispatch
+    print("\n[18/18] Testing /api/petitions/submit (Police SP Land Grabbing Special Cell)...")
+    try:
+        payload = {
+            "tier": "police_sp",
+            "applicant_name": "எஸ். சுந்தரலிங்கம்",
+            "phone": "9840998877",
+            "district": "Madurai",
+            "taluk": "மேலூர்",
+            "village": "திருவாதவூர்",
+            "grievance_category": "நில அபகரிப்பு தடுப்பு சிறப்புப் பிரிவு (ALGC) புகார்",
+            "grievance_details": "எனக்குச் சொந்தமான சர்வே எண் 142/3 பத்திரப் பதிவு செய்யப்பட்ட பட்டா நிலத்தை ஆள்மாறாட்டம் மற்றும் போலி ஆவணங்கள் தயாரித்து கள்ளக் கிரயம் செய்துள்ளனர். நில அபகரிப்பு சிறப்புப் பிரிவு மூலம் குற்றவாளிகள் மீது வழக்குப்பதிவு செய்து நிலத்தை மீட்டுத்தர வேண்டுகிறேன்.",
+            "dispatch_channel": "both"
+        }
+        res = requests.post(f"{TARGET_URL}/api/petitions/submit", json=payload, timeout=12)
+        data = res.json()
+        assert res.status_code == 200
+        assert data.get("status") == "success"
+        assert "TN-POLICE-SP-2026" in data.get("acknowledgement_id")
+        assert "pdf_download_url" in data
+        assert "whatsapp_share_url" in data
+
+        # Verify downloading generated Police SP PDF
+        pdf_res = requests.get(f"{TARGET_URL}{data['pdf_download_url']}", timeout=8)
+        assert pdf_res.status_code == 200
+        assert len(pdf_res.content) > 1000
+        print(f"  ✓ PASS: Synthesized Court-Ready Police SP Petition PDF [{data['filename']}] ({len(pdf_res.content)} bytes) Ack ID: {data['acknowledgement_id']}")
+        results.append(("Police SP Land Grabbing PDF", "PASS"))
+    except Exception as e:
+        print(f"  ✗ FAIL: {e}")
+        results.append(("Police SP Land Grabbing PDF", "FAIL"))
+
     # Summary
     print("\n" + "=" * 70)
     print("📊 TEST EXECUTION SUMMARY:")

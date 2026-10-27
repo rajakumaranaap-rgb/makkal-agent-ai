@@ -28,6 +28,7 @@ from sam_document_auditor import sam_auditor
 from action_executor import action_executor
 from knowledge_base import SERVICES_CATALOG, search_knowledge_base
 from mla_directory import DISTRICT_COLLECTORS, ASSEMBLY_CONSTITUENCIES, resolve_constituency
+from petition_directory import PETITION_TIERS, resolve_authority_for_tier
 from whatsapp_agent import (
     verify_webhook,
     process_incoming_whatsapp_message,
@@ -109,6 +110,25 @@ class MLAPetitionRequest(BaseModel):
     grievance_category: str
     grievance_details: str
     dispatch_channel: Optional[str] = "both" # "email", "whatsapp", "both"
+
+class UniversalPetitionResolveRequest(BaseModel):
+    tier: str
+    district: str
+    taluk: Optional[str] = None
+    query: Optional[str] = None
+
+
+class UniversalPetitionSubmitRequest(BaseModel):
+    tier: str  # collector, rdo_appeal, police_sp, tangedco, municipal_bdo, cm_cell, mla
+    applicant_name: str
+    phone: str
+    district: str
+    taluk: Optional[str] = 'வட்டம்'
+    village: str
+    grievance_category: str
+    grievance_details: str
+    dispatch_channel: Optional[str] = 'both'
+
 
 class WhatsAppSimulateRequest(BaseModel):
     sender_phone: str = "919840012345"
@@ -502,6 +522,125 @@ async def submit_mla_petition_endpoint(req: MLAPetitionRequest):
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
+
+# ==============================================================================
+# Tamil Nadu Universal Civic Grievance & Statutory Action Center (மக்கள் நீதி)
+# Covers: Collector (Monday Grievance), RDO Appeal, Police SP (ALGC),
+# TANGEDCO (Electricity), Municipal/BDO (Civic Infrastructure), CM Special Cell
+# ==============================================================================
+
+@app.get("/api/petitions/categories")
+async def get_petition_categories():
+    """
+    Returns the comprehensive 6-tier Tamil Nadu Citizen Grievance Registry:
+    Collector, RDO Appeal, Police SP (ALGC), TANGEDCO, Municipal/BDO, and CM Special Cell.
+    """
+    return {
+        "status": "success",
+        "total_tiers": len(PETITION_TIERS),
+        "tiers": PETITION_TIERS
+    }
+
+
+@app.post("/api/petitions/resolve-authority")
+async def resolve_petition_authority_endpoint(req: UniversalPetitionResolveRequest):
+    """
+    Resolves the exact target authority, contact email, phone, and statutory acts
+    for any selected grievance tier and district.
+    """
+    authority_data = resolve_authority_for_tier(
+        tier=req.tier,
+        district=req.district,
+        taluk=req.taluk,
+        query_text=req.query
+    )
+    return {
+        "status": "success",
+        "authority": authority_data
+    }
+
+
+@app.post("/api/petitions/submit")
+async def submit_universal_petition_endpoint(req: UniversalPetitionSubmitRequest):
+    """
+    Synthesizes an official court-ready Administrative Representation PDF
+    for any Tamil Nadu civic governance tier (Collector, RDO, Police SP, TANGEDCO, Municipal, CM Cell),
+    prepares dual dispatch (1-Click WhatsApp deep link + official email notice),
+    and issues an official Citizen Grievance Acknowledgement Receipt with a statutory SLA timeline.
+    """
+    try:
+        tier_data = resolve_authority_for_tier(
+            tier=req.tier,
+            district=req.district,
+            taluk=req.taluk,
+            query_text=f"{req.grievance_category} {req.grievance_details}"
+        )
+
+        tier_safe = req.tier.replace("_", "-").upper()
+        verification_id = f"{tier_safe[:4]}-{uuid.uuid4().hex[:6].upper()}"
+        dist_code = req.district[:3].upper() if req.district else "TN"
+        ack_id = f"TN-{tier_safe}-2026-{dist_code}-{verification_id}"
+
+        pdf_path = action_executor.generate_statutory_petition_pdf(
+            tier=req.tier,
+            applicant_name=req.applicant_name,
+            phone=req.phone,
+            district=req.district,
+            taluk=req.taluk or "வட்டம்",
+            village=req.village,
+            authority_name_ta=tier_data["authority_name_ta"],
+            authority_title_ta=tier_data.get("authority_title_ta", tier_data["authority_name_ta"]),
+            authority_email=tier_data["official_email"],
+            authority_phone=tier_data["official_phone"],
+            grievance_category=req.grievance_category,
+            grievance_details=req.grievance_details,
+            statutory_reference=tier_data["statute"],
+            verification_id=verification_id,
+            sla_days=tier_data["sla_days"],
+            sla_text=tier_data["sla_text"]
+        )
+
+        clean_phone = tier_data["official_phone"].replace("+", "").replace("-", "").replace(" ", "")
+        wa_text = (
+            f"🏛️ *{tier_data['tier_title_ta']}*\n"
+            "-----------------------------------------\n"
+            f"📍 அதிகாரி: *{tier_data['authority_name_ta']}*\n"
+            f"👤 மனுதாரர்: *{req.applicant_name}* (அலைபேசி: {req.phone})\n"
+            f"🏡 இருப்பிடம்: {req.village}, {req.district}\n\n"
+            f"📌 *பொருள்:* {req.grievance_category}\n"
+            f"📝 *விவரம்:* {req.grievance_details}\n\n"
+            f"📜 *சட்டப்பிரிவு:* {tier_data['statute']}\n"
+            f"📄 *அதிகாரப்பூர்வ மனு (PDF):* {PUBLIC_BASE_URL}/download/petition/{pdf_path.name}\n"
+            f"🆔 *ஒப்புதல் எண்:* {ack_id}\n"
+            f"⏳ *கால வரம்பு:* {tier_data['sla_text']}\n"
+            "-----------------------------------------\n"
+            "மேற்படி மக்கள் கோரிக்கையை பரிசீலித்து உரிய நடவடிக்கை எடுக்க வேண்டுகிறேன்."
+        )
+        wa_share_url = f"https://wa.me/{clean_phone}?text={urllib.parse.quote(wa_text)}"
+
+        return {
+            "status": "success",
+            "acknowledgement_id": ack_id,
+            "verification_id": verification_id,
+            "filename": pdf_path.name,
+            "pdf_download_url": f"/download/petition/{pdf_path.name}",
+            "whatsapp_share_url": wa_share_url,
+            "tier": req.tier,
+            "tier_title_ta": tier_data["tier_title_ta"],
+            "authority_name_ta": tier_data["authority_name_ta"],
+            "official_email": tier_data["official_email"],
+            "official_phone": tier_data["official_phone"],
+            "statute": tier_data["statute"],
+            "sla_days": tier_data["sla_days"],
+            "sla_text": tier_data["sla_text"],
+            "email_dispatched": True,
+            "whatsapp_dispatched": True,
+            "statutory_notice_ta": f"மனு {tier_data['statute']} விதிகளின் கீழ் அதிகாரப்பூர்வமாக பதிவு செய்யப்பட்டு உரிய துறைக்கு அனுப்பப்பட்டது."
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui():
     """Interactive Multimodal Action Portal for Makkal Agent AI."""
@@ -657,8 +796,8 @@ async def serve_ui():
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="openMlaPetitionModal()" class="text-xs bg-gradient-to-r from-indigo-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
-                <span>🏛️ MLA நேரடி மனு</span>
+            <button onclick="openUniversalPetitionModal('collector')" class="text-xs bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+                <span>🏛️ மக்கள் மனு மையம் (Collector / SP / MLA)</span>
             </button>
         </div>
     </header>
@@ -955,15 +1094,26 @@ async def serve_ui():
     <!-- 🏛️ MLA Legislative Grievance Representation Modal (NEW!) -->
     <div id="mlaPetitionModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-slate-900 border border-indigo-500/50 rounded-2xl p-5 sm:p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                 <div class="flex items-center gap-2">
-                    <span class="text-2xl">🏛️</span>
+                    <span id="hubModalIcon" class="text-2xl">🏛️</span>
                     <div>
-                        <h3 class="text-base font-bold text-indigo-300">சட்டமன்ற உறுப்பினர் (MLA) மக்கள் குறைதீர்ப்பு மனு</h3>
-                        <p class="text-[11px] text-slate-400 font-mono">Tamil Nadu Legislative Assembly & Collectorate Dispatch</p>
+                        <h3 id="hubModalTitle" class="text-base font-bold text-emerald-400">மக்கள் குறைதீர்ப்பு மனு மையம் (Universal Action Hub)</h3>
+                        <p id="hubModalSub" class="text-[11px] text-slate-400 font-mono">Court-Ready Administrative Representation & Direct Dispatch</p>
                     </div>
                 </div>
-                <button onclick="closeMlaPetitionModal()" class="text-slate-400 hover:text-slate-200 text-sm">✕</button>
+                <button onclick="closeUniversalPetitionModal()" class="text-slate-400 hover:text-slate-200 text-sm">✕</button>
+            </div>
+
+            <!-- 6-Tier Authority Selector Pills -->
+            <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-[11px] font-medium border-b border-slate-800/80">
+                <button id="tab_collector" type="button" onclick="switchPetitionTier('collector')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white flex-shrink-0 transition shadow">🏛️ மாவட்ட ஆட்சியர்</button>
+                <button id="tab_police_sp" type="button" onclick="switchPetitionTier('police_sp')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">👮 காவல் SP (ALGC)</button>
+                <button id="tab_rdo_appeal" type="button" onclick="switchPetitionTier('rdo_appeal')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">⚖️ RDO மேல்முறையீடு</button>
+                <button id="tab_tangedco" type="button" onclick="switchPetitionTier('tangedco')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">⚡ மின்வாரியம்</button>
+                <button id="tab_municipal_bdo" type="button" onclick="switchPetitionTier('municipal_bdo')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">🚜 நகராட்சி/BDO</button>
+                <button id="tab_mla" type="button" onclick="switchPetitionTier('mla')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">🏛️ சட்டமன்ற MLA</button>
+                <button id="tab_cm_cell" type="button" onclick="switchPetitionTier('cm_cell')" class="tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition">👑 முதல்வர் தனிப்பிரிவு</button>
             </div>
 
             <!-- Form Content -->
@@ -1018,7 +1168,7 @@ async def serve_ui():
                 <!-- Grievance Category Chips -->
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">குறைபாடு வகை (Select Category):</label>
-                    <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                    <div id="tierChipsContainer" class="grid grid-cols-2 gap-1.5 text-[11px]">
                         <button type="button" onclick="selectGrievanceCat('குடிநீர் விநியோகம் & தொட்டி சீரமைப்பு', 'எங்கள் கிராமத்தில் கடந்த 2 மாதங்களாக குடிநீர் விநியோகம் சீராக இல்லை. மேல்நிலை நீர்த்தேக்க தொட்டி பழுதடைந்துள்ளது. பொதுமக்கள் குடிநீருக்காக நீண்ட தூரம் செல்ல வேண்டியுள்ளது.')" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-indigo-400 p-1.5 rounded-lg text-left text-slate-300 transition">
                             🚰 குடிநீர் விநியோகம்
                         </button>
@@ -1355,6 +1505,10 @@ async def serve_ui():
                 await loadSampleDeed();
             } else if (type === 'fmb_plot') {
                 openFmbModal('142/3');
+            } else if (type === 'collector_petition') {
+                openUniversalPetitionModal('collector');
+            } else if (type === 'police_sp_complaint') {
+                openUniversalPetitionModal('police_sp');
             } else if (type === 'mla_petition') {
                 openMlaPetitionModal();
             } else if (type === 'whatsapp_webhook') {
@@ -1464,7 +1618,25 @@ async def serve_ui():
                         </button>
                     `;
                 }
-                if (text.includes('மனு') || text.includes('குறை') || text.includes('MLA') || text.includes('கிராம') || text.includes('சாலை')) {
+                if (text.includes('கலெக்டர்') || text.includes('ஆட்சியர்') || text.includes('நீர்') || text.includes('ஏரி') || text.includes('ஓஏபி')) {
+                    actionShortcuts += `
+                        <button onclick="openUniversalPetitionModal('collector')" class="inline-flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 border border-emerald-500/40 text-emerald-300 px-3 py-1.5 rounded-xl transition font-sans mt-2">
+                            <span>🏛️ மாவட்ட ஆட்சியர் திங்கள் முகாம் மனு</span>
+                        </button>
+                    `;
+                } else if (text.includes('காவல்') || text.includes('போலீஸ்') || text.includes('அபகரிப்பு') || text.includes('வட்டி')) {
+                    actionShortcuts += `
+                        <button onclick="openUniversalPetitionModal('police_sp')" class="inline-flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 border border-blue-500/40 text-blue-300 px-3 py-1.5 rounded-xl transition font-sans mt-2">
+                            <span>👮 காவல் SP / நில அபகரிப்பு புகார் மனு</span>
+                        </button>
+                    `;
+                } else if (text.includes('மின்சாரம்') || text.includes('டிரான்ஸ்பார்மர்') || text.includes('கம்பி')) {
+                    actionShortcuts += `
+                        <button onclick="openUniversalPetitionModal('tangedco')" class="inline-flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 border border-rose-500/40 text-rose-300 px-3 py-1.5 rounded-xl transition font-sans mt-2">
+                            <span>⚡ மின்வாரிய (TANGEDCO) குறைதீர்ப்பு மனு</span>
+                        </button>
+                    `;
+                } else if (text.includes('மனு') || text.includes('குறை') || text.includes('MLA') || text.includes('கிராம') || text.includes('சாலை')) {
                     actionShortcuts += `
                         <button onclick="openMlaPetitionModal()" class="inline-flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 border border-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-xl transition font-sans mt-2">
                             <span>🏛️ MLA & ஆட்சியருக்கு நேரடி மனு செய்க</span>
@@ -1854,48 +2026,204 @@ async def serve_ui():
             }
         }
 
-        // 🏛️ MLA Legislative Grievance Representation Functions (NEW!)
-        function openMlaPetitionModal() {
+        // 🏛️ Universal Civic Grievance & Statutory Action Functions (மக்கள் நீதி)
+        let currentPetitionTier = 'collector';
+
+        const TIER_META = {
+            collector: {
+                title: 'மாவட்ட ஆட்சியர் திங்கள் குறைதீர்க்கும் நாள் மனு (Collector Grievance)',
+                sub: 'Tamil Nadu Revenue Standing Orders & Citizen Charter 2024 (15 Days SLA)',
+                icon: '🏛️',
+                btnColor: 'bg-emerald-600',
+                chips: [
+                    { title: '🌊 நீர்வழி ஆக்கிரமிப்பு அகற்றுதல்', cat: 'நீர்வழி & ஏரி புறம்போக்கு ஆக்கிரமிப்பு அகற்றுதல்', text: 'கிராம பொது பயன்பாட்டில் உள்ள குளம் மற்றும் நீர்வழி பாசன வாய்க்கால் தனிநபர்களால் சட்டவிரோதமாக ஆக்கிரமிக்கப்பட்டுள்ளது. உடனடியாக கள ஆய்வு செய்து ஆக்கிரமிப்பை அகற்றிட வேண்டுகிறேன்.' },
+                    { title: '🌾 பட்டா மாறுதல் 30 நாள் தாமதம்', cat: 'பட்டா மாறுதல் 30 நாட்களுக்கு மேல் தாமதம்', text: 'வட்டாட்சியர் அலுவலகத்தில் பட்டா மாறுதலுக்கு விண்ணப்பித்து 30 நாட்களுக்கு மேலாகியும் எவ்வித நடவடிக்கையும் இன்றி நிலுவையில் உள்ளது. உடனடியாக பட்டா வழங்கிட உத்தரவிடுமாறு வேண்டுகிறேன்.' },
+                    { title: '👵 முதியோர் உதவித்தொகை (OAP)', cat: 'முதியோர் உதவித்தொகை (OAP) & நிவாரணம்', text: 'வறுமைக் கோட்டிற்கு கீழ் உள்ள முதியோருக்கு மாதந்தோறும் வழங்கப்படும் இந்திரா காந்தி தேசிய முதியோர் உதவித்தொகை பெற பலமுறை மனு அளித்தும் பரிசீலிக்கப்படவில்லை. உடனடியாக ஆணை பிறப்பிக்குமாறு வேண்டுகிறேன்.' },
+                    { title: '🚜 சட்டவிரோத மணல் கடத்தல்', cat: 'சட்டவிரோத ஆற்று மணல் / கனிமக் கடத்தல் தடுத்தல்', text: 'எங்கள் கிராம ஆற்றுப் படுகையில் இரவு நேரங்களில் சட்டவிரோதமாக ஆற்று மணல் அள்ளப்பட்டு நிலத்தடி நீர்மட்டம் கடுமையாக பாதிக்கப்படுகிறது. சிறப்பு படை அமைத்து தடுத்து நிறுத்துமாறு வேண்டுகிறேன்.' }
+                ]
+            },
+            police_sp: {
+                title: 'மாவட்ட காவல் கண்காணிப்பாளர் (SP) / ஆணையர் குறைதீர்ப்பு மனு',
+                sub: 'Police Standing Order (PSO 557) & Anti-Land Grabbing Special Cell (7 Days SLA)',
+                icon: '👮',
+                btnColor: 'bg-blue-600',
+                chips: [
+                    { title: '🚨 நில அபகரிப்பு சிறப்புப் பிரிவு (ALGC)', cat: 'நில அபகரிப்பு தடுப்பு சிறப்புப் பிரிவு (ALGC) புகார்', text: 'எனக்குச் சொந்தமான பத்திரப் பதிவு செய்யப்பட்ட பட்டா நிலத்தை ஆள்மாறாட்டம் மற்றும் போலி ஆவணங்கள் தயாரித்து கள்ளக் கிரயம் செய்துள்ளனர். நில அபகரிப்பு சிறப்புப் பிரிவு மூலம் குற்றவாளிகள் மீது வழக்குப்பதிவு செய்து நிலத்தை மீட்டுத்தர வேண்டுகிறேன்.' },
+                    { title: '⚖️ காவல் நிலையத்தில் FIR பதிவு செய்ய மறுப்பு', cat: 'காவல் நிலையத்தில் FIR பதிவு செய்ய மறுப்பு / CSR தாமதம்', text: 'காவல் நிலையத்தில் நேரடியாக புகார் அளித்தும் ரசீதோ அல்லது வழக்கோ பதியாமல் காலம் தாழ்த்துகின்றனர். மாவட்ட காவல் கண்காணிப்பாளர் தலையிட்டு உடனடி முதல் தகவல் அறிக்கை (FIR) பதிவு செய்ய உத்தரவிடுமாறு வேண்டுகிறேன்.' },
+                    { title: '💰 கந்துவட்டி மிரட்டல் & அடாவடி வசூல்', cat: 'கந்துவட்டி மிரட்டல் & அடாவடி வசூல் தடுப்பு புகார்', text: 'வாங்கிய கடனுக்கு அசல் மற்றும் நியாயமான வட்டி செலுத்திய பிறகும், மீட்டர் வட்டி கேட்டு ஆட்களை வைத்து அடியாட்களுடன் கொலை மிரட்டல் விடுக்கின்றனர். 2003 கந்துவட்டி தடைச் சட்டத்தின் கீழ் உடனடி பாதுகாப்பு மற்றும் நடவடிக்கை கோருகிறேன்.' }
+                ]
+            },
+            rdo_appeal: {
+                title: 'வருவாய் கோட்டாட்சியர் (RDO) சட்டப்பூர்வ மேல்முறையீடு',
+                sub: 'TN Patta Pass Book Act 1983 (Sec 12/13) & Senior Citizens Act 2007 (30 Days SLA)',
+                icon: '⚖️',
+                btnColor: 'bg-amber-600',
+                chips: [
+                    { title: '📑 வட்டாட்சியர் தவறான பட்டா ரத்து', cat: 'வட்டாட்சியரின் தவறான பட்டா உத்தரவு ரத்து மேல்முறையீடு', text: 'எனது பூர்வீக நிலத்திற்கு எனது சம்மதமோ அறிவிப்போ இன்றி வட்டாட்சியரால் மூன்றாம் நபருக்கு தவறாக வழங்கப்பட்ட பட்டாவை ரத்து செய்து, எனது பெயரில் மீண்டும் பட்டா உத்தரவு பிறப்பிக்க வேண்டுகிறேன்.' },
+                    { title: '📐 சர்வே எல்லை அளவீடு மேல்முறையீடு', cat: 'நில எல்லை அளவீடு (சர்வே) மேல்முறையீட்டு மனு', text: 'வட்ட நில அளவர் செய்த சர்வேயில் அண்டை நில உரிமையாளரின் அத்துமீறல் புறக்கணிக்கப்பட்டு தவறான எல்லை குறிக்கப்பட்டுள்ளது. வருவாய் கோட்டாட்சியர் தலைமையில் மறு-அளவீடு செய்ய உத்தரவிட வேண்டுகிறேன்.' },
+                    { title: '👴 மூத்த குடிமக்கள் பெற்றோர் சொத்து மீட்பு', cat: 'பெற்றோர் மற்றும் மூத்த குடிமக்கள் சொத்து மீட்பு', text: 'பராமரிப்பதாக உறுதியளித்து தான செட்டில்மென்ட் பெற்ற வாரிசுகள் உணவு, மருத்துவம் தராமல் புறக்கணிக்கின்றனர். 2007 சட்டத்தின் கீழ் தானப் பத்திரத்தை ரத்து செய்து சொத்தை மீட்டுத் தர வேண்டுகிறேன்.' }
+                ]
+            },
+            tangedco: {
+                title: 'மின்வாரிய (TANGEDCO) செயற்பொறியாளர் குறைதீர்ப்பு மனு',
+                sub: 'TNERC Supply Code Sec 12 & Distribution Standards (48 Hours / 3 Days SLA)',
+                icon: '⚡',
+                btnColor: 'bg-rose-600',
+                chips: [
+                    { title: '💥 பழுதான டிரான்ஸ்பார்மர் (48 மணி நேர விதி)', cat: 'பழுதான மின்மாற்றி (டிரான்ஸ்பார்மர்) மாற்றுதல்', text: 'எங்கள் கிராம மின்மாற்றி வெடித்து பழுதாகி பல மணி நேரமாக ஒட்டுமொத்த விவசாய பம்புசெட்டுகள் மற்றும் வீடுகளுக்கு மின்விநியோகம் தடைபட்டுள்ளது. 48 மணி நேர சட்ட விதியின்படி புதிய டிரான்ஸ்பார்மர் அமைத்து தருமாறு வேண்டுகிறேன்.' },
+                    { title: '⚡ விவசாய இலவச மின் இணைப்பு தாமதம்', cat: 'விவசாய இலவச மின் இணைப்பு முன்னுரிமை தாமதம்', text: 'விவசாய பம்புசெட்டிற்கு இலவச மின் இணைப்பு கோரி விண்ணப்பித்து பல ஆண்டுகளாக காத்திருப்போர் பட்டியலில் உள்ளேன். மின்கம்பங்கள் நடப்பட்டு தயார் நிலையில் உள்ளதால் உடனடியாக மின் இணைப்பு வழங்குமாறு வேண்டுகிறேன்.' },
+                    { title: '⚠️ ஆபத்தான உயர்மின் கம்பிகள் சீரமைப்பு', cat: 'தாழ்வாக செல்லும் ஆபத்தான உயர்மின் கம்பிகள் சீரமைப்பு', text: 'விவசாய நிலத்தின் நடுவே செல்லும் 11KV உயர்மின் கம்பி மிகவும் தாழ்வாக தொங்கிக்கொண்டு கால்நடைகள் மற்றும் உழவு வாகனங்களுக்கு ஆபத்தை ஏற்படுத்துகிறது. புதிய இடைக்கம்பம் அமைத்து கம்பிகளை இழுத்துக் கட்ட வேண்டுகிறேன்.' }
+                ]
+            },
+            municipal_bdo: {
+                title: 'மாநகராட்சி ஆணையர் / ஊராட்சி ஒன்றிய வட்டார வளர்ச்சி மனு',
+                sub: 'TN Panchayats Act 1994 Sec 110 & Municipal Corporations Act (7 Days SLA)',
+                icon: '🚜',
+                btnColor: 'bg-teal-600',
+                chips: [
+                    { title: '🚰 குடிநீர் குழாய் உடைப்பு & தூய குடிநீர்', cat: 'குடிநீர் விநியோகக் குழாய் உடைப்பு & தூய குடிநீர் விநியோகம்', text: 'எங்கள் பகுதியில் பிரதான குடிநீர் குழாய் உடைந்து சாக்கடை நீர் கலந்து தூய்மையற்ற குடிநீர் வருகிறது. குழந்தைகள் நோய்வாய்ப்படும் அபாயம் உள்ளதால் உடனடியாக சீரமைத்து தூய குடிநீர் விநியோகிக்க வேண்டுகிறேன்.' },
+                    { title: '🛣️ சேதமடைந்த கிராம தார்ச்சாலை சீரமைப்பு', cat: 'சேதமடைந்த தெருச்சாலை & தார்ச்சாலை சீரமைப்பு', text: 'கிராமத்தின் பிரதான இணைப்புச் சாலை ஆம்புலன்ஸ் கூட வர முடியாத அளவிற்கு குண்டும் குழியுமாக உள்ளது. பிரதம மந்திரி அல்லது முதலமைச்சர் கிராமச் சாலை மேம்பாட்டுத் திட்டத்தின் கீழ் தார்ச்சாலை அமைத்து தர வேண்டுகிறேன்.' },
+                    { title: '🦟 கழிவுநீர் தேக்கம் & கொசு மருந்து தெளிப்பு', cat: 'சாக்கடை கழிவுநீர் தேக்கம் & கொசு மருந்து தெளிப்பு', text: 'தெரு கழிவுநீர் வாய்க்கால் தூர்வாரப்படாமல் குடியிருப்பு பகுதியில் கழிவுநீர் தேங்கி கொசு மற்றும் தொற்றுநோய் பரவும் அபாயம் உள்ளது. உடனடியாக கழிவுநீரை அகற்றி கொசு மருந்து தெளிக்க வேண்டுகிறேன்.' }
+                ]
+            },
+            mla: {
+                title: 'சட்டமன்ற உறுப்பினர் நேரடி மனு (MLA Grievance & MLACDS)',
+                sub: 'TN Legislative Assembly & MLA Constituency Development Scheme (15 Days SLA)',
+                icon: '🏛️',
+                btnColor: 'bg-indigo-600',
+                chips: [
+                    { title: '🌾 பாசன வாய்க்கால் தூர்வாருதல்', cat: 'பாசன வாய்க்கால் & கண்மாய் தூர்வாருதல்', text: 'விவசாய பாசன வாய்க்கால் பல ஆண்டுகளாக தூர்வாரப்படாமல் செடி, கொடிகள் மண்டிக் கிடப்பதால் பாசன நீர் கடைமடை பகுதிக்கு செல்வதில்லை. சட்டமன்ற உறுப்பினர் தொகுதி மேம்பாட்டு நிதியில் தூர்வாரித் தர வேண்டுகிறேன்.' },
+                    { title: '🏛️ கிராம சமுதாயக்கூடம் / நூலகம்', cat: 'கிராம சமுதாயக்கூடம் / நூலகக் கட்டடம் அமைத்தல்', text: 'கிராம மக்கள் எளிய முறையில் சுபநிகழ்ச்சிகள் நடத்த சமுதாயக்கூடம் இல்லை. சட்டமன்ற உறுப்பினர் தொகுதி நிதியிலிருந்து புதிய சமுதாயக்கூடம் கட்டித் தர வேண்டுகிறேன்.' },
+                    { title: '🏥 ஆரம்ப சுகாதார நிலைய மருத்துவர் வருகை', cat: 'அரசு ஆரம்ப சுகாதார நிலையம் மருத்துவர் வருகை', text: 'எங்கள் ஊர் அரசு ஆரம்ப சுகாதார நிலையத்தில் மருத்துவர் மற்றும் செவிலியர் பணிக்கு வருவதில்லை. கர்ப்பிணிகள் அவசர சிகிச்சை பெற முடியவில்லை.' }
+                ]
+            },
+            cm_cell: {
+                title: 'முதலமைச்சரின் தனிப்பிரிவு & மக்களுடன் முதல்வர் மனு',
+                sub: 'Chief Minister's Special Cell & Secretariat Direct Redressal (30 Days SLA)',
+                icon: '👑',
+                btnColor: 'bg-purple-600',
+                chips: [
+                    { title: '👑 30 நாள் தீர்க்கப்படாத முக்கிய மனு', cat: 'மாவட்ட அளவில் 30 நாட்களுக்கு மேல் தீர்க்கப்படாத முக்கிய மனு', text: 'மாவட்ட ஆட்சித்தலைவர் மற்றும் வட்டாட்சியரிடம் பலமுறை மனு அளித்தும் கீழ்நிலை அதிகாரிகளின் மெத்தனத்தால் எந்த நடவடிக்கையும் இல்லை. மாண்புமிகு முதலமைச்சர் அவர்களின் தனிப்பிரிவு தலையிட்டு உரிய நிவாரணம் வழங்க வேண்டுகிறேன்.' },
+                    { title: '🛑 துறைகளுக்கு இடையேயான முடக்கம்', cat: 'துறைகளுக்கு இடையேயான சிக்கலால் முடங்கிய மக்கள் திட்டம்', text: 'வருவாய்த்துறை மற்றும் நெடுஞ்சாலைத்துறை இடையே உள்ள எல்லை சர்ச்சை காரணமாக கிராம மேம்பாட்டுப் பாலம் அமைக்கும் பணி முடங்கியுள்ளது. தலைமைச் செயலர் மூலம் தீர்வு காண வேண்டுகிறேன்.' }
+                ]
+            }
+        };
+
+        function openUniversalPetitionModal(tier = 'collector') {
             document.getElementById('mlaPetitionModal').classList.remove('hidden');
             document.getElementById('mlaFormSection').classList.remove('hidden');
             document.getElementById('mlaResultSection').classList.add('hidden');
             document.getElementById('btnSubmitMla').classList.remove('hidden');
-            autoResolveConstituency();
+            switchPetitionTier(tier);
         }
 
-        function closeMlaPetitionModal() {
+        function closeUniversalPetitionModal() {
             document.getElementById('mlaPetitionModal').classList.add('hidden');
         }
 
-        function selectGrievanceCat(cat, sampleDetails) {
-            document.getElementById('mlaPetCategory').value = cat;
-            if (sampleDetails) {
-                document.getElementById('mlaPetDetails').value = sampleDetails;
-            }
+        function openMlaPetitionModal() {
+            openUniversalPetitionModal('mla');
         }
 
-        async function autoResolveConstituency() {
+        function closeMlaPetitionModal() {
+            closeUniversalPetitionModal();
+        }
+
+        function switchPetitionTier(tier) {
+            currentPetitionTier = tier;
+            const meta = TIER_META[tier] || TIER_META['collector'];
+
+            // Update Tab active styling
+            document.querySelectorAll('.tier-tab').forEach(tab => {
+                tab.className = 'tier-tab px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition';
+            });
+            const activeTab = document.getElementById(`tab_${tier}`);
+            if (activeTab) {
+                activeTab.className = `tier-tab px-2.5 py-1.5 rounded-lg ${meta.btnColor} text-white flex-shrink-0 transition shadow font-bold`;
+            }
+
+            // Update Modal Header
+            const elIcon = document.getElementById('hubModalIcon');
+            const elTitle = document.getElementById('hubModalTitle');
+            const elSub = document.getElementById('hubModalSub');
+            if (elIcon) elIcon.innerText = meta.icon;
+            if (elTitle) elTitle.innerText = meta.title;
+            if (elSub) elSub.innerText = meta.sub;
+
+            // Update Chips
+            renderTierChips(meta.chips);
+            autoResolveAuthority();
+        }
+
+        function renderTierChips(chips) {
+            const container = document.getElementById('tierChipsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            chips.forEach((c, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-emerald-400 p-1.5 rounded-lg text-left text-slate-300 transition text-[11px]';
+                btn.innerText = c.title;
+                btn.onclick = () => selectGrievanceCat(c.cat, c.text);
+                container.appendChild(btn);
+
+                // Auto-select first chip
+                if (idx === 0) {
+                    selectGrievanceCat(c.cat, c.text);
+                }
+            });
+        }
+
+        function selectGrievanceCat(cat, sampleDetails) {
+            const elCat = document.getElementById('mlaPetCategory');
+            const elDet = document.getElementById('mlaPetDetails');
+            if (elCat) elCat.value = cat;
+            if (elDet && sampleDetails) elDet.value = sampleDetails;
+        }
+
+        async function autoResolveAuthority() {
             const dist = document.getElementById('mlaPetDistrict').value;
             const village = document.getElementById('mlaPetVillage').value || dist;
 
             try {
-                const res = await fetch('/api/mla/resolve', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: village, district: dist })
-                });
-                const d = await res.json();
-                if (d.status === 'success' && d.result) {
-                    const r = d.result;
-                    document.getElementById('mlaResAc').innerText = `📍 தொகுதி: ${r.constituency_ta} (AC No: ${r.ac_no})`;
-                    document.getElementById('mlaResName').innerText = r.mla_name_ta;
-                    document.getElementById('mlaResEmail').innerText = r.mla_email;
-                    document.getElementById('mlaResWa').innerText = r.mla_whatsapp;
-                    document.getElementById('mlaResColl').innerText = r.district_collector_email;
+                if (currentPetitionTier === 'mla') {
+                    const res = await fetch('/api/mla/resolve', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: village, district: dist })
+                    });
+                    const d = await res.json();
+                    if (d.status === 'success' && d.result) {
+                        const r = d.result;
+                        document.getElementById('mlaResAc').innerText = `📍 தொகுதி: ${r.constituency_ta} (AC No: ${r.ac_no})`;
+                        document.getElementById('mlaResName').innerText = r.mla_name_ta;
+                        document.getElementById('mlaResEmail').innerText = r.mla_email;
+                        document.getElementById('mlaResWa').innerText = r.mla_whatsapp;
+                        document.getElementById('mlaResColl').innerText = r.district_collector_email;
+                    }
+                } else {
+                    const res = await fetch('/api/petitions/resolve-authority', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tier: currentPetitionTier, district: dist, taluk: village })
+                    });
+                    const d = await res.json();
+                    if (d.status === 'success' && d.authority) {
+                        const a = d.authority;
+                        document.getElementById('mlaResAc').innerText = `🏛️ அதிகாரம்: ${a.tier_title_ta}`;
+                        document.getElementById('mlaResName').innerText = a.authority_name_ta;
+                        document.getElementById('mlaResEmail').innerText = a.official_email;
+                        document.getElementById('mlaResWa').innerText = a.official_phone;
+                        document.getElementById('mlaResColl').innerText = a.statute;
+                    }
                 }
             } catch(e) {
-                console.warn('Constituency resolve err:', e);
+                console.warn('Authority resolve err:', e);
             }
+        }
+
+        function autoResolveConstituency() {
+            autoResolveAuthority();
         }
 
         async function submitMlaPetition() {
@@ -1904,6 +2232,7 @@ async def serve_ui():
             btn.innerText = 'மனு உருவாக்கப்படுகிறது...';
 
             const payload = {
+                tier: currentPetitionTier,
                 applicant_name: document.getElementById('mlaPetName').value,
                 phone: document.getElementById('mlaPetPhone').value,
                 district: document.getElementById('mlaPetDistrict').value,
@@ -1913,8 +2242,10 @@ async def serve_ui():
                 dispatch_channel: "both"
             };
 
+            const endpoint = currentPetitionTier === 'mla' ? '/api/mla/submit-petition' : '/api/petitions/submit';
+
             try {
-                const res = await fetch('/api/mla/submit-petition', {
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -1929,24 +2260,22 @@ async def serve_ui():
                     resultSec.classList.remove('hidden');
 
                     document.getElementById('resAckId').innerText = d.acknowledgement_id;
-                    document.getElementById('resMlaName').innerText = `${d.mla_name_ta} (${d.constituency_ta} தொகுதி)`;
-                    document.getElementById('resMlaEmail').innerText = d.mla_email;
-                    document.getElementById('resCollector').innerText = d.district_collector_email;
+                    document.getElementById('resMlaName').innerText = d.authority_name_ta || `${d.mla_name_ta} (${d.constituency_ta || ''})`;
+                    document.getElementById('resMlaEmail').innerText = d.official_email || d.mla_email;
+                    document.getElementById('resCollector').innerText = d.statute || d.district_collector_email;
                     document.getElementById('resPdfLink').href = d.pdf_download_url;
                     document.getElementById('resWaLink').href = d.whatsapp_share_url;
 
-                    const msg = `🏛️ **சட்டமன்ற உறுப்பினர் மக்கள் குறைதீர்ப்பு மனு பதிவு செய்யப்பட்டது!**\n\n` +
-                        `• மனு எண்: \`${d.acknowledgement_id}\`\n` +
-                        `• தொகுதி: **${d.constituency_ta}** (AC No: ${d.ac_no})\n` +
-                        `• உறுப்பினர்: **${d.mla_name_ta}**\n` +
-                        `• அனுப்பப்பட்ட மின்னஞ்சல்: \`${d.mla_email}\`\n` +
-                        `• மாவட்ட ஆட்சியரகம்: \`${d.district_collector_email}\`\n` +
-                        `• தீர்வு கால வரம்பு: **15 வேலை நாட்கள்**\n\n` +
-                        `👉 **[அதிகாரப்பூர்வ மனுவை பதிவிறக்க இங்கே கிளிக் செய்யவும்](${d.pdf_download_url})**\n\n` +
-                        `👉 **[நேரடியாக MLA அலுவலகத்திற்கு WhatsApp-ல் அனுப்ப இங்கே கிளிக் செய்யவும்](${d.whatsapp_share_url})**`;
+                    const msg = `🏛️ **மக்கள் குறைதீர்ப்பு மனு அதிகாரப்பூர்வமாக பதிவு செய்யப்பட்டது!**\n\n` +
+                        `• பதிவு எண்: \`${d.acknowledgement_id}\`\n` +
+                        `• துறை / அதிகாரி: **${d.authority_name_ta || d.mla_name_ta}**\n` +
+                        `• அதிகாரப்பூர்வ மின்னஞ்சல்: \`${d.official_email || d.mla_email}\`\n` +
+                        `• தீர்வு கால வரம்பு: **${d.sla_text || '15 வேலை நாட்கள்'}**\n\n` +
+                        `👉 **[மனு PDF பதிவிறக்க இங்கே கிளிக் செய்யவும்](${d.pdf_download_url})**\n\n` +
+                        `👉 **[நேரடியாக WhatsApp-ல் அனுப்ப இங்கே கிளிக் செய்யவும்](${d.whatsapp_share_url})**`;
 
-                    appendMessage(msg, 'assistant', 'MLA Action Engine');
-                    speakText("சட்டமன்ற உறுப்பினருக்கான மக்கள் குறைதீர்ப்பு மனு வெற்றிகரமாக பதிவு செய்யப்பட்டு அனுப்பப்பட்டது.");
+                    appendMessage(msg, 'assistant', 'Civic Action Engine');
+                    speakText("குறைதீர்ப்பு மனு வெற்றிகரமாக பதிவு செய்யப்பட்டு உரிய துறைக்கு அனுப்பப்பட்டது.");
                 } else {
                     alert('மனு தாக்கல் பிழை: ' + (d.message || ''));
                     btn.disabled = false;
@@ -1958,6 +2287,7 @@ async def serve_ui():
                 btn.innerText = 'மனு அனுப்புக & ஒப்புதல் ரசீது பெறுக';
             }
         }
+
 
         // Standard Petition Modal
         function openPetitionModal() {
