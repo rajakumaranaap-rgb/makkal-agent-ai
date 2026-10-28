@@ -26,9 +26,41 @@ FILES_TO_DEPLOY = [
     "app.py",
     "whatsapp_agent.py",
     "meta_client.py",
+    "sia_user_manager.py",
+    "sia_ui_template.py",
+    "sia_users_registry.json",
+    "tnega_civic_engine.py",
+    "llama_vision_auditor.py",
+    "seamless_speech_engine.py",
     "sam_document_auditor.py",
     "action_executor.py",
     "knowledge_base.py",
+    "central_services_directory.py",
+    "civic_greeting_poster_engine.py",
+    "meta_image_studio.py",
+    "sia_services_suite.py",
+    "meta_entertainment_engine.py",
+    "agriculture_engine.py",
+    "modal_sam_service.py",
+    "modal_sam_agri_bridge.py",
+    "whatsapp_auth_manager.py",
+    "mla_directory.py",
+    "petition_directory.py",
+    "family_education_engine.py",
+    "civic_solution_media_engine.py",
+    "static/supro_logo.png",
+    "static/sia_logo.png",
+    "static/favicon.ico",
+    "static/favicon.png",
+    "static/icon.png",
+    "static/logo-title.png",
+    "static/brand_logo.png",
+    "static/brand-leaf-logo.png",
+    "static/supro_text_logo.jpg",
+    "static/supro_hero_banner.jpg",
+    "static/splashscreen_logo.png",
+    "static/sia_brain_logo.png",
+    "static/sia_brain_logo.jpg",
     "requirements.txt",
     ".env",
     "README.md"
@@ -46,12 +78,12 @@ ssh_opts = ["-o", "StrictHostKeyChecking=no", "-i", KEY_PATH]
 
 # Step 1: Ensure Remote Directories Exist
 print("\n[1/4] Preparing remote deployment directory on EC2...")
-mkdir_cmd = ["ssh"] + ssh_opts + [f"{REMOTE_USER}@{IP}", f"mkdir -p {REMOTE_DIR}uploads {REMOTE_DIR}generated_petitions"]
+mkdir_cmd = ["ssh"] + ssh_opts + [f"{REMOTE_USER}@{IP}", f"mkdir -p {REMOTE_DIR}uploads {REMOTE_DIR}generated_petitions {REMOTE_DIR}static {REMOTE_DIR}static/greetings {REMOTE_DIR}static/generated_images"]
 res_mkdir = subprocess.run(mkdir_cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
 if res_mkdir.returncode != 0:
     print(f"❌ Failed to create remote directory: {res_mkdir.stderr}")
     sys.exit(1)
-print("  ✅ Remote directory created: /home/ubuntu/makkal-agent-ai/")
+print("  ✅ Remote directories created: uploads, generated_petitions, static/greetings")
 
 # Step 2: Upload Files via SCP
 print("\n[2/4] Uploading agent core files to AWS EC2...")
@@ -77,7 +109,7 @@ remote_setup_cmd = (
     "python3 -m venv .venv && "
     ".venv/bin/pip install --upgrade pip && "
     ".venv/bin/pip install -r requirements.txt && "
-    ".venv/bin/python3 -m py_compile app.py whatsapp_agent.py meta_client.py sam_document_auditor.py action_executor.py knowledge_base.py && "
+    ".venv/bin/python3 -m py_compile app.py whatsapp_agent.py meta_client.py sia_user_manager.py sia_ui_template.py meta_image_studio.py sia_services_suite.py tnega_civic_engine.py llama_vision_auditor.py seamless_speech_engine.py sam_document_auditor.py action_executor.py knowledge_base.py central_services_directory.py civic_greeting_poster_engine.py meta_entertainment_engine.py agriculture_engine.py modal_sam_service.py modal_sam_agri_bridge.py && "
     "echo PYTHON_ENV_READY"
 )
 ssh_setup = ["ssh"] + ssh_opts + [f"{REMOTE_USER}@{IP}", remote_setup_cmd]
@@ -87,24 +119,26 @@ if "PYTHON_ENV_READY" in res_setup.stdout:
 else:
     print(f"  ⚠️ Remote setup output:\n{res_setup.stdout}\n{res_setup.stderr}")
 
-# Step 4: Launch Service in Dedicated Tmux Window
-print("\n[4/4] Starting Makkal Agent AI daemon on AWS EC2 (Port 8001)...")
+# Step 4: Restart Uvicorn Daemon
+print("\n[4/4] Starting SIA (Makkal Agent AI) daemon on AWS EC2 (Port 8001)...")
 remote_launch_cmd = (
     f"cd {REMOTE_DIR} && "
-    "tmux kill-session -t makkal_agent 2>/dev/null || true; "
-    "tmux new-session -d -s makkal_agent '.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8001 --workers 2 > server.log 2>&1'; "
-    "sleep 2; "
-    "tmux ls; "
-    "curl -s http://127.0.0.1:8001/health || echo HEALTH_CHECK_FAILED"
+    "/home/ubuntu/makkal-agent-ai/start_server.sh"
 )
 ssh_launch = ["ssh"] + ssh_opts + [f"{REMOTE_USER}@{IP}", remote_launch_cmd]
 res_launch = subprocess.run(ssh_launch, capture_output=True, text=True, encoding="utf-8", errors="replace")
 print("  Remote Service Status:")
 print(res_launch.stdout)
 
+# Retrieve active tunnel URL
+ssh_tunnel = ["ssh"] + ssh_opts + [f"{REMOTE_USER}@{IP}", f"cat {REMOTE_DIR}active_tunnel_url.txt 2>/dev/null || echo 'https://regulatory-stack-counter-lady.trycloudflare.com'"]
+res_tunnel = subprocess.run(ssh_tunnel, capture_output=True, text=True, encoding="utf-8", errors="replace")
+tunnel_url = res_tunnel.stdout.strip() or "https://regulatory-stack-counter-lady.trycloudflare.com"
+
 print("\n==================================================")
-print(f"🎉 MAKKAL AGENT AI DEPLOYED TO AWS EC2 ({IP})!")
-print(f"🌐 Public Web Portal: http://{IP}:8001")
-print(f"📱 WhatsApp Webhook: http://{IP}:8001/api/whatsapp/webhook")
-print(f"🩺 Health Endpoint:  http://{IP}:8001/health")
+print(f"🎉 SIA (SUPER INTELLIGENT AGENT) DEPLOYED TO AWS EC2 ({IP})!")
+print("🌐 LIVE PUBLIC WEB PORTAL (Cloudflare HTTPS Tunnel):")
+print(f"👉 {tunnel_url}")
+print(f"📱 WhatsApp Webhook: {tunnel_url}/api/whatsapp/webhook")
+print(f"🩺 Health Endpoint:  {tunnel_url}/health")
 print("==================================================")

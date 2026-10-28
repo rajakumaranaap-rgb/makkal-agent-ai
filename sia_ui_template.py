@@ -407,7 +407,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                                 <!-- 1-Click Instant Unlock & Guided Tour Button -->
                                 <button onclick="instantJudgeUnlock()"
                                         class="w-full py-3.5 bg-gradient-to-r from-[#FF9933] via-[#F59E0B] to-[#10B981] hover:from-[#EA580C] hover:to-[#059669] text-slate-950 font-black text-xs sm:text-sm rounded-xl transition duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99]">
-                                    <span>⚡ 1-Click Instant Judge Unlock (Model PIN: 7890) & Guided Tour ➜</span>
+                                    <span>⚡ 1-Click Instant Unlock & Open Dashboard ➜</span>
                                 </button>
                             </div>
 
@@ -3818,6 +3818,7 @@ ${data.image_url}`);
         // ══════════════════════════════════════════════════════════════════════
 
         window.sessionClose = async function() {
+            sessionStorage.removeItem('sia_dev_unlocked');
             try {
                 if (activeSessionToken || (currentUser && currentUser.phone)) {
                     await fetch('/api/auth/terminate', {
@@ -3903,6 +3904,19 @@ ${data.image_url}`);
                 showAuthBanner('🖥️ Normal App View Restored');
             }
         };
+
+
+        // Auto-restore dashboard if unlocked in current browser session or ?dev=1 is passed
+        try {
+            if (sessionStorage.getItem('sia_dev_unlocked') === '1' || window.location.search.includes('dev=1')) {
+                unlockAppleDesktop({
+                    name: "ர. சுப்பிரமணியன் (R. Subramanian)",
+                    phone: "6381029380",
+                    district: "Madurai",
+                    pin: "7890"
+                });
+            }
+        } catch(e) {}
 
 </script>
 </body>
