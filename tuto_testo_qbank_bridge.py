@@ -95,7 +95,21 @@ class TutoTestoQBankBridge:
         return fields
 
     def _load_qbank(self) -> None:
+        cache_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "tuto_qbank_cache.json")
         if not os.path.exists(self.sql_path):
+            if os.path.exists(cache_path):
+                try:
+                    with open(cache_path, "r", encoding="utf-8") as cf:
+                        c_data = json.load(cf)
+                        self._questions = c_data.get("questions", [])
+                        if not self._gk_milestones:
+                            self._gk_milestones = c_data.get("gk_milestones", [])
+                        if not self._ambition_lessons:
+                            self._ambition_lessons = c_data.get("ambition_lessons", [])
+                    logger.info(f"Loaded {len(self._questions)} questions from cache.")
+                    return
+                except Exception as e:
+                    logger.warning(f"Error loading QBank cache: {e}")
             logger.warning(f"SQL file not found at {self.sql_path}")
             return
 
@@ -164,7 +178,19 @@ class TutoTestoQBankBridge:
         logger.info(f"Loaded {len(self._questions)} questions from TutO QBank.")
 
     def _load_curriculum(self) -> None:
+        cache_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "tuto_qbank_cache.json")
         if not os.path.exists(self.curriculum_path):
+            if os.path.exists(cache_path) and (not self._ambition_lessons or not self._gk_milestones):
+                try:
+                    with open(cache_path, "r", encoding="utf-8") as cf:
+                        c_data = json.load(cf)
+                        if not self._gk_milestones:
+                            self._gk_milestones = c_data.get("gk_milestones", [])
+                        if not self._ambition_lessons:
+                            self._ambition_lessons = c_data.get("ambition_lessons", [])
+                    return
+                except Exception:
+                    pass
             return
 
         with open(self.curriculum_path, "r", encoding="utf-8", errors="ignore") as f:

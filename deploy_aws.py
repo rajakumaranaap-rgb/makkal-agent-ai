@@ -28,6 +28,7 @@ FILES_TO_DEPLOY = [
     "tuto_testo_qbank_bridge.py",
     "family_super_agent.py",
     "data/makkal_domain_training_dataset.jsonl",
+    "data/tuto_qbank_cache.json",
     "data/baseten_train.jsonl",
     "data/baseten_eval.jsonl",
     "whatsapp_agent.py",
