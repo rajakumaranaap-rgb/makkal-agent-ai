@@ -280,12 +280,41 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                             <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl bg-slate-950/95 border border-sky-500/40 p-2 flex items-center justify-center shadow-[0_0_35px_rgba(2,132,199,0.35)] transition-all duration-300 group-hover:scale-105 group-hover:border-amber-400">
                                 <img src="/static/supro_logo.png" alt="SIA Logo" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_0_25px_rgba(255,153,51,0.6)]" />
                             </div>
-                            <div class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-slate-950 rounded-full animate-ping"></div>
-                            <div class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-slate-950 rounded-full shadow-[0_0_10px_#34d399]"></div>
+                            <!-- 🇮🇳 INDIAN STANDARD TIME (IST) ORBITAL CHRONOMETER TRACK -->
+                            <div class="absolute inset-0 m-auto w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-dashed border-emerald-500/30 pointer-events-none shadow-[0_0_25px_rgba(16,185,129,0.15)] flex items-center justify-center">
+                                <!-- 4 Cardinal Clock Marks (12, 3, 6, 9) -->
+                                <span class="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]" title="12 o'clock (00s)"></span>
+                                <span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" title="6 o'clock (30s)"></span>
+                                <span class="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" title="3 o'clock (15s)"></span>
+                                <span class="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" title="9 o'clock (45s)"></span>
+                            </div>
+
+                            <!-- 🇮🇳 IST REVOLVING CLOCK ARM & ORBITING GREEN BALL -->
+                            <div id="istClockArm" class="absolute inset-0 pointer-events-none" style="transform: rotate(0deg); will-change: transform;">
+                                <!-- Holographic Clock Pointer Hand -->
+                                <div class="absolute top-1/2 left-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/40 to-emerald-400 origin-left -translate-y-1/2 pointer-events-none"></div>
+
+                                <!-- The Revolving Green Orb (Indian Standard Time Satellite Hand) -->
+                                <div id="istGreenOrb" class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 pointer-events-auto cursor-pointer group/orb"
+                                     title="🇮🇳 Indian Standard Time (IST) Chronometer • Rotates with Indian Time">
+                                    <div class="absolute -inset-1 rounded-full bg-emerald-400/50 animate-ping"></div>
+                                    <div class="relative w-4 h-4 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-300 to-green-500 border-2 border-slate-950 shadow-[0_0_15px_#10B981,0_0_25px_#34d399] group-hover/orb:scale-125 transition-transform duration-200"></div>
+                                    <!-- Dynamic Light Tail Trail -->
+                                    <div class="absolute -left-2.5 top-1 w-2.5 h-2 rounded-full bg-emerald-400/40 blur-[2px] pointer-events-none"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 🇮🇳 Real-time Indian Standard Time (IST) Digital Chronometer Badge -->
+                        <div class="mt-1 flex items-center justify-center gap-1.5">
+                            <span id="istClockDisplay" class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-emerald-400 bg-slate-950/90 border border-emerald-500/40 px-3 py-0.5 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.25)]" title="Indian Standard Time (UTC+5:30)">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                <span id="istTimeText">--:--:-- IST 🇮🇳</span>
+                            </span>
                         </div>
 
                         <!-- Grand App Title in Indian Flag Gradient -->
-                        <div class="space-y-1.5 mt-2">
+                        <div class="space-y-1.5 mt-1.5">
                             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-orbitron bg-gradient-to-r from-[#FF9933] via-white to-[#10B981] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(255,153,51,0.5)]">
                                 SIA
                             </h1>
@@ -3715,6 +3744,53 @@ ${data.image_url}`);
             }
         };
 
+
+
+        // ══════════════════════════════════════════════════════════════════════
+        // 🇮🇳 INDIAN STANDARD TIME (IST) CELESTIAL CLOCK ORBIT ENGINE
+        // ══════════════════════════════════════════════════════════════════════
+        function initISTClockOrb() {
+            const arm = document.getElementById('istClockArm');
+            const txt = document.getElementById('istTimeText');
+
+            function tick() {
+                // Calculate precise Indian Standard Time (UTC + 5:30)
+                const now = new Date();
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const ist = new Date(utc + (3600000 * 5.5));
+
+                const hrs = ist.getHours();
+                const mins = ist.getMinutes();
+                const secs = ist.getSeconds();
+                const ms = ist.getMilliseconds();
+
+                // Ultra-smooth clock second hand sweep: 60s for full 360 deg
+                // 0 sec = Top (-90 deg from 3 o'clock default arm orientation)
+                const totalSec = secs + (ms / 1000);
+                const angle = (totalSec * 6) - 90;
+
+                if (arm) {
+                    arm.style.transform = `rotate(${angle}deg)`;
+                }
+
+                if (txt) {
+                    const h12 = hrs % 12 || 12;
+                    const ampm = hrs >= 12 ? 'PM' : 'AM';
+                    const pad = (n) => String(n).padStart(2, '0');
+                    txt.innerText = `${pad(h12)}:${pad(mins)}:${pad(secs)} ${ampm} IST 🇮🇳`;
+                }
+
+                requestAnimationFrame(tick);
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initISTClockOrb);
+        } else {
+            initISTClockOrb();
+        }
 
 </script>
 </body>
