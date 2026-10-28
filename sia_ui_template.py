@@ -557,485 +557,369 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     </div>
 
     <!-- ═══════════ AUTHENTICATED APPLE DESKTOP VIEW CONTAINER ═══════════ -->
+    <div <!-- ═══════════ AUTHENTICATED APPLE DESKTOP VIEW CONTAINER ═══════════ -->
     <div id="authenticatedDesktopView" style="filter: blur(16px); opacity: 0.4; pointer-events: none; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
 
-    <!-- ═══════════ HEADER: CYBERNETIC COMMAND DECK ═══════════ -->
-    <header class="w-full max-w-6xl mx-auto px-4 pt-4 pb-2">
-        <div class="flex flex-wrap items-center justify-between gap-4 p-3.5 bg-slate-950/80 backdrop-blur-2xl border border-emerald-500/30 rounded-2xl shadow-[0_10px_35px_-10px_rgba(0,0,0,0.8),0_0_25px_rgba(16,185,129,0.12)]">
+    <!-- ═══════════ TOP COMMAND DECK ═══════════ -->
+    <header class="w-full max-w-7xl mx-auto px-4 pt-3 pb-2">
+        <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-950/85 backdrop-blur-2xl border border-emerald-500/30 rounded-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8),0_0_20px_rgba(16,185,129,0.12)]">
             
-            <!-- Branding: Holographic Quantum Insignia -->
-            <div class="flex items-center gap-3.5">
-                <div class="relative w-13 h-13 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shadow-xl shadow-emerald-500/40 border border-emerald-400/60 p-1 bg-slate-950/95 cursor-pointer flex-shrink-0 group hover:border-emerald-300 transition duration-300" onclick="triggerCompanionWelcome()" title="SIA Living Core - Click for Voice Greeting">
-                    <img src="/static/supro_logo.png" alt="SIA Logo" class="w-full h-full object-contain rounded-xl group-hover:scale-110 transition duration-300 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
-                    <!-- Orbiting energy dot around logo -->
-                    <div class="absolute inset-0 rounded-2xl border border-cyan-400/30 animate-spin" style="animation-duration: 8s;"></div>
+            <!-- Left Branding -->
+            <div class="flex items-center gap-3">
+                <div class="relative w-11 h-11 rounded-2xl overflow-hidden shadow-lg shadow-emerald-500/40 border border-emerald-400/60 p-1 bg-slate-950/95 cursor-pointer flex-shrink-0 group hover:border-emerald-300 transition" onclick="triggerCompanionWelcome()" title="SIA Living Core - Click for Voice Greeting">
+                    <img src="/static/supro_logo.png" alt="SIA Logo" class="w-full h-full object-contain rounded-xl group-hover:scale-110 transition duration-300 drop-shadow-[0_0_12px_rgba(16,185,129,0.8)]" />
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-[#FF9933] via-white to-[#10B981] bg-clip-text text-transparent font-orbitron leading-none">
+                        <h1 class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-[#FF9933] via-white to-[#10B981] bg-clip-text text-transparent font-orbitron leading-none">
                             SIA
                         </h1>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase tracking-widest shadow-sm">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase tracking-widest">
                             ASI 2027 v2.1
                         </span>
                     </div>
-                    <p class="text-[11px] sm:text-xs font-mono font-bold tracking-wide mt-1 flex items-center gap-1.5 flex-wrap">
-                        <span class="text-[#FF9933]">SUPER INTELLIGENT AGENT</span>
-                        <span class="text-white/60">•</span>
-                        <span class="text-[#10B981]">மக்கள் AI</span>
-                        <span class="text-white/60">•</span>
-                        <span class="text-cyan-300 font-mono">Meta AI Stack IN 🇮🇳</span>
+                    <p class="text-[10px] sm:text-[11px] font-mono font-bold tracking-wide text-slate-300 mt-0.5">
+                        <span class="text-[#FF9933]">SUPER INTELLIGENT AGENT</span> • <span class="text-[#10B981]">மக்கள் AI</span> • <span class="text-cyan-300">WhatsApp-First Meta AI Stack 🇮🇳</span>
                     </p>
                 </div>
             </div>
 
-            <!-- Command Suites & VIP Hackathon Deck -->
-            <div class="flex items-center gap-2.5 flex-wrap ml-auto">
-                
-                <!-- VIP Hackathon & Judges Command Capsule (High-Tech Highlight) -->
-                <div class="flex items-center gap-1.5 p-1 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-emerald-500/15 border border-amber-500/40 rounded-xl shadow-lg shadow-amber-500/10">
-                    <button onclick="openJudgesTourModal()" class="text-xs bg-gradient-to-r from-[#FF9933] via-[#F59E0B] to-[#10B981] hover:from-[#EA580C] hover:to-[#059669] text-slate-950 font-black px-3 py-1.5 rounded-lg transition duration-200 cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]">
-                        <span class="animate-bounce text-sm">🎯</span>
+            <!-- Right Controls: VIP Judges Capsule & Modular Suites -->
+            <div class="flex items-center gap-2 flex-wrap ml-auto">
+                <!-- VIP Hackathon Judges Capsule -->
+                <div class="flex items-center gap-1.5 p-1 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-emerald-500/15 border border-amber-500/40 rounded-xl shadow-md">
+                    <button onclick="openJudgesTourModal()" class="text-xs bg-gradient-to-r from-[#FF9933] via-[#F59E0B] to-[#10B981] hover:from-[#EA580C] hover:to-[#059669] text-slate-950 font-black px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 shadow-sm">
+                        <span>🎯</span>
                         <span>Judges Tour</span>
                     </button>
-                    <button onclick="autoFillModule('all')" class="text-xs bg-slate-900/90 hover:bg-amber-950/80 border border-amber-500/30 text-amber-300 font-bold px-2.5 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1 hover:border-amber-400">
+                    <button onclick="autoFillModule('all')" class="text-xs bg-slate-900/90 hover:bg-amber-950/80 border border-amber-500/30 text-amber-300 font-bold px-2.5 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1">
                         <span>⚡</span>
                         <span>Auto-Fill Demo</span>
                     </button>
-                    <button onclick="openJudgeModal()" class="text-xs bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1">
-                        <span>⚖️</span>
-                        <span class="hidden sm:inline">Rubric</span>
+                    <button onclick="openJudgeModal()" class="text-xs bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-semibold px-2 py-1.5 rounded-lg transition cursor-pointer">
+                        ⚖️ Rubric
                     </button>
                 </div>
 
-                <!-- Super-Agent Specialized AI Engines -->
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <button onclick="openImageStudioModal()" class="text-xs bg-gradient-to-r from-pink-600/70 to-purple-600/70 hover:from-pink-500 hover:to-purple-500 border border-pink-400/30 text-white font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-sm">
-                        <span>🎨</span>
-                        <span>Meta Studio</span>
-                    </button>
-                    <button onclick="openAgriRentModal()" class="text-xs bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-500/40 text-emerald-300 font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
-                        <span>🚜</span>
-                        <span>Agri Rent</span>
-                    </button>
-                    <button onclick="openTravelModal()" class="text-xs bg-cyan-950/80 hover:bg-cyan-900/90 border border-cyan-500/40 text-cyan-300 font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
-                        <span>🚗</span>
-                        <span class="hidden sm:inline">Travel</span>
-                    </button>
-                    <button onclick="openEducationModal()" class="text-xs bg-purple-950/80 hover:bg-purple-900/90 border border-purple-500/40 text-purple-300 font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
-                        <span>📚</span>
-                        <span class="hidden sm:inline">கல்வி</span>
-                    </button>
-                    <button onclick="openUniversalPetitionModal('collector')" class="text-xs bg-teal-950/80 hover:bg-teal-900/90 border border-teal-500/40 text-teal-300 font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
-                        <span>🏛️</span>
-                        <span class="hidden sm:inline">மனு</span>
-                    </button>
-                    <button id="langToggleBtn" onclick="toggleLanguage()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1 font-mono">
-                        <span>🌐</span>
-                        <span id="langLabel">தமிழ்</span>
-                    </button>
-                </div>
-
+                <!-- Secondary Suites -->
+                <button onclick="openImageStudioModal()" class="text-xs bg-gradient-to-r from-pink-600/70 to-purple-600/70 hover:from-pink-500 hover:to-purple-500 border border-pink-400/30 text-white font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
+                    <span>🎨</span> <span>Meta Studio</span>
+                </button>
+                <button onclick="openAgriRentModal()" class="text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
+                    <span>🚜</span> <span>Agri Rent</span>
+                </button>
+                <button onclick="openTravelModal()" class="text-xs bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-bold px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1">
+                    <span>🚗</span> <span>Travel</span>
+                </button>
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1 font-mono">
+                    <span>🌐</span>
+                    <span id="langLabel">தமிழ்</span>
+                </button>
             </div>
+
         </div>
     </header>
 
-    <!-- ═══════════ HERO: 2027 REAL-WORLD SUPER INTELLIGENCE QUANTUM CORE ═══════════ -->
-    <section class="w-full max-w-6xl mx-auto px-4 py-2.5">
-        <div class="relative bg-slate-950/85 backdrop-blur-3xl border border-emerald-500/35 rounded-3xl p-4 sm:p-6 shadow-[0_30px_90px_-20px_rgba(0,0,0,0.95),0_0_60px_rgba(16,185,129,0.18)] overflow-hidden">
+    <!-- ═══════════ MAIN CITIZEN WORKSTATION (UNIFIED & TIGHT) ═══════════ -->
+    <main class="w-full max-w-7xl mx-auto px-4 py-2">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
             
-            <!-- Futuristic Cyber Matrix Grid Background -->
-            <div class="absolute inset-0 bg-[radial-gradient(#10b98118_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none opacity-50"></div>
-            <div class="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/15 rounded-full blur-[110px] pointer-events-none"></div>
-            <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[110px] pointer-events-none"></div>
-            <div class="cyber-scan-line"></div>
+            <!-- LEFT WING: Living Avatar & Official WhatsApp Processing Hub (4 cols) -->
+            <div class="lg:col-span-4 space-y-3">
+                
+                <!-- 📲 Official WhatsApp Cloud Processing Center -->
+                <div class="bg-slate-950/85 backdrop-blur-2xl border-2 border-emerald-500/50 rounded-2xl p-4 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.85),0_0_25px_rgba(16,185,129,0.2)] relative overflow-hidden">
+                    <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none"></div>
 
-            <!-- Top Real-Time Telemetry HUD Strip -->
-            <div class="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-800/90">
-                <div class="flex items-center gap-2.5">
-                    <span class="live-dot" style="width:8px;height:8px"></span>
-                    <span class="font-orbitron font-extrabold text-sm sm:text-base text-emerald-400 tracking-wider">SIA 2027 QUANTUM NEURAL CORE</span>
-                    <span class="text-xs text-slate-600 hidden md:inline">|</span>
-                    <span class="text-xs text-slate-400 font-mono hidden md:inline">Meta Llama 3.3 70B • SAM 3.1 • SeamlessM4T Multi-Agent Swarm</span>
+                    <!-- Header with WhatsApp Green Badge -->
+                    <div class="flex items-center justify-between border-b border-emerald-500/30 pb-2.5 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">💬</span>
+                            <div>
+                                <div class="text-xs font-black text-white font-orbitron uppercase tracking-wider">WhatsApp Processing Hub</div>
+                                <div class="text-[10px] text-emerald-400 font-mono">Meta Cloud API v21.0 Gateway</div>
+                            </div>
+                        </div>
+                        <span class="text-[9px] font-mono font-bold bg-emerald-950 border border-emerald-500/60 text-emerald-300 px-2 py-0.5 rounded-full animate-pulse">LIVE 24x7</span>
+                    </div>
+
+                    <!-- Official Number Display with 1-Click Launch -->
+                    <div class="bg-slate-900/90 border border-emerald-500/40 rounded-xl p-3 text-center space-y-1.5 shadow-inner">
+                        <div class="text-[10px] text-slate-400 font-mono">Official Citizen Hotline:</div>
+                        <div class="text-lg font-black font-mono text-emerald-300 tracking-wider">
+                            +91 6381029380
+                        </div>
+                        <div class="text-[10px] text-slate-300">
+                            Send message, voice note, or deed photo for instant AI resolution!
+                        </div>
+                    </div>
+
+                    <!-- 3 Direct WhatsApp Action Channels -->
+                    <div class="space-y-1.5 mt-3">
+                        <a href="https://wa.me/916381029380?text=Hi%20SIA%20%E2%9A%A1" target="_blank"
+                           class="w-full py-2 px-3 bg-[#25D366] hover:bg-[#1ebd59] text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-2 shadow-md cursor-pointer hover:scale-[1.01]">
+                            <span>💬</span>
+                            <span>Chat on WhatsApp (+91 6381029380)</span>
+                        </a>
+                        <a href="https://wa.me/916381029380?text=Check%20my%20Land%20Patta%20status" target="_blank"
+                           class="w-full py-1.5 px-3 bg-slate-900 hover:bg-slate-800 border border-emerald-500/30 text-emerald-300 font-bold text-xs rounded-xl transition flex items-center justify-between cursor-pointer">
+                            <span class="flex items-center gap-1.5"><span>🏠</span> <span>Patta Verification on WhatsApp</span></span>
+                            <span class="text-xs">➜</span>
+                        </a>
+                        <a href="https://wa.me/916381029380?text=Scan%20my%20crop%20leaf%20for%20disease" target="_blank"
+                           class="w-full py-1.5 px-3 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 font-bold text-xs rounded-xl transition flex items-center justify-between cursor-pointer">
+                            <span class="flex items-center gap-1.5"><span>🌾</span> <span>Send Crop Photo to WhatsApp</span></span>
+                            <span class="text-xs">➜</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2 flex-wrap text-xs font-mono">
-                    <div class="flex items-center gap-1.5 bg-emerald-950/70 border border-emerald-500/40 px-3 py-1 rounded-full text-emerald-300 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span id="heroSynapseBadge">2.4 PFLOPS • 10,480 Synapses</span>
+
+                <!-- 🧠 Meta AI Model Directory (Clearly mapped to relevant areas) -->
+                <div class="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-3.5 space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                        <span class="text-xs font-bold text-slate-200 font-orbitron flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                            <span>Meta AI Stack in Action</span>
+                        </span>
+                        <span class="text-[10px] font-mono text-cyan-400">Multi-Model</span>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-cyan-950/70 border border-cyan-500/40 px-3 py-1 rounded-full text-cyan-300 shadow-sm">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                        <span>184 tok/s</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 bg-rose-950/70 border border-rose-500/40 px-3 py-1 rounded-full text-rose-300 shadow-sm">
-                        <span>💓</span>
-                        <span id="heroHeartbeatBadge">74 BPM Synced</span>
+
+                    <div class="space-y-1.5 text-xs font-mono">
+                        <div class="p-2 rounded-xl bg-slate-900/80 border border-cyan-500/20 flex items-start gap-2">
+                            <span class="text-cyan-400 font-bold text-sm">⚡</span>
+                            <div>
+                                <div class="font-bold text-cyan-300">Meta Spark 1.3 (Chat & Voice)</div>
+                                <div class="text-[10px] text-slate-400 font-sans">Fast low-latency Q&A and WhatsApp instant auto-reply (<15ms).</div>
+                            </div>
+                        </div>
+
+                        <div class="p-2 rounded-xl bg-slate-900/80 border border-purple-500/20 flex items-start gap-2">
+                            <span class="text-purple-400 font-bold text-sm">🧠</span>
+                            <div>
+                                <div class="font-bold text-purple-300">Meta Wonder 1.0 (Statutory Legal)</div>
+                                <div class="text-[10px] text-slate-400 font-sans">Deep reasoning for Collector/MLA petitions & TNeGA RSO 31 audit.</div>
+                            </div>
+                        </div>
+
+                        <div class="p-2 rounded-xl bg-slate-900/80 border border-emerald-500/20 flex items-start gap-2">
+                            <span class="text-emerald-400 font-bold text-sm">👁️</span>
+                            <div>
+                                <div class="font-bold text-emerald-300">Meta SAM 3.1 (Vision AI)</div>
+                                <div class="text-[10px] text-slate-400 font-sans">Document seal audit & crop leaf disease segmentation on Modal GPU.</div>
+                            </div>
+                        </div>
+
+                        <div class="p-2 rounded-xl bg-slate-900/80 border border-amber-500/20 flex items-start gap-2">
+                            <span class="text-amber-400 font-bold text-sm">🗣️</span>
+                            <div>
+                                <div class="font-bold text-amber-300">Seamless / Muse Voice</div>
+                                <div class="text-[10px] text-slate-400 font-sans">Rural dialect speech recognition (Madurai, Kongu, Nellai).</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- 3-Column Quantum Cockpit Grid -->
-            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
-
-                <!-- LEFT WING: 3D Holographic Neural Synapse Matrix (3 cols) -->
-                <div class="lg:col-span-3 flex flex-col justify-between bg-slate-900/60 border border-slate-800/90 rounded-2xl p-4 backdrop-blur-md relative overflow-hidden group hover:border-emerald-500/40 transition">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5">
-                                <span class="live-dot" style="width:6px;height:6px"></span> 🧠 Neural Matrix
-                            </span>
-                            <span class="text-[11px] font-mono text-cyan-300 font-semibold" id="brainSynapseCount">280 Synapses</span>
-                        </div>
-                        <div class="canvas-wrap w-full h-[180px] rounded-xl overflow-hidden border border-emerald-500/25 bg-slate-950/95 relative shadow-inner">
-                            <canvas id="neuralBrainCanvas" class="w-full h-full cursor-grab active:cursor-grabbing" style="display:block"></canvas>
-                            <div class="absolute bottom-1 right-2 text-[9px] font-mono text-slate-500 pointer-events-none">Interactive 3D Mesh</div>
-                        </div>
-                    </div>
+            <!-- RIGHT WING: 4 Flagship Citizen Access Points & Single Unified Console (8 cols) -->
+            <div class="lg:col-span-8 space-y-3">
+                
+                <!-- 🎯 4 Core Citizen Access Points (Large, Super-Easy Touch Cards) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     
-                    <!-- Neural Engine Metrics -->
-                    <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-1.5 text-[11px] font-mono">
-                        <div class="flex justify-between text-slate-400">
-                            <span>Inference Speed:</span>
-                            <span class="text-emerald-300 font-bold">8.6ms Zero-Shot</span>
+                    <!-- 1. Land & Patta -->
+                    <div class="bg-slate-950/85 hover:bg-slate-900/90 border border-emerald-500/40 hover:border-emerald-400 rounded-2xl p-3.5 transition duration-200 shadow-md relative overflow-hidden group">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-2xl p-2 bg-emerald-500/15 border border-emerald-500/30 rounded-xl">🏠</span>
+                                <div>
+                                    <div class="text-sm font-black text-white group-hover:text-emerald-300 transition">Land & Patta Services</div>
+                                    <div class="text-[11px] text-slate-400">நில பட்டா சரிபார்ப்பு & மாறுதல்</div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-500/40 text-emerald-300 px-1.5 py-0.5 rounded">TNeGA ₹60</span>
                         </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span>Llama 3.3 Engine:</span>
-                            <span class="text-cyan-300 font-semibold">Baseten AWS Cluster</span>
-                        </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span>Regional Engine:</span>
-                            <span class="text-emerald-400 font-bold">தமிழ் (Kongu/Madurai)</span>
-                        </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span>Civic Accuracy:</span>
-                            <span class="text-emerald-300 font-bold">99.4% Grounded</span>
+                        <p class="text-xs text-slate-300 mt-2 line-clamp-1">Sub-division under RSO 31, Chitta verification & government fee lock.</p>
+                        <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-slate-800">
+                            <button onclick="triggerServiceFlow('patta')" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs rounded-lg transition cursor-pointer">
+                                🔍 Instant Check
+                            </button>
+                            <a href="https://wa.me/916381029380?text=Please%20verify%20my%20Patta%20transfer%20eligibility" target="_blank"
+                               class="py-1.5 px-2.5 bg-slate-900 hover:bg-slate-800 border border-emerald-500/30 text-emerald-300 text-xs font-bold rounded-lg transition cursor-pointer" title="Send via WhatsApp">
+                                📲 WhatsApp
+                            </a>
                         </div>
                     </div>
+
+                    <!-- 2. Smart Ration Card -->
+                    <div class="bg-slate-950/85 hover:bg-slate-900/90 border border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-3.5 transition duration-200 shadow-md relative overflow-hidden group">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-2xl p-2 bg-cyan-500/15 border border-cyan-500/30 rounded-xl">📋</span>
+                                <div>
+                                    <div class="text-sm font-black text-white group-hover:text-cyan-300 transition">Smart Ration Card</div>
+                                    <div class="text-[11px] text-slate-400">குடும்ப அட்டை பெயர் சேர்த்தல்</div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-mono bg-cyan-950 border border-cyan-500/40 text-cyan-300 px-1.5 py-0.5 rounded">PDS FREE</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-2 line-clamp-1">Add baby/member, change address, FPS rice/sugar entitlement.</p>
+                        <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-slate-800">
+                            <button onclick="triggerServiceFlow('ration')" class="flex-1 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-extrabold text-xs rounded-lg transition cursor-pointer">
+                                👶 Add Member
+                            </button>
+                            <a href="https://wa.me/916381029380?text=Documents%20needed%20to%20add%20new%20child%20to%20Smart%20Ration%20Card" target="_blank"
+                               class="py-1.5 px-2.5 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-xs font-bold rounded-lg transition cursor-pointer" title="Send via WhatsApp">
+                                📲 WhatsApp
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 3. MLA / Collector Grievance -->
+                    <div class="bg-slate-950/85 hover:bg-slate-900/90 border border-purple-500/40 hover:border-purple-400 rounded-2xl p-3.5 transition duration-200 shadow-md relative overflow-hidden group">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-2xl p-2 bg-purple-500/15 border border-purple-500/30 rounded-xl">🏛️</span>
+                                <div>
+                                    <div class="text-sm font-black text-white group-hover:text-purple-300 transition">MLA & Collector Grievance</div>
+                                    <div class="text-[11px] text-slate-400">மக்கள் மனு (Meta Wonder 1.0)</div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-mono bg-purple-950 border border-purple-500/40 text-purple-300 px-1.5 py-0.5 rounded">234 MLA</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-2 line-clamp-1">Court-ready statutory petition drafting with legal clauses & WhatsApp dispatch.</p>
+                        <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-slate-800">
+                            <button onclick="openUniversalPetitionModal('collector')" class="flex-1 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs rounded-lg transition cursor-pointer">
+                                📝 Draft Petition
+                            </button>
+                            <a href="https://wa.me/916381029380?text=Help%20me%20draft%20a%20grievance%20petition%20to%20District%20Collector" target="_blank"
+                               class="py-1.5 px-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 text-purple-300 text-xs font-bold rounded-lg transition cursor-pointer" title="Send via WhatsApp">
+                                📲 WhatsApp
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 4. TNAU Agri Vision & Machinery -->
+                    <div class="bg-slate-950/85 hover:bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 rounded-2xl p-3.5 transition duration-200 shadow-md relative overflow-hidden group">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-2xl p-2 bg-amber-500/15 border border-amber-500/30 rounded-xl">🌾</span>
+                                <div>
+                                    <div class="text-sm font-black text-white group-hover:text-amber-300 transition">TNAU Agri Vision & Rental</div>
+                                    <div class="text-[11px] text-slate-400">பயிர் நோய் AI & டிராக்டர் வாடகை</div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-mono bg-amber-950 border border-amber-500/40 text-amber-300 px-1.5 py-0.5 rounded">SAM 3.1</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-2 line-clamp-1">Meta SAM 3.1 leaf lesion segmentation + subsidised equipment rental.</p>
+                        <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-slate-800">
+                            <button onclick="openTnauAgriModal()" class="flex-1 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg transition cursor-pointer">
+                                🔬 Scan Leaf
+                            </button>
+                            <button onclick="openAgriRentModal()" class="py-1.5 px-2.5 bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-300 text-xs font-bold rounded-lg transition cursor-pointer">
+                                🚜 RentO
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- CENTER HERO: Living Super Intelligence Core & Cognitive Stream (6 cols) -->
-                <div class="lg:col-span-6 flex flex-col items-center justify-between text-center bg-slate-900/50 border border-emerald-500/40 rounded-2xl p-4 sm:p-5 backdrop-blur-xl relative overflow-hidden shadow-inner">
-                    <!-- Ambient Hologram Glow Cone -->
-                    <div class="absolute -top-12 inset-x-0 h-40 bg-gradient-to-b from-emerald-500/20 via-cyan-500/10 to-transparent pointer-events-none"></div>
-
-                    <!-- Living Quantum Reactor Pod -->
-                    <div class="relative my-1 flex items-center justify-center">
-                        <!-- Holographic Multi-Axis Orbit Rings with Tiranga & Cyberpunk glow -->
-                        <div class="holo-ring-1 absolute w-48 h-48 sm:w-56 sm:h-56 rounded-full border border-cyan-400/35 pointer-events-none animate-spin" style="animation-duration: 20s;"></div>
-                        <div class="holo-ring-2 absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full border border-emerald-400/30 pointer-events-none animate-spin" style="animation-duration: 15s; animation-direction: reverse;"></div>
-                        <div class="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full border border-[#FF9933]/25 pointer-events-none animate-pulse"></div>
-                        
-                        <!-- 3D Living Super Intelligence Companion Orb -->
-                        <div class="relative w-32 h-32 sm:w-40 sm:h-40 avatar-breathe cursor-pointer select-none rounded-3xl p-1 transition-transform duration-300 hover:scale-105 active:scale-95 group"
-                             onclick="triggerCompanionWelcome()" title="Click to interact with SIA">
-                            <img src="/static/supro_logo.png" alt="SIA 3D Super Intelligence Companion"
-                                 class="w-full h-full object-contain rounded-2xl drop-shadow-[0_0_35px_rgba(20,184,166,0.7)] group-hover:drop-shadow-[0_0_45px_rgba(6,182,212,0.9)] transition" />
-                            <div class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-950 rounded-full animate-ping"></div>
-                            <div class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-950 rounded-full"></div>
+                <!-- 💬 UNIFIED CITIZEN INTERACTIVE CONSOLE (WHATSAPP-CONNECTED) -->
+                <div class="bg-slate-950/90 border border-slate-800 rounded-2xl p-3 shadow-xl space-y-2.5">
+                    
+                    <!-- Console Header & Model Engine Switcher -->
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-xs font-mono flex-wrap gap-2">
+                        <div class="flex items-center gap-1.5 text-slate-300">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="font-bold">Live AI Interaction Stream:</span>
                         </div>
 
-                        <!-- Hidden canvas fallback to preserve drawAvatar JS loop without errors -->
-                        <canvas id="talkingAvatarCanvas" width="240" height="240" class="hidden"></canvas>
-                    </div>
-
-                    <!-- Super-Intelligent Live Cognitive Stream HUD (Deep Reasoning Terminal) -->
-                    <div class="w-full bg-slate-950/90 border border-emerald-500/30 rounded-xl p-3 my-2 shadow-md text-left relative overflow-hidden" onclick="advanceCognitiveThought()" title="Click to cycle cognitive thought step">
-                        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800/80 text-[10px] font-mono">
-                            <div class="flex items-center gap-1.5 text-emerald-400 font-bold">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                <span id="cognitiveStepBadge">COGNITIVE STEP 1 OF 6</span>
-                            </div>
-                            <span class="text-slate-400">Meta Llama 3.3 70B Deep Reasoning</span>
-                        </div>
-                        <p id="siaLiveSubtitle" class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed min-h-[44px] flex items-center">
-                            Hello! I am your SIA (Super Intelligent Agent) powered by Meta Spark 1.3 & Meta Wonder 1.0. Next-Gen civic AI services are ready. How may I assist you today?
-                        </p>
-                    </div>
-
-                    <!-- Dynamic 18-Band Audio Spectrum Visualizer -->
-                    <div class="w-full flex items-center justify-center gap-1 h-5 py-1 mb-1">
-                        <span class="w-1 bg-[#FF9933]/90 rounded-full animate-[pulse_1s_infinite_100ms]" style="height:45%"></span>
-                        <span class="w-1 bg-[#FF9933]/90 rounded-full animate-[pulse_1s_infinite_200ms]" style="height:70%"></span>
-                        <span class="w-1 bg-amber-400/90 rounded-full animate-[pulse_1s_infinite_300ms]" style="height:85%"></span>
-                        <span class="w-1 bg-white/90 rounded-full animate-[pulse_1s_infinite_400ms]" style="height:100%"></span>
-                        <span class="w-1 bg-emerald-400/90 rounded-full animate-[pulse_1s_infinite_500ms]" style="height:80%"></span>
-                        <span class="w-1 bg-teal-400/90 rounded-full animate-[pulse_1s_infinite_600ms]" style="height:95%"></span>
-                        <span class="w-1 bg-cyan-400/90 rounded-full animate-[pulse_1s_infinite_700ms]" style="height:60%"></span>
-                        <span class="w-1 bg-emerald-400/90 rounded-full animate-[pulse_1s_infinite_800ms]" style="height:90%"></span>
-                        <span class="w-1 bg-white/90 rounded-full animate-[pulse_1s_infinite_900ms]" style="height:100%"></span>
-                        <span class="w-1 bg-[#10B981]/90 rounded-full animate-[pulse_1s_infinite_150ms]" style="height:85%"></span>
-                        <span class="w-1 bg-cyan-400/90 rounded-full animate-[pulse_1s_infinite_250ms]" style="height:70%"></span>
-                        <span class="w-1 bg-teal-400/90 rounded-full animate-[pulse_1s_infinite_350ms]" style="height:50%"></span>
-                    </div>
-
-                    <!-- Omni-Modal Neural Command Terminal with Meta Spark & Wonder Co-Pilot Deck -->
-                    <div class="w-full space-y-2">
-                        <!-- Meta Model Dual-Core Selector Bar -->
-                        <div class="flex items-center justify-between gap-2 p-1.5 bg-slate-950/90 border border-slate-800 rounded-xl text-xs font-mono">
-                            <div class="flex items-center gap-1.5 pl-1 text-slate-300">
-                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                                <span class="font-bold">Meta AI Engine:</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <button id="engineSparkBtn" onclick="selectMetaEngine('spark')"
-                                        class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm"
-                                        title="Meta Spark 1.3: Ultra-Fast Conversational Inference (<15ms)">
-                                    <span>⚡</span>
-                                    <span>Meta Spark 1.3</span>
-                                    <span class="text-[9px] bg-cyan-950/80 text-cyan-200 px-1 rounded font-mono">Fast Chat</span>
-                                </button>
-                                <button id="engineWonderBtn" onclick="selectMetaEngine('wonder')"
-                                        class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 text-slate-400 hover:text-white"
-                                        title="Meta Wonder 1.0: Deep Multi-Step Statutory & Civic Reasoning">
-                                    <span>🧠</span>
-                                    <span>Meta Wonder 1.0</span>
-                                    <span class="text-[9px] bg-purple-950/80 text-purple-200 px-1 rounded font-mono">Deep Reason</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 bg-slate-950/90 border border-slate-700/80 rounded-xl p-1.5 focus-within:border-emerald-500/60 shadow-inner">
-                            <button id="heroVoiceBtn" onclick="toggleVoiceRecording()"
-                                    class="py-2.5 px-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 rounded-lg text-xs font-black shadow-md flex items-center gap-1.5 cursor-pointer transition flex-shrink-0">
-                                <span>🎙️</span>
-                                <span class="hidden sm:inline">பேசி கேட்க</span>
-                            </button>
-                            <input id="siaOmniPromptInput" type="text"
-                                   placeholder="Ask SIA anything (e.g., Patta verification, crop leaf scan, MLA petition, education)..."
-                                   class="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 font-medium"
-                                   onkeydown="if(event.key==='Enter') executeOmniPrompt();" />
-                            <button id="omniPromptSubmitBtn" onclick="executeOmniPrompt()"
-                                    class="py-2.5 px-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg text-xs font-extrabold shadow-md flex items-center gap-1 cursor-pointer transition flex-shrink-0 hover:scale-[1.03] active:scale-[0.97]">
+                        <!-- Meta Engine Selector (Spark vs Wonder) -->
+                        <div class="flex items-center gap-1 p-0.5 bg-slate-900 border border-slate-700/80 rounded-xl">
+                            <button id="engineSparkBtn" onclick="selectMetaEngine('spark')"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm">
                                 <span>⚡</span>
-                                <span id="omniPromptSubmitLabel">Ask</span>
+                                <span>Meta Spark 1.3 (Fast)</span>
+                            </button>
+                            <button id="engineWonderBtn" onclick="selectMetaEngine('wonder')"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 text-slate-400 hover:text-white">
+                                <span>🧠</span>
+                                <span>Meta Wonder 1.0 (Deep Reason)</span>
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- RIGHT WING: Multi-Spectral Telemetry & Safety Shield (3 cols) -->
-                <div class="lg:col-span-3 flex flex-col justify-between bg-slate-900/60 border border-slate-800/90 rounded-2xl p-4 backdrop-blur-md relative overflow-hidden group hover:border-cyan-500/40 transition">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-mono font-bold text-rose-400 flex items-center gap-1.5">
-                                <span class="live-dot" style="width:6px;height:6px;background:#f43f5e"></span> 💓 Biometric & Telemetry
-                            </span>
-                            <span class="text-[11px] font-mono text-emerald-400 font-bold" id="ekgBpmDisplay">74 BPM</span>
+                    <!-- Single Clean Chat Stream Box -->
+                    <main id="chatBox" class="bg-slate-900/50 border border-slate-800/80 rounded-xl p-3 overflow-y-auto space-y-3 custom-scroll min-h-[170px] max-h-[260px]">
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-sm flex-shrink-0 mt-0.5">🧠</div>
+                            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl rounded-tl-none p-3 max-w-[90%] text-xs sm:text-sm leading-relaxed shadow-sm space-y-1.5">
+                                <p id="welcomeGreeting" class="font-bold text-emerald-400">Hello! I am your SIA (Super Intelligent Agent).</p>
+                                <p id="welcomeBody" class="text-slate-200">
+                                    I am fully synchronized with WhatsApp (<strong class="text-emerald-300 font-mono">+91 6381029380</strong>). You can ask me to verify your Land Patta, add a child to your Smart Ration Card, draft an MLA/Collector petition with statutory legal clauses, or diagnose crop diseases.
+                                </p>
+                                <div class="pt-1.5 border-t border-slate-800 text-[10px] text-slate-400 flex flex-wrap gap-2.5 font-mono">
+                                    <span>⚡ Meta Spark 1.3 Active</span>
+                                    <span>🧠 Meta Wonder 1.0 Ready</span>
+                                    <span>📱 WhatsApp Cloud v21.0</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="canvas-wrap w-full h-[180px] rounded-xl overflow-hidden border border-rose-500/25 bg-slate-950/95 relative shadow-inner">
-                            <canvas id="heartbeatEkgCanvas" class="w-full h-full" style="display:block"></canvas>
-                            <div class="absolute bottom-1 right-2 text-[9px] font-mono text-slate-500 pointer-events-none">Dual-Wave Sync</div>
+                    </main>
+
+                    <!-- Audio Status Bar -->
+                    <div id="audioSpeakerBar" class="hidden w-full bg-emerald-950/80 border border-emerald-500/40 rounded-xl px-3 py-1.5 flex items-center justify-between text-xs text-emerald-300 font-mono">
+                        <div class="flex items-center gap-2">
+                            <span class="animate-pulse">🔊</span>
+                            <span id="audioPlayingLabel">SIA Voice Playing...</span>
                         </div>
+                        <button onclick="stopSpeechNow()" class="bg-slate-900 hover:bg-slate-800 px-2.5 py-0.5 rounded border border-emerald-700 text-[11px] font-bold cursor-pointer">⏹️ Stop</button>
                     </div>
 
-                    <!-- Multi-Agent Telemetry & Safety Metrics -->
-                    <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-1.5 text-[11px] font-mono">
-                        <div class="flex justify-between text-slate-400">
-                            <span>WhatsApp Cloud API:</span>
-                            <span class="text-emerald-400 font-bold">Online (+91 6381029380)</span>
-                        </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span>Vault Security:</span>
-                            <span class="text-emerald-300 font-bold">Zero-Knowledge AES</span>
-                        </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span>Vision Auditor:</span>
-                            <span class="text-cyan-300 font-semibold">SAM 3.1 (Modal GPU)</span>
-                        </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span>Citizen ID:</span>
-                            <span class="text-amber-300 font-semibold truncate max-w-[130px]">ர. சுப்பிரமணியன்</span>
-                        </div>
+                    <!-- Quick Prompt Chips -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1 text-xs">
+                        <span class="text-[10px] text-slate-500 font-mono flex-shrink-0">Quick Ask:</span>
+                        <button onclick="fillAndSendPrompt('Check my Patta 142/3A under RSO 31 statutory ceiling')" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg flex-shrink-0 cursor-pointer">
+                            🏠 Patta 142/3A
+                        </button>
+                        <button onclick="fillAndSendPrompt('Documents needed to add new child to Ration Card')" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg flex-shrink-0 cursor-pointer">
+                            📋 Add to Ration
+                        </button>
+                        <button onclick="fillAndSendPrompt('Draft MLA petition for road repair in Madurai South')" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg flex-shrink-0 cursor-pointer">
+                            🏛️ MLA Petition
+                        </button>
+                        <button onclick="fillAndSendPrompt('Paddy yellow leaf spot diagnosis and remedy')" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white px-2 py-0.5 rounded-lg flex-shrink-0 cursor-pointer">
+                            🌾 Paddy Disease
+                        </button>
                     </div>
-                </div>
 
-            </div>
-
-            <!-- Bottom Floating Holographic Super-Action Dock -->
-            <div class="relative z-10 mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto custom-scroll pb-1">
-                <span class="text-xs font-mono text-emerald-400 font-bold flex-shrink-0 flex items-center gap-1 pr-1">
-                    <span>⚡ Quick AI Actions:</span>
-                </span>
-                <button onclick="triggerServiceFlow('patta')" class="text-xs bg-slate-900/95 hover:bg-emerald-950/80 border border-slate-700/80 hover:border-emerald-400 text-slate-200 hover:text-emerald-300 px-3.5 py-2 rounded-xl flex items-center gap-2 flex-shrink-0 transition duration-200 cursor-pointer shadow-sm hover:scale-[1.02]">
-                    <span class="text-sm">🏠</span> 
-                    <span class="font-bold">நில பட்டா சரிபார்</span>
-                    <span class="text-[10px] text-slate-500 font-mono hidden sm:inline">TNeGA</span>
-                </button>
-                <button onclick="triggerServiceFlow('ration')" class="text-xs bg-slate-900/95 hover:bg-cyan-950/80 border border-slate-700/80 hover:border-cyan-400 text-slate-200 hover:text-cyan-300 px-3.5 py-2 rounded-xl flex items-center gap-2 flex-shrink-0 transition duration-200 cursor-pointer shadow-sm hover:scale-[1.02]">
-                    <span class="text-sm">📋</span> 
-                    <span class="font-bold">ரேஷன் அட்டை பெயர் சேர்</span>
-                    <span class="text-[10px] text-slate-500 font-mono hidden sm:inline">PDS</span>
-                </button>
-                <button onclick="openUniversalPetitionModal('collector')" class="text-xs bg-slate-900/95 hover:bg-indigo-950/80 border border-slate-700/80 hover:border-indigo-400 text-slate-200 hover:text-indigo-300 px-3.5 py-2 rounded-xl flex items-center gap-2 flex-shrink-0 transition duration-200 cursor-pointer shadow-sm hover:scale-[1.02]">
-                    <span class="text-sm">📝</span> 
-                    <span class="font-bold">ஆட்சியர் / MLA மனு</span>
-                    <span class="text-[10px] text-slate-500 font-mono hidden sm:inline">AI Drafter</span>
-                </button>
-                <button onclick="openTnauAgriModal()" class="text-xs bg-slate-900/95 hover:bg-emerald-950/80 border border-slate-700/80 hover:border-emerald-400 text-slate-200 hover:text-emerald-300 px-3.5 py-2 rounded-xl flex items-center gap-2 flex-shrink-0 transition duration-200 cursor-pointer shadow-sm hover:scale-[1.02]">
-                    <span class="text-sm">🌾</span> 
-                    <span class="font-bold">பயிர் நோய் AI ஸ்கேன்</span>
-                    <span class="text-[10px] text-slate-500 font-mono hidden sm:inline">SAM 3.1</span>
-                </button>
-                <button onclick="openEducationModal()" class="text-xs bg-slate-900/95 hover:bg-purple-950/80 border border-slate-700/80 hover:border-purple-400 text-slate-200 hover:text-purple-300 px-3.5 py-2 rounded-xl flex items-center gap-2 flex-shrink-0 transition duration-200 cursor-pointer shadow-sm hover:scale-[1.02]">
-                    <span class="text-sm">📚</span> 
-                    <span class="font-bold">சமச்சீர் கல்வி AI</span>
-                    <span class="text-[10px] text-slate-500 font-mono hidden sm:inline">1-12th</span>
-                </button>
-                <button onclick="openProofsVaultModal()" class="text-xs bg-slate-900/95 hover:bg-teal-950/80 border border-slate-700/80 hover:border-teal-400 text-slate-200 hover:text-teal-300 px-3.5 py-2 rounded-xl flex items-center gap-2 flex-shrink-0 transition duration-200 cursor-pointer shadow-sm hover:scale-[1.02]">
-                    <span class="text-sm">🪪</span> 
-                    <span class="font-bold">ஆவணப் பெட்டகம்</span>
-                    <span class="text-[10px] text-slate-500 font-mono hidden sm:inline">AES-256</span>
-                </button>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ═══════════ SERVICE CARDS ═══════════ -->
-    <section class="w-full max-w-6xl mx-auto px-4 py-2">
-        <!-- Domain Filter Tabs -->
-        <div class="flex gap-2 overflow-x-auto pb-2 custom-scroll mb-3">
-            <button id="tab_domain_all" onclick="filterDomain('all')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-600 text-white flex-shrink-0 transition cursor-pointer">⭐ அனைத்தும்</button>
-            <button id="tab_domain_vault" onclick="openProofsVaultModal()" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🪪 ஆவணம்</button>
-            <button id="tab_domain_land" onclick="filterDomain('land')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🌾 நிலம்</button>
-            <button id="tab_domain_agri" onclick="filterDomain('agri')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🚜 வேளாண்மை</button>
-            <button id="tab_domain_family" onclick="filterDomain('family')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🍚 குடும்பம்</button>
-            <button id="tab_domain_central" onclick="filterDomain('central')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🏛️ மத்திய அரசு</button>
-            <button id="tab_domain_aadhaar" onclick="filterDomain('aadhaar')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🪪 ஆதார்</button>
-            <button id="tab_domain_exams" onclick="filterDomain('exams')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">📚 கல்வி</button>
-            <button id="tab_domain_grievance" onclick="filterDomain('grievance')" class="domain-tab text-xs font-semibold px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex-shrink-0 transition cursor-pointer">🏛️ மனு</button>
-        </div>
-
-        <div id="bentoTilesContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <!-- Proofs Vault -->
-            <button onclick="openProofsVaultModal()" data-domain="vault" class="sia-card p-4 text-left flex flex-col gap-2 cursor-pointer">
-                <div class="svc-icon bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">🪪</div>
-                <div>
-                    <div class="font-bold text-sm text-cyan-300">ஆவணப் பெட்டகம்</div>
-                    <div class="text-xs text-slate-500 mt-0.5">ஆதார், ரேஷன், பட்டா சேமிப்பு</div>
-                </div>
-            </button>
-            <!-- TNAU Agri -->
-            <div data-domain="agri" class="sia-card p-4 flex flex-col gap-2">
-                <div class="svc-icon bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🌾</div>
-                <div>
-                    <div class="font-bold text-sm text-emerald-300">TNAU வேளாண்</div>
-                    <div class="text-xs text-slate-500 mt-0.5">மஞ்சள், நெல், வாழை வழிகாட்டி</div>
-                </div>
-                <button onclick="openTnauAgriModal()" class="mt-auto py-1.5 bg-emerald-600/80 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold cursor-pointer transition">TNAU ஆலோசனை</button>
-            </div>
-            <!-- TNeGA e-Sevai -->
-            <div data-domain="land" class="sia-card p-4 flex flex-col gap-2">
-                <div class="svc-icon bg-blue-500/10 text-blue-400 border border-blue-500/20">📑</div>
-                <div>
-                    <div class="font-bold text-sm text-blue-300">TNeGA இ-சேவை</div>
-                    <div class="text-xs text-slate-500 mt-0.5">பட்டா ₹60, EC, உதவித்தொகை</div>
-                </div>
-                <button onclick="openTnegaModal()" class="mt-auto py-1.5 bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg text-xs font-bold cursor-pointer transition">ஆவண சரிபார்ப்பு</button>
-            </div>
-            <!-- Samacheer Kalvi -->
-            <div data-domain="exams" class="sia-card p-4 flex flex-col gap-2">
-                <div class="svc-icon bg-purple-500/10 text-purple-400 border border-purple-500/20">📚</div>
-                <div>
-                    <div class="font-bold text-sm text-purple-300">சமச்சீர் கல்வி</div>
-                    <div class="text-xs text-slate-500 mt-0.5">வகுப்பு 1-12 வீட்டுப்பாடம்</div>
-                </div>
-                <button onclick="openSamacheerModal()" class="mt-auto py-1.5 bg-purple-600/80 hover:bg-purple-500 text-white rounded-lg text-xs font-bold cursor-pointer transition">சமச்சீர் கல்வி</button>
-            </div>
-            <!-- SeamlessM4T Speech -->
-            <div data-domain="skills" class="sia-card p-4 flex flex-col gap-2">
-                <div class="svc-icon bg-amber-500/10 text-amber-400 border border-amber-500/20">🗣️</div>
-                <div>
-                    <div class="font-bold text-sm text-amber-300">பேச்சுத் தமிழ்</div>
-                    <div class="text-xs text-slate-500 mt-0.5">மதுரை, கொங்கு, நெல்லை குரல்</div>
-                </div>
-                <button onclick="openSeamlessSpeechModal()" class="mt-auto py-1.5 bg-amber-600/80 hover:bg-amber-500 text-white rounded-lg text-xs font-bold cursor-pointer transition">குரல் அரங்கம்</button>
-            </div>
-            <!-- Patta Mutation -->
-            <button onclick="triggerServiceFlow('patta')" data-domain="land" class="sia-card p-4 text-left flex flex-col gap-2 cursor-pointer">
-                <div class="svc-icon bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🌾</div>
-                <div>
-                    <div class="font-bold text-sm text-emerald-300">பட்டா மாறுதல்</div>
-                    <div class="text-xs text-slate-500 mt-0.5">அரசு கட்டணம்: ₹60 மட்டும்</div>
-                </div>
-            </button>
-            <!-- Smart Ration Card -->
-            <button onclick="triggerServiceFlow('ration')" data-domain="family" class="sia-card p-4 text-left flex flex-col gap-2 cursor-pointer">
-                <div class="svc-icon bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">🍚</div>
-                <div>
-                    <div class="font-bold text-sm text-cyan-300">ரேஷன் அட்டை</div>
-                    <div class="text-xs text-slate-500 mt-0.5">பெயர் சேர்த்தல் — இலவசம் (₹0)</div>
-                </div>
-            </button>
-            <!-- MLA Petition -->
-            <button onclick="openMlaPetitionModal()" data-domain="grievance" class="sia-card p-4 text-left flex flex-col gap-2 cursor-pointer">
-                <div class="svc-icon bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">🏛️</div>
-                <div>
-                    <div class="font-bold text-sm text-indigo-300">MLA நேரடி மனு</div>
-                    <div class="text-xs text-slate-500 mt-0.5">234 தொகுதி சட்டமன்ற மனு</div>
-                </div>
-            </button>
-        </div>
-    </section>
-
-    <!-- ═══════════ CHAT BOX ═══════════ -->
-    <section class="w-full max-w-6xl mx-auto px-4 py-2 flex-1 flex flex-col">
-        <main id="chatBox" class="flex-1 bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 overflow-y-auto space-y-4 custom-scroll min-h-[200px] max-h-[400px]">
-            <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-lg flex-shrink-0 mt-0.5">🧠</div>
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl rounded-tl-none p-4 max-w-[88%] text-sm leading-relaxed shadow-md space-y-2">
-                    <p id="welcomeGreeting" class="font-bold text-emerald-400 text-base">வணக்கம்! நான் உங்கள் SIA.</p>
-                    <p id="welcomeBody" class="text-slate-300">தமிழ்நாடு அரசின் பட்டா மாறுதல், ரேஷன் கார்டு, TNAU பயிர் ஆலோசனை, <b>டிஜிட்டல் ஆவண பெட்டகம்</b> மற்றும் <b>MLA நேரடி மனு</b> — அனைத்திற்கும் நான் உதவுவேன்.</p>
-                    <div class="pt-2 border-t border-slate-800 text-xs text-slate-500 flex flex-wrap gap-3">
-                        <span>🎙️ குரல் பேச்சு</span>
-                        <span>📱 WhatsApp: 6381029380</span>
-                        <span>🪪 ஆவணப் பெட்டகம்</span>
-                        <span>📚 சமச்சீர் கல்வி 1-12</span>
+                    <!-- Single Master Input Bar -->
+                    <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-700/80 rounded-xl p-1.5 focus-within:border-emerald-500/70 shadow-inner">
+                        <label class="cursor-pointer bg-slate-900 hover:bg-slate-800 border border-slate-700 p-2 rounded-lg text-slate-300 flex items-center justify-center transition flex-shrink-0" title="Upload Document / Photo for Audit">
+                            📸
+                            <input type="file" id="docUpload" accept="image/*" class="hidden" onchange="uploadDocumentForAudit(event)">
+                        </label>
+                        <button id="heroVoiceBtn" onclick="toggleVoiceRecording()"
+                                class="bg-slate-900 hover:bg-slate-800 border border-slate-700 p-2 rounded-lg text-emerald-400 flex items-center justify-center transition flex-shrink-0 cursor-pointer" title="Speak in Voice (Tamil / English)">
+                            🎙️
+                        </button>
+                        <input id="userInput" type="text"
+                               placeholder="Ask SIA anything in English or தமிழ் (or send on WhatsApp +91 6381029380)..."
+                               class="flex-1 bg-transparent text-slate-100 placeholder-slate-500 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm focus:outline-none"
+                               onkeypress="handleKeyPress(event)">
+                        <button id="sendBtn" onclick="sendMessage()"
+                                class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-black px-4 py-2 rounded-lg transition shadow-md text-xs sm:text-sm flex-shrink-0 cursor-pointer hover:scale-[1.02] active:scale-[0.98]">
+                            <span id="sendBtnText">Ask ➜</span>
+                        </button>
                     </div>
+
                 </div>
-            </div>
-        </main>
 
-        <!-- Audio Status Bar -->
-        <div id="audioSpeakerBar" class="hidden w-full bg-emerald-950/60 border border-emerald-500/30 rounded-xl px-4 py-2 mt-2 flex items-center justify-between text-sm text-emerald-300">
-            <div class="flex items-center gap-2">
-                <span class="animate-pulse">🔊</span>
-                <span id="audioPlayingLabel">SIA பேசுகிறது...</span>
             </div>
-            <button onclick="stopSpeechNow()" class="bg-slate-900 hover:bg-slate-800 px-3 py-1 rounded-lg border border-emerald-700/40 text-xs font-bold cursor-pointer">⏹️ நிறுத்து</button>
+
         </div>
-
-        <!-- Input Footer -->
-        <footer class="w-full bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-3 mt-2 shadow-xl">
-            <div class="flex items-center gap-2">
-                <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 p-3 rounded-xl text-slate-300 flex items-center justify-center transition flex-shrink-0" title="ஆவணம் ஆய்வு">
-                    📸
-                    <input type="file" id="docUpload" accept="image/*" class="hidden" onchange="uploadDocumentForAudit(event)">
-                </label>
-                <button onclick="toggleVoiceRecording()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 p-3 rounded-xl text-emerald-400 flex items-center justify-center transition flex-shrink-0 cursor-pointer">🎙️</button>
-                <input id="userInput" type="text"
-                    placeholder="SIA-விடம் உங்கள் கேள்வியை தட்டச்சு செய்யுங்கள்..."
-                    class="flex-1 bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition"
-                    onkeypress="handleKeyPress(event)">
-                <button id="sendBtn" onclick="sendMessage()"
-                    class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 text-sm flex-shrink-0 cursor-pointer">
-                    <span id="sendBtnText">அனுப்பு ➤</span>
-                </button>
-            </div>
-            <div class="flex items-center justify-between mt-2 px-1 text-xs text-slate-500">
-                <label class="flex items-center gap-1.5 cursor-pointer hover:text-emerald-400 transition">
-                    <input type="checkbox" id="deepReasonToggle" checked class="accent-emerald-500 rounded">
-                    <span>🧠 Muse Wonder (5-Step Trace)</span>
-                </label>
-                <label class="flex items-center gap-1.5 cursor-pointer hover:text-purple-400 transition">
-                    <input type="checkbox" id="basetenToggle" class="accent-purple-500 rounded">
-                    <span>🔒 Baseten Sovereign</span>
-                </label>
-            </div>
-        </footer>
-    </section>
+    </main>
     </div> <!-- END authenticatedDesktopView -->
-
 
     <!-- ══════════════════════════════════════════════════════════ -->
     <!-- MODALS                                                    -->
@@ -1859,6 +1743,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         // 1. 🧠 NEURAL BRAIN — 280 nodes, glow, synapse firing
         // ════════════════════════════════════════════════════════
         const brainCanvas = document.getElementById('neuralBrainCanvas');
+        if (!brainCanvas) return;
         const bCtx = brainCanvas.getContext('2d');
         let brainNodes = [];
         const NUM_NODES = 280;
@@ -1995,6 +1880,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         // 2. 💓 HEARTBEAT EKG — smooth Bézier, medical grid, glow dot
         // ════════════════════════════════════════════════════════
         const ekgCanvas = document.getElementById('heartbeatEkgCanvas');
+        if (!ekgCanvas) return;
         const eCtx = ekgCanvas.getContext('2d');
         let ekgData = [];
         const EKG_MAX = 200;
@@ -3078,6 +2964,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         // ════════════════════════════════════════════════════════
         window.handleKeyPress = function(e) { if (e.key === 'Enter') sendMessage(); };
 
+        
+        // ── Helper: Quick Prompt Dispatch ──
+        window.fillAndSendPrompt = function(promptText) {
+            const input = document.getElementById('userInput');
+            if (input) {
+                input.value = promptText;
+                if (typeof sendMessage === 'function') sendMessage();
+            }
+        };
+
         window.sendMessage = async function() {
             const q = userInput.value.trim();
             if (!q) return;
@@ -3161,8 +3057,22 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         };
 
         window.triggerServiceFlow = function(svc) {
-            if (svc === 'patta') { userInput.value = "கூட்டு பட்டாவில் உள்ள நிலத்தை தனி பட்டாவாக உட்பிரிவு செய்ய RSO 31 விதிமுறை மற்றும் அரசு கட்டணம் ₹60 வழிகாட்டவும்."; sendMessage(); }
-            else if (svc === 'ration') { userInput.value = "ஸ்மார்ட் ரேஷன் கார்டில் புதிய குழந்தை பெயர் சேர்க்க ஆவணங்கள் என்ன?"; sendMessage(); }
+            const input = document.getElementById('userInput');
+            if (svc === 'patta') {
+                if (input) {
+                    input.value = (currentLang === 'en')
+                        ? "Verify joint patta sub-division to individual patta under RSO 31 statutory ceiling fee ₹60."
+                        : "கூட்டு பட்டாவில் உள்ள நிலத்தை தனி பட்டாவாக உட்பிரிவு செய்ய RSO 31 விதிமுறை மற்றும் அரசு கட்டணம் ₹60 வழிகாட்டவும்.";
+                }
+                sendMessage();
+            } else if (svc === 'ration') {
+                if (input) {
+                    input.value = (currentLang === 'en')
+                        ? "What documents are required to add a new child name to Smart Ration Card online?"
+                        : "ஸ்மார்ட் ரேஷன் கார்டில் புதிய குழந்தை பெயர் சேர்க்க ஆவணங்கள் என்ன?";
+                }
+                sendMessage();
+            }
         };
 
 
