@@ -25,6 +25,7 @@ REMOTE_DIR = f"/home/ubuntu/makkal-agent-ai/"
 FILES_TO_DEPLOY = [
     "app.py",
     "domain_training_engine.py",
+    "tuto_testo_qbank_bridge.py",
     "data/makkal_domain_training_dataset.jsonl",
     "data/baseten_train.jsonl",
     "data/baseten_eval.jsonl",
@@ -113,7 +114,7 @@ remote_setup_cmd = (
     "python3 -m venv .venv && "
     ".venv/bin/pip install --upgrade pip && "
     ".venv/bin/pip install -r requirements.txt && "
-    ".venv/bin/python3 -m py_compile app.py domain_training_engine.py whatsapp_agent.py meta_client.py sia_user_manager.py sia_ui_template.py meta_image_studio.py sia_services_suite.py tnega_civic_engine.py llama_vision_auditor.py seamless_speech_engine.py sam_document_auditor.py action_executor.py knowledge_base.py central_services_directory.py civic_greeting_poster_engine.py meta_entertainment_engine.py agriculture_engine.py modal_sam_service.py modal_sam_agri_bridge.py && "
+    ".venv/bin/python3 -m py_compile app.py domain_training_engine.py tuto_testo_qbank_bridge.py whatsapp_agent.py meta_client.py sia_user_manager.py sia_ui_template.py meta_image_studio.py sia_services_suite.py tnega_civic_engine.py llama_vision_auditor.py seamless_speech_engine.py sam_document_auditor.py action_executor.py knowledge_base.py central_services_directory.py civic_greeting_poster_engine.py meta_entertainment_engine.py agriculture_engine.py modal_sam_service.py modal_sam_agri_bridge.py && "
     "echo PYTHON_ENV_READY"
 )
 ssh_setup = ["ssh"] + ssh_opts + [f"{REMOTE_USER}@{IP}", remote_setup_cmd]

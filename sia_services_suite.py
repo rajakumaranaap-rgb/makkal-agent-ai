@@ -26,6 +26,11 @@ from typing import Dict, Any, List, Optional
 from meta_client import meta_client
 
 logger = logging.getLogger("makkal.services_suite")
+try:
+    from tuto_testo_qbank_bridge import tuto_testo_qbank_bridge
+except Exception:
+    tuto_testo_qbank_bridge = None
+
 
 PUBLIC_AWS_BASE = os.getenv("PUBLIC_BASE_URL", "http://52.66.255.113:8001").rstrip("/")
 
@@ -398,8 +403,27 @@ def generate_tuto_exam(category: str = "TNPSC", count: int = 5, topic_hint: str 
     test_id = f"TESTO-{uuid.uuid4().hex[:8].upper()}"
     selected_questions = []
 
+    # Ingest all TutO/TestO database questions if available
+    all_bank_questions = list(CURATED_QUESTION_BANK)
+    if tuto_testo_qbank_bridge:
+        for qb in tuto_testo_qbank_bridge.get_all_questions():
+            mapped_cat = "TNPSC" if qb["subject"] in ["Polity", "History", "Geography", "Aptitude"] else "Samacheer"
+            all_bank_questions.append({
+                "id": qb["uid"],
+                "category": mapped_cat,
+                "subject": qb["subject"],
+                "subject_ta": qb["subject"],
+                "question": qb["q_en"],
+                "question_ta": qb["q_ta"],
+                "options": qb["options"],
+                "options_ta": qb["options"],
+                "correct_option": qb["correct"],
+                "explanation_ta": qb["exp_ta"] or qb["exp_en"],
+                "formula_or_law": qb["formula"]
+            })
+
     # Filter curated bank
-    for q in CURATED_QUESTION_BANK:
+    for q in all_bank_questions:
         if category == "ALL" or q["category"].lower() == category.lower() or "samacheer" in category.lower():
             selected_questions.append(q)
 
