@@ -207,6 +207,81 @@ class TutoTestoQBankBridge:
         res = [q for q in self._questions if ex_lower in q["exam"].lower() or q["exam"] == "ALL"]
         return res[:limit]
 
+    def get_all_ambition_lessons(self) -> List[Dict[str, Any]]:
+        """Returns all 80 Ambition career mentorship lessons."""
+        return self._ambition_lessons
+
+    def get_ambition_tracks(self) -> List[Dict[str, Any]]:
+        """Returns the 8 Ambition career tracks with lesson counts and sample lesson."""
+        tracks_map = {}
+        for l in self._ambition_lessons:
+            key = l["curriculum"]
+            if key not in tracks_map:
+                tracks_map[key] = {
+                    "curriculum": key,
+                    "role": l["role"],
+                    "icon": l["icon"],
+                    "lesson_count": 0,
+                    "sample_title": l["title"],
+                    "sample_micro": l["micro"],
+                    "lessons": []
+                }
+            tracks_map[key]["lesson_count"] += 1
+            tracks_map[key]["lessons"].append({"title": l["title"], "micro": l["micro"]})
+        return list(tracks_map.values())
+
+    def get_ambition_lesson_by_role(self, role_or_keyword: str) -> Optional[Dict[str, Any]]:
+        """Finds the best matching Ambition career mentorship lesson by keyword."""
+        kw = role_or_keyword.lower().strip()
+        # Direct matches
+        alias_map = {
+            "ias": "JrIAS",
+            "ips": "JrIPS",
+            "collector": "JrIAS",
+            "judge": "JrJudge",
+            "law": "JrJudge",
+            "lawyer": "JrJudge",
+            "neethi": "JrJudge",
+            "doctor": "JrDR",
+            "dr": "JrDR",
+            "medical": "JrDR",
+            "neet": "JrDR",
+            "engineer": "JrER",
+            "er": "JrER",
+            "robotics": "JrER",
+            "ai": "JrER",
+            "scientist": "JrScientist",
+            "isro": "JrScientist",
+            "space": "JrScientist",
+            "ceo": "JrCEO",
+            "business": "JrCEO",
+            "startup": "JrCEO",
+            "ca": "JrAR",
+            "auditor": "JrAR",
+            "finance": "JrAR"
+        }
+        target_curriculum = alias_map.get(kw)
+
+        for l in self._ambition_lessons:
+            if target_curriculum and target_curriculum.lower() in l["curriculum"].lower():
+                return l
+            if kw in l["curriculum"].lower() or kw in l["role"].lower() or kw in l["title"].lower():
+                return l
+        return self._ambition_lessons[0] if self._ambition_lessons else None
+
+    def get_all_gk_milestones(self) -> List[Dict[str, Any]]:
+        """Returns all 45 GK & Science milestones."""
+        return self._gk_milestones
+
+    def get_daily_gk(self, day_offset: int = 0) -> Optional[Dict[str, Any]]:
+        """Returns a GK milestone deterministically based on day or index."""
+        if not self._gk_milestones:
+            return None
+        import datetime
+        now = datetime.datetime.now()
+        day_of_year = (now.timetuple().tm_yday + day_offset) % len(self._gk_milestones)
+        return self._gk_milestones[day_of_year]
+
     def convert_to_training_samples(self) -> List[Dict[str, Any]]:
         """
         Converts all 250 TutO/TestO questions + GK + Ambition lessons into

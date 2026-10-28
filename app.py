@@ -1784,6 +1784,66 @@ async def export_baseten_dataset_endpoint():
     return res
 
 
+# ==============================================================================
+# SIA FAMILY SUPER-INTELLIGENT HUB ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/sia/family-hub/summary")
+async def get_family_hub_summary_endpoint():
+    """Returns structured multi-persona data for the Web Family Hub."""
+    from family_super_agent import family_super_agent
+    return family_super_agent.get_family_hub_summary()
+
+
+@app.post("/api/sia/family-hub/query")
+async def query_family_hub_endpoint(payload: Dict[str, Any]):
+    """Handles an interactive family query across Student, Farmer, Elder, or Citizen personas."""
+    from family_super_agent import family_super_agent
+    query = payload.get("query", "")
+    persona = payload.get("persona") # optional override: 'student', 'farmer', 'elder', 'citizen'
+    phone = payload.get("phone", "6381029380")
+    if not query:
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+    return family_super_agent.handle_family_request(query=query, persona_override=persona, phone=phone)
+
+
+@app.get("/api/sia/ambition-tracks")
+async def get_ambition_tracks_endpoint():
+    """Returns the 8 SuprO Ambition career mentorship tracks (80 lessons total)."""
+    from tuto_testo_qbank_bridge import tuto_testo_qbank_bridge
+    return {
+        "status": "success",
+        "tracks": tuto_testo_qbank_bridge.get_ambition_tracks(),
+        "total_lessons": len(tuto_testo_qbank_bridge._ambition_lessons)
+    }
+
+
+@app.get("/api/sia/gk-daily")
+async def get_daily_gk_endpoint(day_offset: int = 0):
+    """Returns a daily GK & Science milestone from the 365-day progression."""
+    from tuto_testo_qbank_bridge import tuto_testo_qbank_bridge
+    gk = tuto_testo_qbank_bridge.get_daily_gk(day_offset=day_offset)
+    return {
+        "status": "success",
+        "milestone": gk,
+        "total_milestones": len(tuto_testo_qbank_bridge._gk_milestones)
+    }
+
+
+@app.get("/api/sia/elder-pension")
+async def get_elder_pension_endpoint():
+    """Returns statutory guidelines for Old Age Pension (OAP), KMUT, and CMCHIS."""
+    from family_super_agent import FAMILY_STATUTORY_RULES
+    return {
+        "status": "success",
+        "rules": {
+            "oap": FAMILY_STATUTORY_RULES["oap"],
+            "kmut": FAMILY_STATUTORY_RULES["kmut"],
+            "cmchis": FAMILY_STATUTORY_RULES["cmchis"]
+        }
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui():
     """Interactive Multimodal Action Portal for SIA (Super Intelligent Agent)."""

@@ -611,6 +611,122 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                         "reply": reply_text
                     }
 
+            # 2.6 Family Super-Intelligent Hub Trigger ('FAMILY', 'HUB', 'குடும்பம்', 'btn_fam_hub')
+            elif (
+                clean_upper in ["FAMILY", "HUB", "FAM", "குடும்பம்", "குடும்ப AI"] or
+                interactive_id in ["btn_fam_hub", "fam_hub"]
+            ):
+                from family_super_agent import family_super_agent
+                summary = family_super_agent.get_family_hub_summary()
+                body_text = (
+                    "👨‍👩‍👧‍👦 *SIA குடும்ப சூப்பர் இன்டெலிஜென்ஸ் (Family Super-Intelligent Hub)* 🌟\n\n"
+                    "தமிழ்நாட்டின் ஒவ்வொரு குடும்ப உறுப்பினரின் அத்தியாவசியத் தேவைகளுக்கும் Meta AI ஒருங்கிணைந்த வழிகாட்டி:\n\n"
+                    "1. 🎓 *மாணவர் கல்வி (Student)*: 1-12 பாடங்கள், TutO CBT தேர்வுகள், 80 Ambition வழிகாட்டிகள்\n"
+                    "2. 🌾 *விவசாயிகள் (Farmer)*: SAM 3.1 பயிர் இலை ஆய்வு, மண்டி விலை, PMFBY 72-hr மனு\n"
+                    "3. 👵 *முதியோர் பாதுகாப்பு (Elder)*: OAP ₹1,000, KMUT ₹1,000, CMCHIS ₹5 லட்சம்\n"
+                    "4. 🏛️ *குடும்பத் தலைவர் (Citizen)*: பட்டா ₹60, ரேஷன் அட்டை, ஆதார் ₹50, RTI ₹10\n\n"
+                    "கீழே உள்ள பிரிவுகளில் ஒன்றைத் தேர்ந்தெடுக்கவும் அல்லது நேரடியாக தட்டச்சு செய்யவும் 👇"
+                )
+                buttons = [
+                    {"id": "fam_student", "title": "🎓 மாணவர் கல்வி"},
+                    {"id": "fam_farmer",  "title": "🌾 உழவர் நலன்"},
+                    {"id": "fam_elder",   "title": "👵 முதியோர் பாதுகாப்பு"}
+                ]
+                send_whatsapp_button_message(
+                    to_number=sender_phone,
+                    body_text=body_text,
+                    buttons=buttons,
+                    header_text="👨‍👩‍👧‍👦 SIA Family Super-Intelligence",
+                    footer_text="Meta Model API Suite (Spark 1.3 & Wonder 1.0)"
+                )
+                return {
+                    "status": "processed",
+                    "handler": "family_hub_dispatcher",
+                    "sender": sender_phone
+                }
+
+            # 2.7 Ambition Career Mentorship Trigger ('IAS', 'IPS', 'DOCTOR', 'ENGINEER', 'JUDGE', 'SCIENTIST', 'CEO', 'CA', 'AMBITION')
+            elif (
+                any(clean_upper.startswith(k) or clean_upper == k for k in [
+                    "IAS", "IPS", "DOCTOR", "ENGINEER", "JUDGE", "SCIENTIST", "CEO", "CA", "AUDITOR",
+                    "AMBITION", "JR IAS", "JR DOCTOR", "JR JUDGE", "JR ENGINEER", "JR SCIENTIST",
+                    "கனவு", "லட்சியம்", "வழிகாட்டுதல்"
+                ]) or
+                interactive_id.startswith("fam_ambition") or
+                interactive_id == "fam_student"
+            ):
+                from family_super_agent import family_super_agent
+                fam_res = family_super_agent.handle_family_request(user_text, persona_override="student", phone=sender_phone)
+                reply_text = fam_res.get("reply_ta", "")
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "family_student_ambition",
+                    "sender": sender_phone,
+                    "sub_intent": fam_res.get("sub_intent", "ambition_mentorship"),
+                    "reply": reply_text
+                }
+
+            # 2.8 Daily 365 GK Milestone Trigger ('GK', 'TODAY', 'அறிவு', 'பொது அறிவு', 'MILESTONE')
+            elif any(clean_upper == k or clean_upper.startswith(k + " ") for k in ["GK", "TODAY", "அறிவு", "பொது அறிவு", "MILESTONE"]):
+                from family_super_agent import family_super_agent
+                fam_res = family_super_agent.handle_family_request("GK", persona_override="student", phone=sender_phone)
+                reply_text = fam_res.get("reply_ta", "")
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "family_student_gk",
+                    "sender": sender_phone,
+                    "reply": reply_text
+                }
+
+            # 2.9 Elder Social Security & Pension Trigger ('PENSION', 'OAP', 'KMUT', 'MAGALIR', 'முதியோர்', 'ஓய்வூதியம்', 'மகளிர் உரிமை', 'fam_elder')
+            elif (
+                any(k in clean_upper for k in ["PENSION", "OAP", "KMUT", "MAGALIR", "முதியோர்", "ஓய்வூதியம்", "மகளிர் உரிமை", "ரூபாய் 1000"]) or
+                interactive_id == "fam_elder"
+            ):
+                from family_super_agent import family_super_agent
+                fam_res = family_super_agent.handle_family_request(user_text, persona_override="elder", phone=sender_phone)
+                reply_text = fam_res.get("reply_ta", "")
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "family_elder_pension",
+                    "sender": sender_phone,
+                    "sub_intent": fam_res.get("sub_intent", "oap_pension"),
+                    "reply": reply_text
+                }
+
+            # 2.10 Farmer Mandi & Advisory Trigger ('MANDI', 'FARMER', 'AGRI', 'பயிர்', 'உழவர்', 'சந்தை', 'விலை', 'டிராக்டர்', 'fam_farmer')
+            elif (
+                any(k in clean_upper for k in ["MANDI", "MARKET", "விலை", "சந்தை"]) or
+                interactive_id == "fam_farmer"
+            ):
+                from family_super_agent import family_super_agent
+                fam_res = family_super_agent.handle_family_request(user_text, persona_override="farmer", phone=sender_phone)
+                reply_text = fam_res.get("reply_ta", "")
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "family_farmer_mandi",
+                    "sender": sender_phone,
+                    "sub_intent": fam_res.get("sub_intent", "mandi_prices"),
+                    "reply": reply_text
+                }
+
+            # 2.11 Citizen Household Head Sovereign Rights ('fam_citizen')
+            elif interactive_id == "fam_citizen":
+                from family_super_agent import family_super_agent
+                fam_res = family_super_agent.handle_family_request("citizen", persona_override="citizen", phone=sender_phone)
+                reply_text = fam_res.get("reply_ta", "")
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "family_citizen_rights",
+                    "sender": sender_phone,
+                    "reply": reply_text
+                }
+
             # 3. Meta Multimodal Image Generation Trigger (Wishes, Home Design, Thumbnail, Educational Diagrams)
             elif any(k in (user_text or "").lower() for k in [
                 "image", "photo", "picture", "poster", "thumbnail", "drawing", "design", "illustration", "diagram",

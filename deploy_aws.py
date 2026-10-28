@@ -26,6 +26,7 @@ FILES_TO_DEPLOY = [
     "app.py",
     "domain_training_engine.py",
     "tuto_testo_qbank_bridge.py",
+    "family_super_agent.py",
     "data/makkal_domain_training_dataset.jsonl",
     "data/baseten_train.jsonl",
     "data/baseten_eval.jsonl",

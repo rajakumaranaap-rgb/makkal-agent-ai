@@ -430,6 +430,18 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
     #  CASE 5: Greeting / contains SIA / Hi / Hello / START
     # ────────────────────────────────────────────────────────────────────────
+    SYSTEM_COMMAND_KEYWORDS = {
+        "CLOSE", "LOGOUT", "EXIT", "QUIT", "LOCK", "TEST", "EXAM", "QUIZ", "TNPSC",
+        "SAMACHEER", "FAMILY", "HUB", "FAM", "IAS", "IPS", "DOCTOR", "ENGINEER",
+        "JUDGE", "SCIENTIST", "CEO", "CA", "AUDITOR", "AMBITION", "GK", "TODAY",
+        "PENSION", "OAP", "KMUT", "MAGALIR", "MANDI", "MARKET", "PATTA", "RATION",
+        "AADHAAR", "RTI", "ANS"
+    }
+    if any(upper == k or upper.startswith(k + " ") or upper.startswith(k + "-") for k in SYSTEM_COMMAND_KEYWORDS):
+        return None
+    if upper in ["A", "B", "C", "D"] or (len(upper) >= 3 and upper[0].isdigit() and upper[1] in "-:" and upper[2] in "ABCD"):
+        return None
+
     contains_sia = "SIA" in upper or "சியா" in text
     if not is_user_registered(clean_phone) and any(w in upper for w in ["ACCESS", "REGISTER", "SIGNUP", "NEW", "WANT TO ACCESS"]):
         return _start_registration(clean_phone)
@@ -439,7 +451,7 @@ def handle_sia_whatsapp_flow(
         "வணக்கம்", "ஹலோ", "ஹாய்", "SIA",
     ] or contains_sia
 
-    if is_greeting or (msg_type == "text" and len(text) <= 12 and not text.isdigit()):
+    if is_greeting:
         return _send_welcome(clean_phone)
 
     # ────────────────────────────────────────────────────────────────────────

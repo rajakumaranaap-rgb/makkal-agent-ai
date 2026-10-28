@@ -602,6 +602,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                     </button>
                 </div>
 
+                <!-- Family Super-Intelligent Hub -->
+                <button onclick="openFamilyHubModal()" class="text-xs bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 text-slate-950 font-black px-2.5 py-1 rounded-xl transition cursor-pointer flex items-center gap-1 shadow-md hover:scale-105">
+                    <span>👨‍👩‍👧‍👦</span> <span>Family Hub</span>
+                </button>
+
                 <!-- Secondary Suites -->
                 <button onclick="openImageStudioModal()" class="text-xs bg-gradient-to-r from-pink-600/70 to-purple-600/70 hover:from-pink-500 hover:to-purple-500 border border-pink-400/30 text-white font-bold px-2 py-1 rounded-xl transition cursor-pointer flex items-center gap-1">
                     <span>🎨</span> <span>Studio</span>
@@ -1593,6 +1598,72 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <a id="travelWhatsAppBtn" href="" target="_blank" class="block w-full py-2.5 bg-[#25D366] hover:bg-[#1ebd59] text-white text-xs font-bold rounded-xl text-center shadow transition flex items-center justify-center gap-1.5 cursor-pointer">
                     <span>💬 1-Click WhatsApp Booking Dispatch</span>
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- MODAL: 👨‍👩‍👧‍👦 FAMILY SUPER-INTELLIGENT HUB (குடும்ப AI)        -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="familyHubModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-slate-900 border border-amber-500/50 rounded-3xl max-w-3xl w-full p-5 sm:p-6 shadow-2xl relative space-y-4 my-auto max-h-[90vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-emerald-500 flex items-center justify-center text-xl shadow-lg shadow-amber-500/20">👨‍👩‍👧‍👦</div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                            <span>SIA Family Super-Intelligent Hub</span>
+                            <span class="text-[10px] bg-amber-950 text-amber-300 border border-amber-500/50 px-2 py-0.5 rounded-full font-mono font-bold">Meta AI Suite 2026</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">குடும்ப சூப்பர் இன்டெலிஜென்ஸ் • Student • Farmer • Elder • Citizen Personas</p>
+                    </div>
+                </div>
+                <button onclick="closeFamilyHubModal()" class="text-slate-400 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800 text-sm cursor-pointer">✕ Close</button>
+            </div>
+
+            <!-- 4 Persona Navigation Tabs -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button id="famTab_student" onclick="switchFamilyPersona('student')" class="py-2.5 px-2 rounded-xl text-xs font-bold border border-amber-500 bg-amber-950/60 text-amber-200 flex flex-col items-center gap-1 transition shadow-md">
+                    <span class="text-lg">🎓</span>
+                    <span>மாணவர் (Student)</span>
+                    <span class="text-[9px] text-indigo-400 font-normal">Wonder 1.0</span>
+                </button>
+                <button id="famTab_farmer" onclick="switchFamilyPersona('farmer')" class="py-2.5 px-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 flex flex-col items-center gap-1 transition">
+                    <span class="text-lg">🌾</span>
+                    <span>உழவர் (Farmer)</span>
+                    <span class="text-[9px] text-emerald-400 font-normal">SAM 3.1 & Modal</span>
+                </button>
+                <button id="famTab_elder" onclick="switchFamilyPersona('elder')" class="py-2.5 px-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 flex flex-col items-center gap-1 transition">
+                    <span class="text-lg">👵</span>
+                    <span>முதியோர் (Elder)</span>
+                    <span class="text-[9px] text-rose-400 font-normal">OAP ₹1,000</span>
+                </button>
+                <button id="famTab_citizen" onclick="switchFamilyPersona('citizen')" class="py-2.5 px-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 flex flex-col items-center gap-1 transition">
+                    <span class="text-lg">🏛️</span>
+                    <span>குடிமகன் (Citizen)</span>
+                    <span class="text-[9px] text-amber-400 font-normal">Fee Locks</span>
+                </button>
+            </div>
+
+            <!-- Dynamic Content Area -->
+            <div id="familyPersonaContentArea" class="space-y-4"></div>
+
+            <!-- Live Family Query Bar -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-400 font-medium">Ask Family Super-Agent (குரல் அல்லது எழுத்து):</span>
+                    <span id="familyActiveModelBadge" class="text-[10px] font-mono text-amber-400">Meta Wonder 1.0</span>
+                </div>
+                <div class="flex gap-2">
+                    <input id="familyHubInput" type="text" placeholder="எ.கா: 10th Maths quadratic equations அல்லது PMFBY பயிர் இழப்பீடு..."
+                           class="flex-1 bg-slate-900 border border-slate-700 px-3 py-2 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-amber-500"
+                           onkeypress="if(event.key==='Enter') submitFamilyHubQuery()" />
+                    <button onclick="submitFamilyHubQuery()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 text-slate-950 font-black text-xs rounded-xl cursor-pointer transition shadow-md">
+                        Ask SIA 🚀
+                    </button>
+                </div>
+                <div id="familyHubQueryResult" class="hidden text-xs text-slate-200 bg-slate-900/90 border border-emerald-500/30 rounded-xl p-3 leading-relaxed max-h-48 overflow-y-auto"></div>
             </div>
         </div>
     </div>
@@ -3319,6 +3390,275 @@ Dataset is live-conditioned into all Meta Model API & Baseten workflows!`);
                     document.getElementById('travelResultArea').classList.remove('hidden');
                 }
             } catch (err) { alert('Fare calculate error: ' + err.message); }
+        };
+
+        let currentFamilyPersona = 'student';
+
+        window.openFamilyHubModal = function() {
+            document.getElementById('familyHubModal').classList.remove('hidden');
+            switchFamilyPersona('student');
+        };
+
+        window.closeFamilyHubModal = function() {
+            document.getElementById('familyHubModal').classList.add('hidden');
+        };
+
+        window.switchFamilyPersona = async function(persona) {
+            currentFamilyPersona = persona;
+            const tabs = ['student', 'farmer', 'elder', 'citizen'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('famTab_' + t);
+                if (btn) {
+                    if (t === persona) {
+                        btn.className = 'py-2.5 px-2 rounded-xl text-xs font-bold border border-amber-500 bg-amber-950/60 text-amber-200 flex flex-col items-center gap-1 transition shadow-md';
+                    } else {
+                        btn.className = 'py-2.5 px-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 flex flex-col items-center gap-1 transition';
+                    }
+                }
+            });
+
+            const contentArea = document.getElementById('familyPersonaContentArea');
+            const badge = document.getElementById('familyActiveModelBadge');
+
+            if (persona === 'student') {
+                if (badge) badge.innerText = 'Meta Wonder 1.0 & TutO CBT';
+                contentArea.innerHTML = `
+                    <div class="bg-indigo-950/30 border border-indigo-500/40 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🎓</span>
+                                <div>
+                                    <div class="text-sm font-bold text-white">மாணவர் & குழந்தைகள் கல்வி (Student Hub)</div>
+                                    <div class="text-xs text-indigo-300">சமச்சீர் கல்வி 1-12 • 250+ QBank CBT • 80 Ambition வழிகாட்டிகள்</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono bg-indigo-900/80 border border-indigo-400/40 text-indigo-200 px-2 py-0.5 rounded-full">Wonder 1.0</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                            <button onclick="openTestoModal(); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-indigo-900/40 border border-indigo-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">📝</div>
+                                <div class="text-xs font-bold text-white mt-1">CBT Exam Test</div>
+                                <div class="text-[10px] text-slate-400">250+ QBank MCQs</div>
+                            </button>
+                            <button onclick="openSamacheerModal(); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-indigo-900/40 border border-indigo-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">📚</div>
+                                <div class="text-xs font-bold text-white mt-1">1-12 Homework</div>
+                                <div class="text-[10px] text-slate-400">4-Step Derivations</div>
+                            </button>
+                            <button onclick="fetchDailyGkDisplay()" class="p-2.5 bg-slate-900 hover:bg-indigo-900/40 border border-indigo-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">💡</div>
+                                <div class="text-xs font-bold text-white mt-1">Daily GK 365</div>
+                                <div class="text-[10px] text-slate-400">Science Milestones</div>
+                            </button>
+                            <button onclick="fetchAmbitionTracksDisplay()" class="p-2.5 bg-slate-900 hover:bg-indigo-900/40 border border-indigo-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">🚀</div>
+                                <div class="text-xs font-bold text-white mt-1">Ambition Mentor</div>
+                                <div class="text-[10px] text-slate-400">JrIAS, JrJudge, JrDR</div>
+                            </button>
+                        </div>
+                        <div id="studentSubDisplay" class="text-xs text-slate-300 bg-slate-950/70 border border-slate-800 rounded-xl p-3 hidden"></div>
+                    </div>
+                `;
+            } else if (persona === 'farmer') {
+                if (badge) badge.innerText = 'Meta SAM 3.1 & Modal GPU';
+                contentArea.innerHTML = `
+                    <div class="bg-emerald-950/30 border border-emerald-500/40 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🌾</span>
+                                <div>
+                                    <div class="text-sm font-bold text-white">விவசாயிகள் & உழவர் நலன் (Farmer Hub)</div>
+                                    <div class="text-xs text-emerald-300">பயிர் இலை AI ஆய்வு • மண்டி விலை • PMFBY 72-hr மனு • RentO</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono bg-emerald-900/80 border border-emerald-400/40 text-emerald-200 px-2 py-0.5 rounded-full">SAM 3.1 & Modal</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                            <button onclick="openTnauAgriModal(); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">🔬</div>
+                                <div class="text-xs font-bold text-white mt-1">Crop Leaf Scan</div>
+                                <div class="text-[10px] text-slate-400">Lesion Segmentation</div>
+                            </button>
+                            <button onclick="openAgriRentModal(); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">🚜</div>
+                                <div class="text-xs font-bold text-white mt-1">RentO Machinery</div>
+                                <div class="text-[10px] text-slate-400">Tractor & Drone</div>
+                            </button>
+                            <button onclick="fetchMandiPricesDisplay()" class="p-2.5 bg-slate-900 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">📊</div>
+                                <div class="text-xs font-bold text-white mt-1">Mandi Daily Rates</div>
+                                <div class="text-[10px] text-slate-400">Koyambedu & Madurai</div>
+                            </button>
+                        </div>
+                        <div id="farmerSubDisplay" class="text-xs text-slate-300 bg-slate-950/70 border border-slate-800 rounded-xl p-3 hidden"></div>
+                    </div>
+                `;
+            } else if (persona === 'elder') {
+                if (badge) badge.innerText = 'Meta Spark 1.3 & SeamlessM4T v2';
+                contentArea.innerHTML = `
+                    <div class="bg-rose-950/30 border border-rose-500/40 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">👵</span>
+                                <div>
+                                    <div class="text-sm font-bold text-white">முதியோர் & தாய்மார்கள் பாதுகாப்பு (Elder Hub)</div>
+                                    <div class="text-xs text-rose-300">OAP ₹1,000 ஓய்வூதியம் • KMUT ₹1,000 • CMCHIS ₹5 லட்சம்</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono bg-rose-900/80 border border-rose-400/40 text-rose-200 px-2 py-0.5 rounded-full">Spark 1.3</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                            <button onclick="fetchPensionRuleDisplay('oap')" class="p-2.5 bg-slate-900 hover:bg-rose-900/40 border border-rose-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">💰</div>
+                                <div class="text-xs font-bold text-white mt-1">OAP ₹1,000 Pension</div>
+                                <div class="text-[10px] text-slate-400">60+ Doorstep DBT</div>
+                            </button>
+                            <button onclick="fetchPensionRuleDisplay('kmut')" class="p-2.5 bg-slate-900 hover:bg-rose-900/40 border border-rose-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">👩</div>
+                                <div class="text-xs font-bold text-white mt-1">KMUT ₹1,000 Scheme</div>
+                                <div class="text-[10px] text-slate-400">RDO Appeal Redressal</div>
+                            </button>
+                            <button onclick="fetchPensionRuleDisplay('cmchis')" class="p-2.5 bg-slate-900 hover:bg-rose-900/40 border border-rose-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">🏥</div>
+                                <div class="text-xs font-bold text-white mt-1">CMCHIS ₹5L Health</div>
+                                <div class="text-[10px] text-slate-400">Free Hospital Network</div>
+                            </button>
+                        </div>
+                        <div id="elderSubDisplay" class="text-xs text-slate-300 bg-slate-950/70 border border-slate-800 rounded-xl p-3 hidden"></div>
+                    </div>
+                `;
+            } else {
+                if (badge) badge.innerText = 'Meta Spark 1.3 & SAM 3.1';
+                contentArea.innerHTML = `
+                    <div class="bg-amber-950/30 border border-amber-500/40 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🏛️</span>
+                                <div>
+                                    <div class="text-sm font-bold text-white">குடும்பத் தலைவர் & குடியுரிமை (Citizen Hub)</div>
+                                    <div class="text-xs text-amber-300">பட்டா ₹60 கட்டண பூட்டு • ரேஷன் அட்டை • ஆதார் ₹50 • RTI ₹10</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono bg-amber-900/80 border border-amber-400/40 text-amber-200 px-2 py-0.5 rounded-full">Statutory Lock</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                            <button onclick="triggerServiceFlow('patta'); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-amber-900/40 border border-amber-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">🏠</div>
+                                <div class="text-xs font-bold text-white mt-1">Patta Transfer</div>
+                                <div class="text-[10px] text-slate-400">RSO 31 • ₹60 Lock</div>
+                            </button>
+                            <button onclick="triggerServiceFlow('ration'); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-amber-900/40 border border-amber-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">📋</div>
+                                <div class="text-xs font-bold text-white mt-1">Ration Card</div>
+                                <div class="text-[10px] text-slate-400">TNPDS Free ₹0</div>
+                            </button>
+                            <button onclick="openAadhaarModal(); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-amber-900/40 border border-amber-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">🪪</div>
+                                <div class="text-xs font-bold text-white mt-1">Aadhaar Update</div>
+                                <div class="text-[10px] text-slate-400">UIDAI ₹50 Lock</div>
+                            </button>
+                            <button onclick="openRtiModal(); closeFamilyHubModal();" class="p-2.5 bg-slate-900 hover:bg-amber-900/40 border border-amber-500/30 rounded-xl text-left transition cursor-pointer">
+                                <div class="text-base">📜</div>
+                                <div class="text-xs font-bold text-white mt-1">RTI 2005 Draft</div>
+                                <div class="text-[10px] text-slate-400">Statutory ₹10 Fee</div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        window.submitFamilyHubQuery = async function() {
+            const input = document.getElementById('familyHubInput');
+            const resBox = document.getElementById('familyHubQueryResult');
+            const q = (input ? input.value : '').trim();
+            if (!q) return;
+
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<span class="text-amber-400 font-mono animate-pulse">⏳ Meta AI Deliberating query...</span>';
+
+            try {
+                const res = await fetch('/api/sia/family-hub/query', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ query: q, persona: currentFamilyPersona })
+                });
+                const data = await res.json();
+                if (data.reply_ta) {
+                    resBox.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.reply_ta) : data.reply_ta.replace(/\n/g, '<br>');
+                } else {
+                    resBox.innerHTML = JSON.stringify(data, null, 2);
+                }
+            } catch (err) {
+                resBox.innerHTML = '<span class="text-red-400 font-mono">Error: ' + err.message + '</span>';
+            }
+        };
+
+        window.fetchDailyGkDisplay = async function() {
+            const box = document.getElementById('studentSubDisplay');
+            if (!box) return;
+            box.classList.remove('hidden');
+            box.innerHTML = '⏳ Loading Daily GK Milestone...';
+            try {
+                const res = await fetch('/api/sia/gk-daily');
+                const data = await res.json();
+                const m = data.milestone;
+                if (m) {
+                    box.innerHTML = `<strong>${m.icon} ${m.title}</strong><br><p class="mt-1 text-slate-300">${m.micro}</p>`;
+                }
+            } catch (err) { box.innerHTML = 'Error: ' + err.message; }
+        };
+
+        window.fetchAmbitionTracksDisplay = async function() {
+            const box = document.getElementById('studentSubDisplay');
+            if (!box) return;
+            box.classList.remove('hidden');
+            box.innerHTML = '⏳ Loading 8 Ambition Tracks...';
+            try {
+                const res = await fetch('/api/sia/ambition-tracks');
+                const data = await res.json();
+                const tracks = data.tracks || [];
+                box.innerHTML = `
+                    <div class="font-bold text-amber-300 mb-1">🚀 SuprO 8 Ambition Career Pathways:</div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        ${tracks.map(t => `
+                            <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg">
+                                <span class="text-sm">${t.icon}</span> <strong>${t.curriculum}</strong>
+                                <div class="text-[10px] text-slate-400">${t.role} (${t.lesson_count} lessons)</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (err) { box.innerHTML = 'Error: ' + err.message; }
+        };
+
+        window.fetchMandiPricesDisplay = async function() {
+            const box = document.getElementById('farmerSubDisplay');
+            if (!box) return;
+            box.classList.remove('hidden');
+            box.innerHTML = '⏳ Loading Live Mandi Rates...';
+            try {
+                const res = await fetch('/api/sia/family-hub/query', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ query: 'Mandi market price', persona: 'farmer' })
+                });
+                const data = await res.json();
+                box.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.reply_ta || '') : data.reply_ta;
+            } catch (err) { box.innerHTML = 'Error: ' + err.message; }
+        };
+
+        window.fetchPensionRuleDisplay = async function(ruleKey) {
+            const box = document.getElementById('elderSubDisplay');
+            if (!box) return;
+            box.classList.remove('hidden');
+            box.innerHTML = '⏳ Loading Pension Statutory Rules...';
+            try {
+                const res = await fetch('/api/sia/elder-pension');
+                const data = await res.json();
+                const text = data.rules ? data.rules[ruleKey] : '';
+                box.innerHTML = `<strong>📜 Statutory Government Rule:</strong><br><p class="mt-1 text-emerald-300">${text}</p>`;
+            } catch (err) { box.innerHTML = 'Error: ' + err.message; }
         };
 
         window.openTestoModal = function() { document.getElementById('testoModal').classList.remove('hidden'); };
