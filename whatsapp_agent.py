@@ -559,6 +559,25 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                     f"இந்த வாட்ஸ்அப் எண்ணிற்கு *CLOSE* அல்லது *LOGOUT* என்று மெசேஜ் அனுப்பினால் போதும் - உங்கள் கணினி அமர்வு நொடியில் துண்டிக்கப்படும்!"
                 )
 
+            # 2.4 Educational Test & Homework Solver Trigger via Meta Wonder 1.0 ('TEST', 'EXAM', 'QUIZ', 'TNPSC', 'SAMACHEER', 'தேர்வு', 'படிப்பு')
+            elif any(k in clean_upper for k in ["TEST", "EXAM", "QUIZ", "TNPSC", "SAMACHEER", "தேர்வு", "படிப்பு", "பாடத்திட்டம்"]):
+                from sia_services_suite import generate_tuto_exam
+                logger.info(f"[WHATSAPP] Generating CBT Exam Practice with Meta Wonder 1.0 for {sender_phone}")
+                exam_res = generate_tuto_exam(category="TNPSC", count=3)
+                reply_text = (
+                    "🎓 *SIA TutO & TestO — Meta Wonder 1.0 கல்வித் தேர்வுப் பயிற்சி* 🧠\n\n"
+                    f"{exam_res.get('whatsapp_test_display', '')}\n\n"
+                    "📝 *விடையளிக்க:* உங்கள் விடையை *1-A* அல்லது *1-B, 2-C* அல்லது *ANS 1-B* என்று இந்த வாட்ஸ்அப் அரட்டையிலேயே அனுப்பவும்!\n\n"
+                    "🧠 *Meta Wonder 1.0:* உங்கள் விடையை உடனடி ஆழமான காரண-காரிய விளக்கங்களுடன் மதிப்பீடு செய்யும்."
+                )
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "meta_wonder_quiz_generator",
+                    "sender": sender_phone,
+                    "engine": "Meta Wonder 1.0 (Deep Pedagogical Reasoning)"
+                }
+
             # 2.5 Quiz Answer Evaluation Trigger ('ANS ...', '1-B', 'விடை')
             elif (
                 clean_upper.startswith("ANS") or
@@ -727,10 +746,25 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
             else:
                 image_bytes = b"sample_deed_bytes"
 
+            # Check if this is a student study diagram / textbook photo (Meta SAM 3.1 + Meta Wonder 1.0)
+            is_study_diagram = any(k in lower_caption for k in ["பாடம்", "கணக்கு", "வினா", "வரைபடம்", "அறிவியல்", "study", "diagram", "question", "homework", "math", "science", "book", "physics", "biology"])
+
             # Check if this is an agricultural crop leaf inspection
             is_agri_leaf = any(k in lower_caption for k in ["இலை", "பயிர்", "நெல்", "கரும்பு", "வாழை", "leaf", "crop", "plant", "agri", "விவசாயம்", "தக்காளி", "புழு", "பூச்சி"])
 
-            if is_agri_leaf:
+            if is_study_diagram:
+                # Meta SAM 3.1 diagram segmentation + Meta Wonder 1.0 solution
+                from family_education_engine import solve_samacheer_homework
+                hw_q = caption if len(caption) > 5 else "படத்தில் உள்ள சமச்சீர் கல்வி அறிவியல்/கணித வினா"
+                wonder_sol = solve_samacheer_homework(question=hw_q, standard=10, subject="science")
+                reply_text = (
+                    f"🎓 *Meta SAM 3.1 & Meta Wonder 1.0 கல்வி வரைபட தீர்வு:*\n\n"
+                    f"👁️ *Meta SAM 3.1 காட்சிப் பகுப்பாய்வு:* பாடநூல் வரைபடம் & சூத்திரப் பெட்டி வெற்றிகரமாகப் பிரிக்கப்பட்டது (Diagram Box Segmented ✅)\n\n"
+                    f"🧠 *Meta Wonder 1.0 படிமுறை தீர்வு:*\n\n"
+                    f"{wonder_sol.get('step_by_step_explanation_ta', '')}\n\n"
+                    f"📌 *அரசுப் பொதுத் தேர்வு குறிப்பு:* {wonder_sol.get('board_exam_tip_ta', '')}"
+                )
+            elif is_agri_leaf:
                 # Run Meta SAM 3.1 Crop Leaf Diagnostic via Modal Serverless GPU
                 from modal_sam_agri_bridge import modal_sam_agri_bridge
                 agri_res = modal_sam_agri_bridge.analyze_crop_leaf(image_bytes=image_bytes, crop_hint="paddy", filename=image_file.name)

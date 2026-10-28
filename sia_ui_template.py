@@ -1053,8 +1053,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <div class="flex items-center gap-3">
                     <span class="text-2xl">📚</span>
                     <div>
-                        <h3 class="text-base font-bold text-purple-300">சமச்சீர் கல்வி (Standards 1–12)</h3>
-                        <p class="text-xs text-slate-500 font-mono">TNSB Homework & Adaptive Quizzes</p>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-bold text-purple-300">சமச்சீர் கல்வி (Standards 1–12)</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-purple-950 border border-purple-500/50 text-purple-300 animate-pulse">🧠 Meta Wonder 1.0</span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-mono">TNSB Homework & CBT Practice • Deep Pedagogical Reasoning</p>
                     </div>
                 </div>
                 <button onclick="autoFillModule('samacheer')" class="mr-2 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 shadow-sm">⚡ Auto-Fill Class 10 Maths</button>
@@ -1381,6 +1384,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <span>சுவயம் (SWAYAM) IIT இலவசக் கல்வி</span>
     </div>
 
+    <!-- =========================== INTEGRATION ANCHORS & DOMAIN HUBS (BASETEN, RTI, EXAMS, SWAYAM) =========================== -->
+    <div id="centralServicesHub" class="hidden" style="display:none;">
+        <input type="checkbox" id="basetenToggle" class="hidden" />
+        <div id="tab_domain_central">RTI தகவல் பெறும் உரிமை • நாடாளுமன்ற உறுப்பினர் (MP)</div>
+        <div id="tab_domain_aadhaar">ஆதார் முகவரி மாற்றம்</div>
+        <div id="tab_domain_exams">NEET, UPSC & TNPSC • சுவயம் (SWAYAM) IIT கல்வி</div>
+    </div>
     <div id="rtiPetitionModal" class="modal-overlay hidden"></div>
     <div id="mpPetitionModal" class="modal-overlay hidden"></div>
     <div id="aadhaarGuideModal" class="modal-overlay hidden"></div>
@@ -1591,9 +1601,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                     <div>
                         <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                             <span>SIA TutO & TestO Exam Hub</span>
-                            <span class="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-mono">CBT Simulator</span>
+                            <span class="text-[10px] bg-purple-950 text-purple-300 border border-purple-500/50 px-2 py-0.5 rounded-full font-mono font-bold">🧠 Meta Wonder 1.0 CBT</span>
                         </h3>
-                        <p class="text-xs text-slate-400">TNPSC Group 2/4 • Samacheer Kalvi 10th & 12th • Instant Bilingual Scoring</p>
+                        <p class="text-xs text-slate-400">TNPSC Group 1/2/4 • Samacheer Kalvi • Deep Reasoning & Distractor Analysis</p>
                     </div>
                 </div>
                 <button onclick="autoFillModule('testo')" class="mr-2 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 shadow-sm">⚡ Auto-Fill TNPSC Quiz</button>
@@ -2859,16 +2869,59 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             const rd = document.getElementById('samacheerHwResult');
             if (!q) return;
             rd.classList.remove('hidden');
-            rd.innerHTML = '<div class="text-purple-400 animate-pulse text-sm">தீர்வு உருவாக்கப்படுகிறது...</div>';
+            rd.innerHTML = '<div class="text-purple-400 animate-pulse text-sm py-2">🧠 Meta Wonder 1.0 ஆழமான கல்வி பகுப்பாய்வு செய்கிறது...</div>';
             try {
-                const res = await fetch('/api/samacheer-kalvi/homework', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ standard: std, subject: sub, question: q }) });
+                const res = await fetch('/api/samacheer-kalvi/homework', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ standard: std, subject: sub, question: q })
+                });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    const s = data.solution;
-                    let steps = s.step_by_step_explanation_ta.map(x => `<li class="mb-1 text-slate-200 text-sm">${x}</li>`).join('');
-                    rd.innerHTML = `<div class="space-y-2"><div class="font-bold text-purple-300">${s.textbook_unit}</div><div class="bg-purple-950/30 p-2 rounded text-sm text-emerald-300 font-mono">${s.formula_or_theorem || ''}</div><ol class="list-decimal ml-4 text-sm">${steps}</ol><div class="bg-emerald-950/30 p-2 rounded text-sm text-emerald-300">🎯 ${s.exam_tips_and_marks}</div></div>`;
+                    const s = data.solution || data;
+                    let expTa = s.step_by_step_explanation_ta || '';
+                    let stepsHtml = '';
+                    if (Array.isArray(expTa)) {
+                        stepsHtml = expTa.map(x => `<li class="mb-1 text-slate-200 text-sm">${x}</li>`).join('');
+                        stepsHtml = `<ol class="list-decimal ml-4 text-sm space-y-1">${stepsHtml}</ol>`;
+                    } else {
+                        stepsHtml = `<div class="text-slate-200 text-sm leading-relaxed whitespace-pre-line">${expTa}</div>`;
+                    }
+                    
+                    let tracesHtml = '';
+                    if (data.reasoning_traces && Array.isArray(data.reasoning_traces)) {
+                        tracesHtml = `
+                            <div class="mt-2.5 p-2 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs">
+                                <div class="font-bold text-purple-300 font-mono text-[10px] mb-1">🧠 Meta Wonder 1.0 Pedagogical Reasoning Steps:</div>
+                                <div class="space-y-1 text-slate-300 text-[11px]">
+                                    ${data.reasoning_traces.map(t => `<div>• <strong>${t.title}</strong>: <span class="text-slate-400">${t.description}</span></div>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    const unitName = s.textbook_unit || `${data.standard || ''} ${data.subject || ''}`;
+                    const formula = s.formula_or_theorem || (s.formulae_and_units ? s.formulae_and_units.join(' • ') : '');
+                    const tip = s.board_exam_tip_ta || s.exam_tips_and_marks || '';
+                    
+                    rd.innerHTML = `
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between border-b border-purple-500/30 pb-1.5">
+                                <span class="font-bold text-purple-300 text-xs">${unitName}</span>
+                                <span class="text-[9px] font-mono text-purple-200 bg-purple-900/60 border border-purple-400/40 px-2 py-0.5 rounded-full">🧠 Meta Wonder 1.0</span>
+                            </div>
+                            ${formula ? `<div class="bg-purple-950/30 p-2 rounded text-xs text-emerald-300 font-mono">${formula}</div>` : ''}
+                            ${stepsHtml}
+                            ${tracesHtml}
+                            ${tip ? `<div class="bg-amber-950/40 border border-amber-500/30 p-2 rounded text-xs text-amber-200">💡 <strong>அரசு தேர்வு குறிப்பு:</strong> ${tip}</div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    rd.innerHTML = '<div class="text-rose-400 text-sm">தீர்வு பெறுவதில் பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.</div>';
                 }
-            } catch (e) { rd.innerHTML = `<div class="text-red-400">${e.message}</div>`; }
+            } catch (e) {
+                rd.innerHTML = '<div class="text-rose-400 text-sm">இணைப்பு பிழை ஏற்பட்டது: ' + e.message + '</div>';
+            }
         };
 
         window.loadSamacheerQuiz = async function() {
