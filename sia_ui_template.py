@@ -380,12 +380,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
                             <!-- 🎛️ Dual-Mode Access Switcher Tabs -->
                             <div class="flex items-center p-1 bg-slate-950 border border-slate-800 rounded-xl gap-1">
-                                <button id="authTabJudgeBtn" onclick="switchAuthTab('judge')"
+                                <button id="authTabJudgeBtn" type="button" onclick="switchAuthTab('judge')"
                                         class="flex-1 py-1.5 px-3 rounded-lg text-xs font-black font-orbitron transition cursor-pointer flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 shadow-md">
                                     <span>⚡</span>
                                     <span>Judge Express Pass</span>
                                 </button>
-                                <button id="authTabWaBtn" onclick="switchAuthTab('whatsapp')"
+                                <button id="authTabWaBtn" type="button" onclick="switchAuthTab('whatsapp')"
                                         class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer flex items-center justify-center gap-1.5">
                                     <span>📱</span>
                                     <span>WhatsApp Login</span>
@@ -414,11 +414,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                                 </div>
 
                                 <div class="text-[11px] text-slate-300">
-                                    👤 Citizen: <strong class="text-white">ர. சுப்பிரமணியன் (R. Subramanian)</strong> • Madurai (Pre-verified Vault & Land Deeds)
+                                    👤 Profile: <strong class="text-white">Citizen Account (குடிமகன் கணக்கு)</strong> • Madurai (Pre-verified Vault & Land Deeds)
                                 </div>
 
                                 <!-- 1-Click Instant Unlock & Open Dashboard Button -->
-                                <button onclick="instantJudgeUnlock()"
+                                <button id="instantJudgeUnlockBtn" type="button" onclick="instantJudgeUnlock()"
                                         class="w-full py-3 bg-gradient-to-r from-[#FF9933] via-[#F59E0B] to-[#10B981] hover:from-[#EA580C] hover:to-[#059669] text-slate-950 font-black text-xs sm:text-sm rounded-xl transition duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99]">
                                     <span>⚡ 1-Click Instant Unlock & Open Dashboard ➜</span>
                                 </button>
@@ -653,6 +653,20 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                             Send message, voice note, or deed photo for instant AI resolution!
                         </div>
                     </div>
+
+                    <!-- 🧠 Bio-Cognitive Telemetry HUD (3D Neural Brain & Heartbeat EKG) -->
+                    <div class="mt-3 grid grid-cols-2 gap-2">
+                        <div class="h-28 rounded-xl overflow-hidden border border-emerald-500/25 bg-slate-950/95 relative shadow-inner">
+                            <canvas id="neuralBrainCanvas" class="w-full h-full cursor-grab active:cursor-grabbing" style="display:block"></canvas>
+                            <div class="absolute bottom-1 right-2 text-[9px] font-mono text-slate-500 pointer-events-none">3D Neural Brain</div>
+                        </div>
+                        <div class="h-28 rounded-xl overflow-hidden border border-rose-500/25 bg-slate-950/95 relative shadow-inner">
+                            <canvas id="heartbeatEkgCanvas" class="w-full h-full" style="display:block"></canvas>
+                            <div class="absolute bottom-1 right-2 text-[9px] font-mono text-slate-500 pointer-events-none">Live Biometric EKG</div>
+                        </div>
+                    </div>
+                    <!-- Hidden Talking Avatar Canvas to maintain drawAvatar animation loop -->
+                    <canvas id="talkingAvatarCanvas" width="240" height="240" class="hidden"></canvas>
 
                     <!-- 3 Direct WhatsApp Action Channels -->
                     <div class="space-y-1.5 mt-3">
@@ -940,7 +954,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             </div>
             <div id="vaultProfileSummary" class="bg-slate-950 p-3 rounded-xl border border-cyan-500/20 flex items-center justify-between text-sm">
                 <div>
-                    <span id="vaultProfileName" class="font-bold text-slate-200 block">ர. சுப்பிரமணியன்</span>
+                    <span id="vaultProfileName" class="font-bold text-slate-200 block">Citizen / குடிமகன்</span>
                     <span id="vaultProfileMeta" class="text-slate-500 text-xs">மாவட்டம்: மதுரை • குடும்பம்: 4 பேர்</span>
                 </div>
                 <div class="text-right font-mono text-xs">
@@ -1350,7 +1364,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <button onclick="closeGreetingPosterModal()" class="text-slate-400 hover:text-white px-3 py-1 rounded-lg bg-slate-800 text-sm cursor-pointer">✕ Close</button>
             </div>
             <div class="space-y-3">
-                <input type="text" id="greetingCitizenName" placeholder="உங்கள் பெயர் / Your Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200">
+                <input type="text" id="greetingCitizenName" placeholder="Citizen / குடிமகன்" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200">
                 <input type="text" id="greetingOccasion" placeholder="திருவிழா / Occasion (எ.கா. பொங்கல், தீபாவளி)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200">
                 <button onclick="generateCivicGreetingPoster()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold rounded-xl transition cursor-pointer">வாழ்த்து அட்டை உருவாக்கு (Generate Poster)</button>
                 <div id="greetingResult" class="hidden space-y-2 pt-2 border-t border-slate-800"></div>
@@ -1743,8 +1757,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         // 1. 🧠 NEURAL BRAIN — 280 nodes, glow, synapse firing
         // ════════════════════════════════════════════════════════
         const brainCanvas = document.getElementById('neuralBrainCanvas');
-        if (!brainCanvas) return;
-        const bCtx = brainCanvas.getContext('2d');
+        const bCtx = brainCanvas ? brainCanvas.getContext('2d') : null;
         let brainNodes = [];
         const NUM_NODES = 280;
         let brainRotX = 0.3, brainRotY = 0;
@@ -1753,9 +1766,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         let synapseFlash = -1; // index of currently flashing synapse pair
 
         function resizeBrainCanvas() {
+            if (!brainCanvas || !brainCanvas.parentElement) return;
             const r = brainCanvas.parentElement.getBoundingClientRect();
-            brainCanvas.width = r.width;
-            brainCanvas.height = r.height;
+            brainCanvas.width = r.width || 200;
+            brainCanvas.height = r.height || 112;
         }
 
         function initBrain() {
@@ -1777,6 +1791,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         }
 
         function drawBrain() {
+            if (!brainCanvas || !bCtx) return;
             const W = brainCanvas.width, H = brainCanvas.height;
             if (W === 0 || H === 0) { requestAnimationFrame(drawBrain); return; }
             bCtx.clearRect(0, 0, W, H);
@@ -1880,16 +1895,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         // 2. 💓 HEARTBEAT EKG — smooth Bézier, medical grid, glow dot
         // ════════════════════════════════════════════════════════
         const ekgCanvas = document.getElementById('heartbeatEkgCanvas');
-        if (!ekgCanvas) return;
-        const eCtx = ekgCanvas.getContext('2d');
+        const eCtx = ekgCanvas ? ekgCanvas.getContext('2d') : null;
         let ekgData = [];
         const EKG_MAX = 200;
         let ekgStep = 0;
 
         function resizeEkgCanvas() {
+            if (!ekgCanvas || !ekgCanvas.parentElement) return;
             const r = ekgCanvas.parentElement.getBoundingClientRect();
-            ekgCanvas.width = r.width;
-            ekgCanvas.height = r.height;
+            ekgCanvas.width = r.width || 200;
+            ekgCanvas.height = r.height || 112;
         }
 
         function ekgWave(t) {
@@ -1905,6 +1920,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         }
 
         function drawEkg() {
+            if (!ekgCanvas || !eCtx) return;
             const W = ekgCanvas.width, H = ekgCanvas.height;
             if (W === 0 || H === 0) { requestAnimationFrame(drawEkg); return; }
 
@@ -2205,12 +2221,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         // INIT — start canvases after DOM ready
         // ════════════════════════════════════════════════════════
         function initAll() {
-            resizeBrainCanvas();
-            resizeEkgCanvas();
-            initBrain();
-            drawBrain();
-            drawEkg();
-            drawAvatar();
+            try { resizeBrainCanvas(); } catch(e) {}
+            try { resizeEkgCanvas(); } catch(e) {}
+            try { initBrain(); } catch(e) {}
+            try { drawBrain(); } catch(e) {}
+            try { drawEkg(); } catch(e) {}
+            try { drawAvatar(); } catch(e) {}
         }
         initAll();
         window.addEventListener('resize', () => { resizeBrainCanvas(); resizeEkgCanvas(); });
@@ -2500,9 +2516,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             rec.start();
         };
 
-        function unlockAppleDesktop(user) {
+                function unlockAppleDesktop(user) {
             isDesktopUnlocked = true;
-            if (user) currentUser = user;
+            if (user) {
+                currentUser = Object.assign({}, currentUser, user, { name: (currentLang === 'ta') ? 'குடிமகன்' : 'Citizen' });
+            }
 
             // Unveil the main authenticated desktop
             const desk = document.getElementById('authenticatedDesktopView');
@@ -2523,7 +2541,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
             // Update Apple Top Bar
             const nameEl = document.getElementById('appleCitizenNameDisplay');
-            if (nameEl) nameEl.innerText = currentUser.name || currentUser.phone || 'Citizen';
+            if (nameEl) nameEl.innerText = (currentLang === 'ta') ? 'குடிமகன்' : 'Citizen';
 
             const pill = document.getElementById('appleCitizenPill');
             if (pill) pill.classList.remove('hidden');
@@ -2535,8 +2553,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             loadUserProfile();
             setTimeout(() => { if (typeof resizeBrainCanvas==='function') resizeBrainCanvas(); if (typeof resizeEkgCanvas==='function') resizeEkgCanvas(); if (typeof initCognitiveStream==='function') initCognitiveStream(); }, 120);
         }
+        window.unlockAppleDesktop = unlockAppleDesktop;
 
-        window.lockAppleDesktop = function() {
+        function lockAppleDesktop() {
             isDesktopUnlocked = false;
 
             // Blur the desktop
@@ -2559,21 +2578,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             const lockBtn = document.getElementById('appleLockBtn');
             if (lockBtn) lockBtn.classList.add('hidden');
 
-            // Switch to PIN step if phone is valid 10 digits; otherwise keep Step 1 phone input visible
-            const sPhone = document.getElementById('appleStepPhone');
-            const sPin = document.getElementById('appleStepPin');
-            if (currentUser.phone && currentUser.phone.length === 10) {
-                if (sPhone && sPin) {
-                    sPhone.classList.add('hidden');
-                    sPin.classList.remove('hidden');
-                }
-            } else {
-                if (sPhone && sPin) {
-                    sPhone.classList.remove('hidden');
-                    sPin.classList.add('hidden');
-                }
-            }
-        };
+            const pill = document.getElementById('appleCitizenPill');
+            if (pill) pill.classList.add('hidden');
+        }
+        window.lockAppleDesktop = lockAppleDesktop;
 
         function showKillSwitchLockout() {
             lockAppleDesktop();
@@ -3425,7 +3433,7 @@ ${data.image_url}`);
             } catch (e) {
                 console.warn('Instant unlock fallback:', e);
                 unlockAppleDesktop({
-                    name: "ர. சுப்பிரமணியன் (R. Subramanian)",
+                    name: "Citizen",
                     phone: "6381029380",
                     district: "Madurai",
                     pin: "7890"
@@ -3707,7 +3715,7 @@ ${data.image_url}`);
                 setTimeout(() => {
                     const nInp = document.getElementById('greetingCitizenName');
                     const oInp = document.getElementById('greetingOccasion');
-                    if (nInp) nInp.value = "ர. சுப்பிரமணியன் (R. Subramanian)";
+                    if (nInp) nInp.value = "Citizen";
                     if (oInp) oInp.value = "தீபாவளி மற்றும் பொங்கல் திருநாள் நல்வாழ்த்துகள் (Vadipatti Farmers Association)";
                     showAuthBanner('⚡ Auto-Filled Civic Festival Greeting Poster!');
                 }, 300);
@@ -4132,7 +4140,7 @@ ${data.image_url}`);
         try {
             if (sessionStorage.getItem('sia_dev_unlocked') === '1' || window.location.search.includes('dev=1')) {
                 unlockAppleDesktop({
-                    name: "ர. சுப்பிரமணியன் (R. Subramanian)",
+                    name: "Citizen",
                     phone: "6381029380",
                     district: "Madurai",
                     pin: "7890"
