@@ -235,18 +235,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </div>
     </nav>
 
-    <!-- ═══════════ APPLE DESKTOP LOGIN WINDOW ═══════════ -->
-    <div id="appleDesktopAuthOverlay" class="fixed inset-0 top-12 z-40 bg-[#030612]/95 backdrop-blur-3xl overflow-y-auto flex flex-col justify-start md:justify-center items-center p-3 sm:p-5 md:p-8 transition-all duration-700">
-        <!-- Ambient Indian Flag (Tiranga) Glow Orbs -->
+    <!-- ═══════════ APPLE DESKTOP LOGIN WINDOW (SUPER INTELLIGENT ERA 2027) ═══════════ -->
+    <div id="appleDesktopAuthOverlay" class="fixed inset-0 top-12 z-40 bg-[#030612]/95 backdrop-blur-3xl overflow-y-auto flex flex-col justify-start md:justify-center items-center p-3 sm:p-5 md:p-6 transition-all duration-700">
+        <!-- Ambient Indian Flag (Tiranga) & Cyberpunk Glow Orbs -->
         <div class="absolute w-[500px] h-[500px] bg-[#FF9933]/15 rounded-full blur-[140px] pointer-events-none -top-24 -left-24"></div>
-        <div class="absolute w-[450px] h-[450px] bg-[#0284C7]/12 rounded-full blur-[130px] pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-        <div class="absolute w-[500px] h-[500px] bg-[#138808]/15 rounded-full blur-[140px] pointer-events-none -bottom-24 -right-24"></div>
+        <div class="absolute w-[450px] h-[450px] bg-[#06B6D4]/12 rounded-full blur-[130px] pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute w-[500px] h-[500px] bg-[#10B981]/15 rounded-full blur-[140px] pointer-events-none -bottom-24 -right-24"></div>
 
-        <!-- The Apple Frosted Glass Window: Responsive on Desktop & Mobile, Neatly Centered -->
-        <div id="appleWindowCard" class="relative max-w-lg md:max-w-4xl lg:max-w-5xl w-full my-auto bg-slate-900/90 backdrop-blur-3xl border border-amber-500/25 rounded-3xl apple-window-shadow transition-all duration-500 overflow-hidden shadow-2xl">
+        <!-- The Frosted Glass Quantum Window: Fully Responsive, No Cut-Off, Scrollable if needed -->
+        <div id="appleWindowCard" class="relative max-w-lg md:max-w-4xl lg:max-w-5xl w-full my-auto max-h-[calc(100vh-4rem)] overflow-y-auto custom-scroll bg-slate-950/85 backdrop-blur-3xl border border-emerald-500/35 rounded-3xl apple-window-shadow transition-all duration-500 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.9),0_0_50px_rgba(16,185,129,0.18)]">
             
-            <!-- Window Title Bar with macOS dots and Tiranga badge -->
-            <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800/90 bg-slate-950/70">
+            <!-- Window Title Bar with macOS Action Dots and Tiranga Badge -->
+            <div class="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 py-2.5 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-md">
                 <div class="flex items-center gap-2 group/dots">
                     <!-- 🔴 Red Dot: Session Close & Remote Kill-Switch -->
                     <button onclick="sessionClose()"
@@ -270,8 +270,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                     </button>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-slate-300 font-orbitron tracking-wider">SIA • SUPER INTELLIGENT AGENT</span>
-                    <span class="inline-flex items-center gap-1.5 text-[10px] font-mono text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2.5 py-0.5 rounded-full"><svg class="w-4 h-2.5 rounded-[1px] overflow-hidden inline-block shadow-sm" viewBox="0 0 30 20"><rect width="30" height="6.67" fill="#FF9933"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.5" fill="#000080"/></svg><span>Tiranga Edition</span></span>
+                    <span class="text-xs font-bold text-slate-300 font-orbitron tracking-wider">SIA 2027 • SUPER INTELLIGENT ACCESS GATEWAY</span>
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-mono text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2 py-0.5 rounded-full">
+                        <svg class="w-3.5 h-2 rounded-[1px] overflow-hidden inline-block shadow-sm" viewBox="0 0 30 20"><rect width="30" height="6.67" fill="#FF9933"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.5" fill="#000080"/></svg>
+                        <span>Tiranga Edition</span>
+                    </span>
                 </div>
                 <div class="text-[11px] font-mono text-emerald-400 hidden sm:flex items-center gap-1.5">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -280,29 +283,29 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             </div>
 
             <!-- Responsive 2-Column Grid on Desktop / Clean Centered Column on Mobile -->
-            <div class="p-4 sm:p-6 lg:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center">
+            <div class="p-4 sm:p-6 lg:p-7">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-7 items-center">
                     
                     <!-- LEFT COLUMN: Brand Hero, SuprO Logo, Tiranga Hologram & Title -->
-                    <div class="md:col-span-5 flex flex-col items-center justify-center text-center p-4 sm:p-6 bg-slate-950/70 rounded-2xl border border-slate-800/80 relative overflow-hidden">
+                    <div class="md:col-span-5 flex flex-col items-center justify-center text-center p-4 sm:p-5 bg-slate-950/80 rounded-2xl border border-slate-800/90 relative overflow-hidden shadow-inner">
                         <!-- Subtle Background Glow inside left panel -->
-                        <div class="absolute -top-10 -left-10 w-40 h-40 bg-[#FF9933]/15 rounded-full blur-3xl pointer-events-none"></div>
-                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-[#138808]/15 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="absolute -top-10 -left-10 w-36 h-36 bg-[#FF9933]/15 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="absolute -bottom-10 -right-10 w-36 h-36 bg-[#10B981]/15 rounded-full blur-3xl pointer-events-none"></div>
 
-                        <!-- 3D Holographic Neural Core with Tiranga Orbits -->
-                        <div class="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center avatar-breathe cursor-pointer select-none group my-2" onclick="triggerCompanionWelcome()">
+                        <!-- 3D Holographic Living Core with Tiranga Orbits & IST Chronometer -->
+                        <div class="relative w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center avatar-breathe cursor-pointer select-none group my-1" onclick="triggerCompanionWelcome()" title="Click for Voice Greeting">
                             <!-- Saffron Outer Orbit -->
-                            <div class="holo-ring-1 absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full border border-[#FF9933]/60 pointer-events-none shadow-[0_0_20px_rgba(255,153,51,0.3)]"></div>
+                            <div class="holo-ring-1 absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full border border-[#FF9933]/60 pointer-events-none shadow-[0_0_20px_rgba(255,153,51,0.3)] animate-spin" style="animation-duration: 25s;"></div>
                             <!-- India Green Inner Orbit -->
-                            <div class="holo-ring-2 absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full border border-[#10B981]/60 pointer-events-none shadow-[0_0_20px_rgba(16,185,129,0.3)]"></div>
+                            <div class="holo-ring-2 absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-[#10B981]/60 pointer-events-none shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-spin" style="animation-duration: 18s; animation-direction: reverse;"></div>
 
                             <!-- Glowing Chamfered Glass Pod with SuprO Brand Logo -->
-                            <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl bg-slate-950/95 border border-sky-500/40 p-2 flex items-center justify-center shadow-[0_0_35px_rgba(2,132,199,0.35)] transition-all duration-300 group-hover:scale-105 group-hover:border-amber-400">
+                            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-slate-950/95 border border-sky-500/40 p-2 flex items-center justify-center shadow-[0_0_35px_rgba(2,132,199,0.35)] transition-all duration-300 group-hover:scale-105 group-hover:border-amber-400">
                                 <img src="/static/supro_logo.png" alt="SIA Logo" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_0_25px_rgba(255,153,51,0.6)]" />
                             </div>
+
                             <!-- 🇮🇳 INDIAN STANDARD TIME (IST) ORBITAL CHRONOMETER TRACK -->
-                            <div class="absolute inset-0 m-auto w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-dashed border-emerald-500/30 pointer-events-none shadow-[0_0_25px_rgba(16,185,129,0.15)] flex items-center justify-center">
-                                <!-- 4 Cardinal Clock Marks (12, 3, 6, 9) -->
+                            <div class="absolute inset-0 m-auto w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-dashed border-emerald-500/30 pointer-events-none shadow-[0_0_25px_rgba(16,185,129,0.15)] flex items-center justify-center">
                                 <span class="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]" title="12 o'clock (00s)"></span>
                                 <span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" title="6 o'clock (30s)"></span>
                                 <span class="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" title="3 o'clock (15s)"></span>
@@ -311,15 +314,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
                             <!-- 🇮🇳 IST REVOLVING CLOCK ARM & ORBITING GREEN BALL -->
                             <div id="istClockArm" class="absolute inset-0 pointer-events-none" style="transform: rotate(0deg); will-change: transform;">
-                                <!-- Holographic Clock Pointer Hand -->
                                 <div class="absolute top-1/2 left-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/40 to-emerald-400 origin-left -translate-y-1/2 pointer-events-none"></div>
-
-                                <!-- The Revolving Green Orb (Indian Standard Time Satellite Hand) -->
                                 <div id="istGreenOrb" class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 pointer-events-auto cursor-pointer group/orb"
                                      title="🇮🇳 Indian Standard Time (IST) Chronometer • Rotates with Indian Time">
                                     <div class="absolute -inset-1 rounded-full bg-emerald-400/50 animate-ping"></div>
                                     <div class="relative w-4 h-4 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-300 to-green-500 border-2 border-slate-950 shadow-[0_0_15px_#10B981,0_0_25px_#34d399] group-hover/orb:scale-125 transition-transform duration-200"></div>
-                                    <!-- Dynamic Light Tail Trail -->
                                     <div class="absolute -left-2.5 top-1 w-2.5 h-2 rounded-full bg-emerald-400/40 blur-[2px] pointer-events-none"></div>
                                 </div>
                             </div>
@@ -334,25 +333,25 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                         </div>
 
                         <!-- Grand App Title in Indian Flag Gradient -->
-                        <div class="space-y-1.5 mt-1.5">
-                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-orbitron bg-gradient-to-r from-[#FF9933] via-white to-[#10B981] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(255,153,51,0.5)]">
+                        <div class="space-y-1 mt-1">
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-orbitron bg-gradient-to-r from-[#FF9933] via-white to-[#10B981] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,153,51,0.5)]">
                                 SIA
                             </h1>
-                            <div class="text-xs sm:text-sm font-extrabold tracking-widest font-orbitron uppercase flex items-center justify-center gap-1.5 flex-wrap">
-                                <span class="w-2 h-2 rounded-full bg-[#FF9933] animate-pulse"></span>
+                            <div class="text-[11px] sm:text-xs font-extrabold tracking-widest font-orbitron uppercase flex items-center justify-center gap-1.5 flex-wrap">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#FF9933] animate-pulse"></span>
                                 <span class="text-[#FF9933]">SUPER INTELLIGENT AGENT</span>
-                                <span class="text-white">•</span>
+                                <span class="text-white/60">•</span>
                                 <span class="text-[#10B981]">மக்கள் AI</span>
-                                <span class="inline-flex items-center"><svg class="w-4 h-2.5 rounded-[1px] overflow-hidden inline-block shadow-sm" viewBox="0 0 30 20"><rect width="30" height="6.67" fill="#FF9933"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.5" fill="#000080"/></svg></span>
+                                <span class="inline-flex items-center"><svg class="w-3.5 h-2 rounded-[1px] overflow-hidden inline-block shadow-sm" viewBox="0 0 30 20"><rect width="30" height="6.67" fill="#FF9933"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.5" fill="#000080"/></svg></span>
                             </div>
-                            <div class="inline-flex items-center gap-1.5 bg-slate-900/90 border border-sky-500/40 px-3 py-1 rounded-full text-[10px] font-mono text-sky-300 mt-1">
+                            <div class="inline-flex items-center gap-1.5 bg-slate-900/90 border border-sky-500/40 px-2.5 py-0.5 rounded-full text-[9px] font-mono text-sky-300 mt-0.5">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#0284C7] animate-pulse"></span>
                                 <span>META AI DEVELOPER HACKATHON 2026</span>
                             </div>
                         </div>
 
                         <!-- WhatsApp Direct Link Pill -->
-                        <a href="https://wa.me/916381029380?text=Hi%20SIA" target="_blank" class="mt-3.5 inline-flex items-center gap-2 bg-slate-950/90 hover:bg-slate-900 border border-emerald-500/40 px-3.5 py-1.5 rounded-full text-xs text-emerald-300 font-mono shadow-[0_0_15px_rgba(16,185,129,0.2)] transition cursor-pointer">
+                        <a href="https://wa.me/916381029380?text=Hi%20SIA" target="_blank" class="mt-2.5 inline-flex items-center gap-2 bg-slate-950/90 hover:bg-slate-900 border border-emerald-500/40 px-3 py-1 rounded-full text-[11px] text-emerald-300 font-mono shadow-[0_0_15px_rgba(16,185,129,0.2)] transition cursor-pointer">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span class="font-bold">WhatsApp: +91 6381029380</span>
                         </a>
@@ -361,15 +360,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                     <!-- RIGHT COLUMN: Authentication & Services Action Console -->
                     <div class="md:col-span-7 flex flex-col justify-center text-left">
                         
-                        <!-- STEP 1: SINGLE INPUTBOX -->
-                        <div id="appleStepPhone" class="space-y-4">
+                        <!-- STEP 1: LOGIN CHOICES (TABBED / STREAMLINED - NO CUT OFF) -->
+                        <div id="appleStepPhone" class="space-y-3">
                             <!-- Elevated Header -->
                             <div class="space-y-1">
-                                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-500/40 text-[10px] font-mono text-amber-300">
+                                <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-500/40 text-[9px] font-mono text-amber-300">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    <span>META AI DEVELOPER HACKATHON 2026 • OFFICIAL ACCESS GATEWAY</span>
+                                    <span>OFFICIAL ACCESS GATEWAY • 2027 REAL-WORLD SUPER INTELLIGENCE</span>
                                 </div>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-orbitron">
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight font-orbitron">
                                     WhatsApp Fast Login & Evaluator Pass
                                 </h2>
                                 <p class="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap">
@@ -379,23 +378,37 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                                 </p>
                             </div>
 
-                            <!-- 🏆 PRIORITY 1: META HACKATHON EVALUATOR EXPRESS PASS (1-CLICK UNLOCK) -->
-                            <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-amber-500/15 via-slate-950 to-emerald-500/15 border-2 border-amber-500/60 shadow-[0_0_25px_rgba(245,158,11,0.25)] space-y-3 text-left">
-                                <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
+                            <!-- 🎛️ Dual-Mode Access Switcher Tabs -->
+                            <div class="flex items-center p-1 bg-slate-950 border border-slate-800 rounded-xl gap-1">
+                                <button id="authTabJudgeBtn" onclick="switchAuthTab('judge')"
+                                        class="flex-1 py-1.5 px-3 rounded-lg text-xs font-black font-orbitron transition cursor-pointer flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 shadow-md">
+                                    <span>⚡</span>
+                                    <span>Judge Express Pass</span>
+                                </button>
+                                <button id="authTabWaBtn" onclick="switchAuthTab('whatsapp')"
+                                        class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer flex items-center justify-center gap-1.5">
+                                    <span>📱</span>
+                                    <span>WhatsApp Login</span>
+                                </button>
+                            </div>
+
+                            <!-- 🏆 TAB 1: META HACKATHON EVALUATOR EXPRESS PASS (1-CLICK UNLOCK) -->
+                            <div id="authPaneJudge" class="p-3.5 rounded-2xl bg-gradient-to-br from-amber-500/15 via-slate-950 to-emerald-500/15 border-2 border-amber-500/50 shadow-[0_0_25px_rgba(245,158,11,0.2)] space-y-2.5 text-left">
+                                <div class="flex items-center justify-between border-b border-amber-500/30 pb-1.5">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-2.5 rounded-[1px] overflow-hidden inline-block shadow-sm" viewBox="0 0 30 20"><rect width="30" height="6.67" fill="#FF9933"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.5" fill="#000080"/></svg>
                                         <span class="text-xs font-black text-amber-300 font-orbitron uppercase tracking-wider">🏆 Hackathon Judge Express Pass</span>
                                     </div>
-                                    <span class="text-[10px] font-mono font-bold bg-emerald-950 border border-emerald-500/50 text-emerald-300 px-2 py-0.5 rounded-full animate-pulse">OFFICIAL DEMO</span>
+                                    <span class="text-[9px] font-mono font-bold bg-emerald-950 border border-emerald-500/50 text-emerald-300 px-2 py-0.5 rounded-full animate-pulse">OFFICIAL DEMO</span>
                                 </div>
                                 
                                 <div class="grid grid-cols-2 gap-2 text-xs">
                                     <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
-                                        <span class="text-[10px] text-slate-400 block">Official Cloud WhatsApp:</span>
+                                        <span class="text-[9px] text-slate-400 block">Official Cloud WhatsApp:</span>
                                         <strong class="text-emerald-400 font-mono text-xs">+91 6381029380</strong>
                                     </div>
                                     <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
-                                        <span class="text-[10px] text-slate-400 block">Evaluator Model PIN:</span>
+                                        <span class="text-[9px] text-slate-400 block">Evaluator Model PIN:</span>
                                         <strong class="text-amber-300 font-mono text-xs">7890</strong>
                                     </div>
                                 </div>
@@ -404,15 +417,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                                     👤 Citizen: <strong class="text-white">ர. சுப்பிரமணியன் (R. Subramanian)</strong> • Madurai (Pre-verified Vault & Land Deeds)
                                 </div>
 
-                                <!-- 1-Click Instant Unlock & Guided Tour Button -->
+                                <!-- 1-Click Instant Unlock & Open Dashboard Button -->
                                 <button onclick="instantJudgeUnlock()"
-                                        class="w-full py-3.5 bg-gradient-to-r from-[#FF9933] via-[#F59E0B] to-[#10B981] hover:from-[#EA580C] hover:to-[#059669] text-slate-950 font-black text-xs sm:text-sm rounded-xl transition duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99]">
+                                        class="w-full py-3 bg-gradient-to-r from-[#FF9933] via-[#F59E0B] to-[#10B981] hover:from-[#EA580C] hover:to-[#059669] text-slate-950 font-black text-xs sm:text-sm rounded-xl transition duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99]">
                                     <span>⚡ 1-Click Instant Unlock & Open Dashboard ➜</span>
                                 </button>
                             </div>
 
-                            <!-- 📱 PRIORITY 2: TEST WITH YOUR OWN WHATSAPP NUMBER -->
-                            <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-2xl space-y-3 text-left">
+                            <!-- 📱 TAB 2: TEST WITH YOUR OWN WHATSAPP NUMBER -->
+                            <div id="authPaneWhatsApp" class="hidden bg-slate-950/80 border border-slate-800 p-3.5 rounded-2xl space-y-2.5 text-left">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
                                         <span>📲 Test Live with Your Own WhatsApp Number</span>
@@ -451,92 +464,53 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                                 <div id="applePhoneErrorMsg" class="text-xs text-red-400 hidden"></div>
                             </div>
 
-                            <!-- 4 Flagship Cyber-Glass Service Pillars -->
-                            <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-800/80">
-                                <div class="group relative bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/30 hover:border-amber-400 transition cursor-pointer overflow-hidden" onclick="fillApplePhone('6381029380')">
-                                    <div class="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
-                                    <div class="flex items-center gap-2 pl-1">
-                                        <span class="text-base flex-shrink-0 group-hover:scale-110 transition">🚗</span>
-                                        <div class="overflow-hidden">
-                                            <div class="text-[11px] font-bold text-amber-300 font-orbitron truncate">RideO • Travel</div>
-                                            <div class="text-[10px] text-slate-400 truncate">Temple Tours & Fare Lock</div>
-                                        </div>
-                                    </div>
+                            <!-- 4 Flagship Cyber-Glass Service Pillars (Compact row) -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-slate-800/80">
+                                <div class="bg-slate-950/80 p-2 rounded-xl border border-amber-500/30 hover:border-amber-400 transition cursor-pointer text-left" onclick="fillApplePhone('6381029380')">
+                                    <div class="text-xs font-bold text-amber-300 flex items-center gap-1 truncate"><span>🚗</span> <span>RideO</span></div>
+                                    <div class="text-[9px] text-slate-400 truncate">Travel & Fares</div>
                                 </div>
-                                <div class="group relative bg-slate-950/80 p-2.5 rounded-xl border border-sky-500/30 hover:border-sky-400 transition cursor-pointer overflow-hidden" onclick="fillApplePhone('6381029380')">
-                                    <div class="absolute top-0 left-0 w-1 h-full bg-sky-400"></div>
-                                    <div class="flex items-center gap-2 pl-1">
-                                        <span class="text-base flex-shrink-0 group-hover:scale-110 transition">🎓</span>
-                                        <div class="overflow-hidden">
-                                            <div class="text-[11px] font-bold text-sky-300 font-orbitron truncate">TestO • Exam CBT</div>
-                                            <div class="text-[10px] text-slate-400 truncate">TNPSC & Samacheer Coach</div>
-                                        </div>
-                                    </div>
+                                <div class="bg-slate-950/80 p-2 rounded-xl border border-sky-500/30 hover:border-sky-400 transition cursor-pointer text-left" onclick="fillApplePhone('6381029380')">
+                                    <div class="text-xs font-bold text-sky-300 flex items-center gap-1 truncate"><span>🎓</span> <span>TestO</span></div>
+                                    <div class="text-[9px] text-slate-400 truncate">Exams CBT</div>
                                 </div>
-                                <div class="group relative bg-slate-950/80 p-2.5 rounded-xl border border-emerald-500/30 hover:border-emerald-400 transition cursor-pointer overflow-hidden" onclick="fillApplePhone('6381029380')">
-                                    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-400"></div>
-                                    <div class="flex items-center gap-2 pl-1">
-                                        <span class="text-base flex-shrink-0 group-hover:scale-110 transition">🚜</span>
-                                        <div class="overflow-hidden">
-                                            <div class="text-[11px] font-bold text-emerald-300 font-orbitron truncate">RentO • Agri Drone</div>
-                                            <div class="text-[10px] text-slate-400 truncate">Tractors & Drone Sprayers</div>
-                                        </div>
-                                    </div>
+                                <div class="bg-slate-950/80 p-2 rounded-xl border border-emerald-500/30 hover:border-emerald-400 transition cursor-pointer text-left" onclick="fillApplePhone('6381029380')">
+                                    <div class="text-xs font-bold text-emerald-300 flex items-center gap-1 truncate"><span>🚜</span> <span>RentO</span></div>
+                                    <div class="text-[9px] text-slate-400 truncate">Agri Drone</div>
                                 </div>
-                                <div class="group relative bg-slate-950/80 p-2.5 rounded-xl border border-purple-500/30 hover:border-purple-400 transition cursor-pointer overflow-hidden" onclick="fillApplePhone('6381029380')">
-                                    <div class="absolute top-0 left-0 w-1 h-full bg-purple-400"></div>
-                                    <div class="flex items-center gap-2 pl-1">
-                                        <span class="text-base flex-shrink-0 group-hover:scale-110 transition">🎨</span>
-                                        <div class="overflow-hidden">
-                                            <div class="text-[11px] font-bold text-purple-300 font-orbitron truncate">Meta Image Studio</div>
-                                            <div class="text-[10px] text-slate-400 truncate">Creative AI Posters & Art</div>
-                                        </div>
-                                    </div>
+                                <div class="bg-slate-950/80 p-2 rounded-xl border border-purple-500/30 hover:border-purple-400 transition cursor-pointer text-left" onclick="fillApplePhone('6381029380')">
+                                    <div class="text-xs font-bold text-purple-300 flex items-center gap-1 truncate"><span>🏛️</span> <span>மனு</span></div>
+                                    <div class="text-[9px] text-slate-400 truncate">MLA AI Grievance</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- STEP 2: WHATSAPP PIN VERIFICATION -->
-                        <div id="appleStepPin" class="space-y-4 hidden">
+                        <!-- STEP 2: WHATSAPP PIN VERIFICATION STEP -->
+                        <div id="appleStepPin" class="space-y-3.5 hidden">
                             <div class="space-y-1">
-                                <span id="appleUserGreetingBadge" class="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-amber-300 bg-amber-950/80 px-3 py-1 rounded-full border border-amber-500/40"><svg class="w-4 h-2.5 rounded-[1px] overflow-hidden inline-block shadow-sm" viewBox="0 0 30 20"><rect width="30" height="6.67" fill="#FF9933"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.5" fill="#000080"/></svg> <span>Citizen • +91 6381029380</span></span>
-                                <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight font-orbitron">
-                                    Login via WhatsApp PIN
+                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-500/40 px-2 py-0.5 rounded-full">
+                                    STEP 2 OF 2 • SECURE BIOMETRIC / PIN AUTH
+                                </span>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white font-orbitron">
+                                    Enter 4-Digit Security PIN
                                 </h2>
-                                <p class="text-xs text-amber-200">
-                                    உங்கள் வாட்ஸ்அப் மூலம் PIN அனுப்பி உள்நுழையவும்
-                                </p>
                             </div>
 
-                            <!-- ⚡ QUICK EVALUATOR / JUDGE MODEL PIN BYPASS CHIP -->
-                            <div class="p-3 rounded-xl bg-gradient-to-r from-amber-500/15 via-slate-900 to-emerald-500/15 border border-amber-500/40 flex items-center justify-between gap-2 shadow-sm text-left">
-                                <div>
-                                    <span class="text-xs text-amber-300 font-bold block flex items-center gap-1">
-                                        <span>⚖️ Evaluator Model PIN:</span>
-                                        <span class="font-mono text-emerald-400 font-black text-sm">7890</span>
-                                    </span>
-                                    <span class="text-[10px] text-slate-400">Meta Hackathon 1-Click Verification Pass</span>
-                                </div>
-                                <button onclick="autoFillModelPin('7890')" class="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 text-slate-950 font-black text-xs rounded-lg transition cursor-pointer shadow-md flex-shrink-0">
-                                    ⚡ Auto-Fill 7890 & Unlock 🔓
-                                </button>
-                            </div>
-
-                            <!-- Instruction Box -->
-                            <div class="bg-slate-950/90 border border-amber-500/30 p-4 rounded-2xl text-left space-y-3">
+                            <!-- WhatsApp Instruction Card -->
+                            <div class="bg-slate-950/80 border border-emerald-500/40 p-3.5 rounded-2xl space-y-2.5 text-left">
                                 <div class="flex items-start gap-2.5">
                                     <span class="text-xl flex-shrink-0">📲</span>
                                     <div class="text-xs text-slate-300 leading-relaxed">
-                                        Please send your <strong class="text-amber-300">4-digit PIN</strong> via that WhatsApp (<span id="appleDisplayPhone" class="font-mono text-sky-300 font-bold">+91 ...</span>) via <strong class="text-amber-300">message or voice PIN</strong> to SIA (<strong class="text-emerald-300">+91 6381029380</strong>) to access your app!
+                                        Please send your <strong class="text-amber-300">4-digit PIN</strong> via WhatsApp (<span id="appleDisplayPhone" class="font-mono text-sky-300 font-bold">+91 ...</span>) via <strong class="text-amber-300">message or voice PIN</strong> to SIA (<strong class="text-emerald-300">+91 6381029380</strong>)!
                                     </div>
                                 </div>
                                 <div class="text-[11px] text-slate-400 border-t border-slate-800 pt-2">
-                                    உங்கள் வாட்ஸ்அப்பிலிருந்து +91 6381029380 எண்ணிற்கு உங்கள் 4-இலக்க PIN எண்ணை குறுஞ்செய்தியாகவோ அல்லது 🎙️ குரல் எழுத்தாகவோ (Voice PIN) அனுப்பவும்!
+                                    உங்கள் வாட்ஸ்அப்பிலிருந்து +91 6381029380 எண்ணிற்கு உங்கள் 4-இலக்க PIN எண்ணை குறுஞ்செய்தியாகவோ அல்லது 🎙️ குரல் எழுத்தாகவோ அனுப்பவும்!
                                 </div>
 
                                 <!-- 1-Click WhatsApp Button -->
                                 <a id="appleWhatsAppLink" href="https://wa.me/916381029380?text=PIN%20" target="_blank"
-                                   class="block w-full py-3 bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-xs rounded-xl text-center shadow-lg shadow-green-500/20 transition flex items-center justify-center gap-2 cursor-pointer">
+                                   class="block w-full py-2.5 bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-xs rounded-xl text-center shadow-lg shadow-green-500/20 transition flex items-center justify-center gap-2 cursor-pointer">
                                     <span>💬 Open WhatsApp & Send PIN (+91 6381029380)</span>
                                 </a>
                             </div>
@@ -548,7 +522,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                             </div>
 
                             <!-- Direct On-Screen & Voice PIN Fallback -->
-                            <div class="bg-slate-950/60 border border-slate-800 p-3.5 rounded-2xl space-y-2 text-left">
+                            <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-2xl space-y-2 text-left">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[11px] text-slate-400 block font-medium">Or enter/speak your PIN here:</span>
                                     <span class="text-[10px] text-emerald-400 font-mono">Model PIN: 7890</span>
@@ -569,7 +543,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
                             <!-- Back to Phone Step -->
                             <div>
-                                <button onclick="backToApplePhoneStep()" class="text-xs text-slate-500 hover:text-slate-300 underline cursor-pointer">
+                                <button onclick="backToApplePhoneStep()" class="text-xs text-slate-400 hover:text-slate-200 underline cursor-pointer">
                                     ← Change WhatsApp number
                                 </button>
                             </div>
@@ -2396,7 +2370,41 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         setInterval(updateAppleClock, 1000);
         updateAppleClock();
 
+        
+        // ══════════════════════════════════════════════════════════════════════
+        // DUAL-MODE AUTH SWITCHER: JUDGE 1-CLICK PASS VS PERSONAL WHATSAPP
+        // ══════════════════════════════════════════════════════════════════════
+        window.switchAuthTab = function(tab) {
+            const judgePane = document.getElementById('authPaneJudge');
+            const waPane = document.getElementById('authPaneWhatsApp');
+            const judgeBtn = document.getElementById('authTabJudgeBtn');
+            const waBtn = document.getElementById('authTabWaBtn');
+            
+            if (tab === 'judge') {
+                if (judgePane) judgePane.classList.remove('hidden');
+                if (waPane) waPane.classList.add('hidden');
+                if (judgeBtn) {
+                    judgeBtn.className = "flex-1 py-1.5 px-3 rounded-lg text-xs font-black font-orbitron transition cursor-pointer flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 shadow-md";
+                }
+                if (waBtn) {
+                    waBtn.className = "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer flex items-center justify-center gap-1.5";
+                }
+            } else {
+                if (judgePane) judgePane.classList.add('hidden');
+                if (waPane) waPane.classList.remove('hidden');
+                if (waBtn) {
+                    waBtn.className = "flex-1 py-1.5 px-3 rounded-lg text-xs font-black font-orbitron transition cursor-pointer flex items-center justify-center gap-1.5 bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 shadow-md";
+                }
+                if (judgeBtn) {
+                    judgeBtn.className = "flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer flex items-center justify-center gap-1.5";
+                }
+                const inp = document.getElementById('applePhoneInput');
+                if (inp) inp.focus();
+            }
+        };
+
         window.fillApplePhone = function(p) {
+            if (typeof switchAuthTab === 'function') switchAuthTab('whatsapp');
             const inp = document.getElementById('applePhoneInput');
             if (inp) {
                 inp.value = p;
