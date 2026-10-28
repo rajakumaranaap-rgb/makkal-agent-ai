@@ -223,8 +223,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <span class="live-dot" style="width:5px;height:5px"></span>
                 <span id="appleCitizenNameDisplay">Citizen</span>
             </div>
-            <button id="appleLockBtn" onclick="lockAppleDesktop()" class="bg-red-950/50 hover:bg-red-900/60 border border-red-500/30 text-red-300 px-2.5 py-0.5 rounded transition cursor-pointer hidden">
-                🔒 Lock
+            <button id="appleLockBtn" onclick="sessionClose()" class="bg-red-950/60 hover:bg-red-900 border border-red-500/40 text-red-300 px-2.5 py-0.5 rounded transition cursor-pointer hidden" title="Close Session">
+                🔒 Close
+            </button>
+            <button onclick="toggleFullscreenApp()" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-emerald-400 px-2 py-0.5 rounded transition cursor-pointer hidden sm:inline-flex items-center gap-1" title="Toggle Full Screen View">
+                <span>⤢ Fullscreen</span>
             </button>
             <span class="text-amber-400 hidden sm:inline">🇮🇳 Meta AI</span>
             <span class="text-emerald-400 hidden sm:inline">⚡ 100%</span>
@@ -244,10 +247,27 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             
             <!-- Window Title Bar with macOS dots and Tiranga badge -->
             <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800/90 bg-slate-950/70">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] cursor-pointer hover:opacity-80 transition inline-block" title="Close"></span>
-                    <span class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] cursor-pointer hover:opacity-80 transition inline-block" title="Minimize"></span>
-                    <span class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] cursor-pointer hover:opacity-80 transition inline-block" title="Fullscreen"></span>
+                <div class="flex items-center gap-2 group/dots">
+                    <!-- 🔴 Red Dot: Session Close & Remote Kill-Switch -->
+                    <button onclick="sessionClose()"
+                            class="w-3.5 h-3.5 rounded-full bg-[#ff5f56] border border-[#e0443e] cursor-pointer hover:scale-110 hover:shadow-[0_0_10px_#ff5f56] active:scale-95 transition flex items-center justify-center text-[8px] font-bold text-slate-950 opacity-90 hover:opacity-100"
+                            title="Close & Terminate Session 🔒 (அமர்வு மூடு)">
+                        <span class="opacity-0 group-hover/dots:opacity-100 leading-none">✕</span>
+                    </button>
+
+                    <!-- 🟡 Yellow Dot: Minimize / Compact View -->
+                    <button onclick="minimizeAppWindow()"
+                            class="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] border border-[#dea123] cursor-pointer hover:scale-110 hover:shadow-[0_0_10px_#ffbd2e] active:scale-95 transition flex items-center justify-center text-[8px] font-bold text-slate-950 opacity-90 hover:opacity-100"
+                            title="Minimize / Compact View 🗕 (சுருக்கு)">
+                        <span class="opacity-0 group-hover/dots:opacity-100 leading-none">−</span>
+                    </button>
+
+                    <!-- 🟢 Green Dot: Full Screen App View -->
+                    <button onclick="toggleFullscreenApp()"
+                            class="w-3.5 h-3.5 rounded-full bg-[#27c93f] border border-[#1aab29] cursor-pointer hover:scale-110 hover:shadow-[0_0_10px_#27c93f] active:scale-95 transition flex items-center justify-center text-[7px] font-black text-slate-950 opacity-90 hover:opacity-100"
+                            title="Full Screen App View ⤢ (முழுத்திரை பார்வை)">
+                        <span class="opacity-0 group-hover/dots:opacity-100 leading-none">⤢</span>
+                    </button>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-bold text-slate-300 font-orbitron tracking-wider">SIA • SUPER INTELLIGENT AGENT</span>
@@ -3791,6 +3811,98 @@ ${data.image_url}`);
         } else {
             initISTClockOrb();
         }
+
+
+        // ══════════════════════════════════════════════════════════════════════
+        // WINDOW CONTROLS: RED (SESSION CLOSE), YELLOW (MINIMIZE), GREEN (FULLSCREEN)
+        // ══════════════════════════════════════════════════════════════════════
+
+        window.sessionClose = async function() {
+            try {
+                if (activeSessionToken || (currentUser && currentUser.phone)) {
+                    await fetch('/api/auth/terminate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: activeSessionToken,
+                            phone: currentUser ? currentUser.phone : ''
+                        })
+                    });
+                }
+            } catch (e) {
+                console.warn('Session terminate call error:', e);
+            }
+
+            // Lock desktop and reset state
+            lockAppleDesktop();
+            currentUser = { phone: '', name: '', district: '', pin: '' };
+            activeSessionToken = '';
+            backToApplePhoneStep();
+            
+            showAuthBanner('🔒 அமர்வு பாதுகாப்பாக மூடப்பட்டது (Session Closed Safely)');
+        };
+
+        window.minimizeAppWindow = function() {
+            const card = document.getElementById('appleWindowCard');
+            if (!card) return;
+            const contentGrid = card.querySelector('.grid');
+            const isMin = card.classList.toggle('app-window-minimized');
+
+            if (isMin) {
+                if (contentGrid) contentGrid.style.display = 'none';
+                card.style.maxHeight = '52px';
+                showAuthBanner('🗕 Window Minimized. Click yellow dot or title bar to expand.');
+            } else {
+                if (contentGrid) contentGrid.style.display = '';
+                card.style.maxHeight = '';
+                showAuthBanner('🗖 Window Restored');
+            }
+        };
+
+        window.toggleFullscreenApp = function() {
+            const card = document.getElementById('appleWindowCard');
+            const desk = document.getElementById('authenticatedDesktopView');
+            const isDocFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+
+            if (!isDocFullscreen) {
+                // Request browser fullscreen
+                const el = document.documentElement;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen().catch(() => {});
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                }
+
+                // Expand window card & desktop container
+                if (card) {
+                    card.classList.add('app-window-fullscreen');
+                    card.style.maxWidth = '98vw';
+                    card.style.width = '98vw';
+                }
+                if (desk) {
+                    desk.style.maxWidth = '100vw';
+                }
+                showAuthBanner('🖥️ Fullscreen App View Activated ⤢');
+            } else {
+                // Exit browser fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+
+                // Restore
+                if (card) {
+                    card.classList.remove('app-window-fullscreen');
+                    card.style.maxWidth = '';
+                    card.style.width = '';
+                }
+                if (desk) {
+                    desk.style.maxWidth = '';
+                }
+                showAuthBanner('🖥️ Normal App View Restored');
+            }
+        };
 
 </script>
 </body>
