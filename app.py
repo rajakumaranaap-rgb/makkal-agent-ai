@@ -1741,6 +1741,49 @@ async def get_sia_heartbeat_stats_endpoint():
     }
 
 
+# ==============================================================================
+# META MODEL DOMAIN TRAINING & QA BENCHMARK ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/meta/training-metrics")
+async def get_meta_training_metrics_endpoint():
+    """
+    Returns live statistics from the 100+ domain training Q&A dataset engine.
+    Demonstrates model alignment, statutory fee locks, and Baseten fine-tuning readiness.
+    """
+    from domain_training_engine import domain_training_engine
+    return domain_training_engine.get_dataset_statistics()
+
+
+@app.post("/api/meta/evaluate-qa")
+async def evaluate_meta_qa_endpoint(payload: Dict[str, Any]):
+    """
+    Evaluates generated model response or runs benchmark evaluation against statutory ground truth.
+    """
+    from domain_training_engine import domain_training_engine
+    query = payload.get("query", "பட்டா மாறுதல் கட்டணம் எவ்வளவு?")
+    reply = payload.get("reply", "")
+    if not reply:
+        # Run live model inference to evaluate
+        from meta_client import meta_client
+        res = meta_client.chat_completion(messages=[{"role": "user", "content": query}])
+        reply = res.get("choices", [{}])[0].get("message", {}).get("content", "")
+    
+    eval_result = domain_training_engine.evaluate_response(generated_reply=reply, query=query)
+    eval_result["reply"] = reply
+    return eval_result
+
+
+@app.post("/api/meta/export-baseten-dataset")
+async def export_baseten_dataset_endpoint():
+    """
+    Exports the domain Q&A dataset into standard Baseten LoRA / SFT training JSONL.
+    """
+    from domain_training_engine import domain_training_engine
+    res = domain_training_engine.export_baseten_fine_tuning_dataset()
+    return res
+
+
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui():
     """Interactive Multimodal Action Portal for SIA (Super Intelligent Agent)."""
