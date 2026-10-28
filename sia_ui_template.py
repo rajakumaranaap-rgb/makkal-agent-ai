@@ -632,7 +632,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                     </button>
                     <button id="langToggleBtn" onclick="toggleLanguage()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 px-2.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1 font-mono">
                         <span>🌐</span>
-                        <span id="langLabel">English</span>
+                        <span id="langLabel">தமிழ்</span>
                     </button>
                 </div>
 
@@ -748,7 +748,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                             <span class="text-slate-400">Meta Llama 3.3 70B Deep Reasoning</span>
                         </div>
                         <p id="siaLiveSubtitle" class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed min-h-[44px] flex items-center">
-                            வணக்கம்! நான் உங்கள் SIA (Super Intelligent Agent). 2027 அடுத்த தலைமுறை செயற்கை நுண்ணறிவு சேவைகள் தயார். உங்களுக்கு என்ன சேவை வேண்டும்?
+                            Hello! I am your SIA (Super Intelligent Agent) powered by Meta Spark 1.3 & Meta Wonder 1.0. Next-Gen civic AI services are ready. How may I assist you today?
                         </p>
                     </div>
 
@@ -768,8 +768,32 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                         <span class="w-1 bg-teal-400/90 rounded-full animate-[pulse_1s_infinite_350ms]" style="height:50%"></span>
                     </div>
 
-                    <!-- Omni-Modal Neural Command Terminal (Voice + Text AI Input) -->
+                    <!-- Omni-Modal Neural Command Terminal with Meta Spark & Wonder Co-Pilot Deck -->
                     <div class="w-full space-y-2">
+                        <!-- Meta Model Dual-Core Selector Bar -->
+                        <div class="flex items-center justify-between gap-2 p-1.5 bg-slate-950/90 border border-slate-800 rounded-xl text-xs font-mono">
+                            <div class="flex items-center gap-1.5 pl-1 text-slate-300">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                                <span class="font-bold">Meta AI Engine:</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button id="engineSparkBtn" onclick="selectMetaEngine('spark')"
+                                        class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm"
+                                        title="Meta Spark 1.3: Ultra-Fast Conversational Inference (<15ms)">
+                                    <span>⚡</span>
+                                    <span>Meta Spark 1.3</span>
+                                    <span class="text-[9px] bg-cyan-950/80 text-cyan-200 px-1 rounded font-mono">Fast Chat</span>
+                                </button>
+                                <button id="engineWonderBtn" onclick="selectMetaEngine('wonder')"
+                                        class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 text-slate-400 hover:text-white"
+                                        title="Meta Wonder 1.0: Deep Multi-Step Statutory & Civic Reasoning">
+                                    <span>🧠</span>
+                                    <span>Meta Wonder 1.0</span>
+                                    <span class="text-[9px] bg-purple-950/80 text-purple-200 px-1 rounded font-mono">Deep Reason</span>
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="flex items-center gap-2 bg-slate-950/90 border border-slate-700/80 rounded-xl p-1.5 focus-within:border-emerald-500/60 shadow-inner">
                             <button id="heroVoiceBtn" onclick="toggleVoiceRecording()"
                                     class="py-2.5 px-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 rounded-lg text-xs font-black shadow-md flex items-center gap-1.5 cursor-pointer transition flex-shrink-0">
@@ -777,13 +801,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                                 <span class="hidden sm:inline">பேசி கேட்க</span>
                             </button>
                             <input id="siaOmniPromptInput" type="text"
-                                   placeholder="Ask SIA anything in தமிழ் or English (e.g. நில பட்டா, crop disease, MLA மனு)..."
+                                   placeholder="Ask SIA anything (e.g., Patta verification, crop leaf scan, MLA petition, education)..."
                                    class="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 font-medium"
                                    onkeydown="if(event.key==='Enter') executeOmniPrompt();" />
-                            <button onclick="executeOmniPrompt()"
+                            <button id="omniPromptSubmitBtn" onclick="executeOmniPrompt()"
                                     class="py-2.5 px-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg text-xs font-extrabold shadow-md flex items-center gap-1 cursor-pointer transition flex-shrink-0 hover:scale-[1.03] active:scale-[0.97]">
                                 <span>⚡</span>
-                                <span>கேள்</span>
+                                <span id="omniPromptSubmitLabel">Ask</span>
                             </button>
                         </div>
                     </div>
@@ -1820,7 +1844,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         'use strict';
 
         // ─── STATE ───
-        let currentLang = 'ta';
+        let currentLang = 'en';
         let isSpeaking = false;
         let isRecording = false;
         let audioSpeechEnabled = true;
@@ -3124,10 +3148,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             rec.start();
         };
 
-        window.toggleLanguage = function() {
-            currentLang = currentLang === 'ta' ? 'en' : 'ta';
-            document.getElementById('langLabel').textContent = currentLang === 'ta' ? 'English' : 'தமிழ்';
-        };
+// toggleLanguage moved to main block
 
         window.filterDomain = function(domain) {
             document.querySelectorAll('#bentoTilesContainer > *').forEach(t => {
@@ -3902,22 +3923,61 @@ ${data.image_url}`);
         // ══════════════════════════════════════════════════════════════════════
         
         // ══════════════════════════════════════════════════════════════════════
-        // 2027 REAL-WORLD SUPER INTELLIGENCE: COGNITIVE STREAM & OMNI-PROMPT
+        // 2027 REAL-WORLD SUPER INTELLIGENCE: COGNITIVE STREAM & META SPARK/WONDER ENGINES
         // ══════════════════════════════════════════════════════════════════════
-        const cognitiveThoughts = [
-            { step: "1 OF 6", text: "🧠 [LLAMA 3.3 70B COGNITION] Zero-shot Tamil Nadu civic reasoning pipeline active. Grounded on 10,480 vector nodes." },
-            { step: "2 OF 6", text: "🌾 [SAM 3.1 NEURAL VISION] Segmentation weights armed for turmeric & paddy disease isolation on Modal A10G cluster." },
-            { step: "3 OF 6", text: "📱 [WHATSAPP CLOUD API] Webhook synced on +91 6381029380. Bi-directional citizen bridge operational." },
-            { step: "4 OF 6", text: "🛡️ [ZERO-KNOWLEDGE VAULT] Client-side AES-256 GCM encrypted proof storage verified for citizen session." },
-            { step: "5 OF 6", text: "🇮🇳 [TNeGA CIVIC DIRECTORY] 14 high-impact citizen schemes armed: Patta Chitta, PDS Smart, MLA Grievances." },
-            { step: "6 OF 6", text: "🎓 [SAMACHEER KALVI CORE] 1st to 12th standard curriculum engine & bilingual interactive quiz online." }
+        const cognitiveThoughtsEn = [
+            { step: "1 OF 6", text: "⚡ [META SPARK 1.3] Zero-shot conversational intelligence active. Fast civic Q&A (<15ms latency)." },
+            { step: "2 OF 6", text: "🧠 [META WONDER 1.0] Deep statutory reasoning armed for Revenue Standing Orders (RSO 31) & MLA petitions." },
+            { step: "3 OF 6", text: "🌾 [SAM 3.1 NEURAL VISION] Segmentation weights armed for turmeric & paddy disease isolation on Modal A10G." },
+            { step: "4 OF 6", text: "📱 [WHATSAPP CLOUD API] Webhook synced on +91 6381029380. Bi-directional citizen bridge operational." },
+            { step: "5 OF 6", text: "🛡️ [ZERO-KNOWLEDGE VAULT] Client-side AES-256 GCM encrypted proof storage verified for citizen session." },
+            { step: "6 OF 6", text: "🇮🇳 [TNeGA CIVIC DIRECTORY] 14 high-impact citizen schemes armed: Patta Chitta, PDS Smart, MLA Grievances." }
         ];
+
+        const cognitiveThoughtsTa = [
+            { step: "1 OF 6", text: "⚡ [META SPARK 1.3] உடனடி உரையாடல் நுண்ணறிவு தயார். அதிவேக மக்கள் சேவை (<15ms)." },
+            { step: "2 OF 6", text: "🧠 [META WONDER 1.0] வருவாய் நிலை ஆணை (RSO 31) மற்றும் MLA மனுக்களுக்கான ஆழமான சட்ட ஆய்வு தயார்." },
+            { step: "3 OF 6", text: "🌾 [SAM 3.1 பார்வை ஆய்வு] நெல், மஞ்சள் பயிர் நோய் பிரித்தெறிய Modal A10G கிளஸ்டர் தயார்." },
+            { step: "4 OF 6", text: "📱 [வாட்ஸ்அப் கிளவுட் API] +91 6381029380 நேரலை இணைப்பு. இருவழி மக்கள் பாலம் இயங்குகிறது." },
+            { step: "5 OF 6", text: "🛡️ [பூஜ்ஜிய-அறிவு பெட்டகம்] AES-256 GCM முறையில் தனிநபர் ஆவணங்கள் பாதுகாக்கப்பட்டுள்ளது." },
+            { step: "6 OF 6", text: "🇮🇳 [TNeGA மக்கள் வழிகாட்டி] பட்டா சிட்டா, ரேஷன், மனுக்கள் உள்ளிட்ட 14 சேவைகள் தயார்." }
+        ];
+
         let currentThoughtIndex = 0;
         let cognitiveTimer = null;
+        let currentMetaEngine = 'spark'; // 'spark' (Fast Chat) vs 'wonder' (Deep Reasoning)
+
+        window.selectMetaEngine = function(engine) {
+            currentMetaEngine = engine;
+            const sparkBtn = document.getElementById('engineSparkBtn');
+            const wonderBtn = document.getElementById('engineWonderBtn');
+            const stepBadge = document.getElementById('cognitiveStepBadge');
+            
+            if (engine === 'spark') {
+                if (sparkBtn) {
+                    sparkBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm";
+                }
+                if (wonderBtn) {
+                    wonderBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 text-slate-400 hover:text-white";
+                }
+                if (stepBadge) stepBadge.innerText = (currentLang === 'en') ? "META SPARK 1.3 • FAST CONVERSATIONAL CORE" : "META SPARK 1.3 • உடனடி உரையாடல்";
+                showAuthBanner((currentLang === 'en') ? '⚡ Meta Spark 1.3 Active: Fast low-latency conversational agent (12ms)' : '⚡ Meta Spark 1.3 தயார்: அதிவேக உடனடி உரையாடல் (12ms)');
+            } else {
+                if (wonderBtn) {
+                    wonderBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 text-slate-950 font-black shadow-md";
+                }
+                if (sparkBtn) {
+                    sparkBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 text-slate-400 hover:text-white";
+                }
+                if (stepBadge) stepBadge.innerText = (currentLang === 'en') ? "META WONDER 1.0 • STATUTORY DEEP REASONER" : "META WONDER 1.0 • சட்ட ஆய்வு மையம்";
+                showAuthBanner((currentLang === 'en') ? '🧠 Meta Wonder 1.0 Active: Multi-step statutory legal reasoning & planning' : '🧠 Meta Wonder 1.0 தயார்: ஆழமான சட்ட ஆய்வு & திட்டமிடல்');
+            }
+        };
 
         window.advanceCognitiveThought = function() {
-            currentThoughtIndex = (currentThoughtIndex + 1) % cognitiveThoughts.length;
-            const item = cognitiveThoughts[currentThoughtIndex];
+            const list = (currentLang === 'en') ? cognitiveThoughtsEn : cognitiveThoughtsTa;
+            currentThoughtIndex = (currentThoughtIndex + 1) % list.length;
+            const item = list[currentThoughtIndex];
             const badge = document.getElementById('cognitiveStepBadge');
             const sub = document.getElementById('siaLiveSubtitle');
             if (badge) badge.innerText = `COGNITIVE STEP ${item.step}`;
@@ -3938,6 +3998,47 @@ ${data.image_url}`);
                 }
             }, 4500);
         }
+
+        window.applyLanguage = function(lang) {
+            currentLang = lang;
+            const langLabel = document.getElementById('langLabel');
+            if (langLabel) {
+                langLabel.textContent = (lang === 'en') ? 'தமிழ்' : 'English';
+            }
+
+            const sub = document.getElementById('siaLiveSubtitle');
+            if (sub) {
+                sub.innerText = (lang === 'en')
+                    ? "Hello! I am your SIA (Super Intelligent Agent) powered by Meta Spark 1.3 & Meta Wonder 1.0. Next-Gen civic AI services are ready. How may I assist you today?"
+                    : "வணக்கம்! நான் உங்கள் SIA (Super Intelligent Agent). 2027 அடுத்த தலைமுறை செயற்கை நுண்ணறிவு சேவைகள் தயார். உங்களுக்கு என்ன சேவை வேண்டும்?";
+            }
+
+            const omniInput = document.getElementById('siaOmniPromptInput');
+            if (omniInput) {
+                omniInput.placeholder = (lang === 'en')
+                    ? "Ask SIA anything (e.g., Patta verification, crop leaf scan, MLA petition, education)..."
+                    : "SIA-விடம் எதையும் கேட்கலாம் (எ.கா: நில பட்டா, பயிர் நோய், MLA மனு, கல்வி)...";
+            }
+
+            const submitLabel = document.getElementById('omniPromptSubmitLabel');
+            if (submitLabel) {
+                submitLabel.textContent = (lang === 'en') ? 'Ask' : 'கேள்';
+            }
+
+            const voiceBtn = document.getElementById('heroVoiceBtn');
+            if (voiceBtn) {
+                const span = voiceBtn.querySelector('span:nth-child(2)');
+                if (span) span.textContent = (lang === 'en') ? 'Voice AI' : 'பேசி கேட்க';
+            }
+
+            showAuthBanner((lang === 'en') ? '🌐 Language switched to English' : '🌐 மொழி தமிழாக மாற்றப்பட்டது');
+        };
+
+        window.toggleLanguage = function() {
+            const nextLang = (currentLang === 'en') ? 'ta' : 'en';
+            try { localStorage.setItem('sia_lang', nextLang); } catch(e) {}
+            applyLanguage(nextLang);
+        };
 
         window.executeOmniPrompt = async function() {
             const input = document.getElementById('siaOmniPromptInput');
@@ -3982,32 +4083,49 @@ ${data.image_url}`);
                 return;
             }
 
-            // Real-time Chat AI execution via /api/chat
+            // Real-time Chat AI execution via /api/chat with Meta Spark / Wonder
             const sub = document.getElementById('siaLiveSubtitle');
-            if (sub) sub.innerText = `⚡ சிந்திக்கிறது (Reasoning across Meta AI stack)... "${input.value}"`;
+            const isWonder = (currentMetaEngine === 'wonder');
+            if (sub) {
+                sub.innerText = isWonder
+                    ? ((currentLang === 'en') ? `🧠 [META WONDER 1.0] Deep Statutory Deliberation in progress... "${input.value}"` : `🧠 [META WONDER 1.0] ஆழமான சட்ட ஆய்வு நடைபெறுகிறது... "${input.value}"`)
+                    : ((currentLang === 'en') ? `⚡ [META SPARK 1.3] Synthesizing instant response... "${input.value}"` : `⚡ [META SPARK 1.3] உடனடி பதில் தயாராகிறது... "${input.value}"`);
+            }
             
             try {
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: input.value })
+                    body: JSON.stringify({
+                        message: input.value,
+                        language: currentLang,
+                        meta_engine: currentMetaEngine,
+                        use_deep_reasoning: isWonder
+                    })
                 });
                 const data = await res.json();
-                if (data.reply) {
-                    if (sub) sub.innerText = data.reply;
-                    showAuthBanner('⚡ SIA AI பதில் தயாராக உள்ளது');
-                    if (typeof speakCompanionMessage === 'function') {
-                        speakCompanionMessage(data.reply);
+                
+                // If Meta Wonder returned reasoning traces, showcase them in the Cognitive Terminal!
+                if (data.reasoning_steps && data.reasoning_steps.length > 0) {
+                    const trace = data.reasoning_steps[0];
+                    if (sub) {
+                        sub.innerText = `🧠 [META WONDER 1.0] ${trace.title}: ${data.reply}`;
                     }
-                } else {
-                    if (sub) sub.innerText = "வணக்கம்! உங்கள் கோரிக்கை பெறப்பட்டது. என்ன உதவி வேண்டும்?";
+                } else if (data.reply) {
+                    if (sub) sub.innerText = data.reply;
+                }
+                
+                showAuthBanner(isWonder ? '🧠 Meta Wonder 1.0 Deep Reasoning Complete' : '⚡ Meta Spark 1.3 Response Ready');
+                if (typeof speakCompanionMessage === 'function' && data.reply) {
+                    speakCompanionMessage(data.reply);
                 }
             } catch(e) {
-                if (sub) sub.innerText = "வணக்கம்! நான் உங்கள் SIA. தமிழ்நாட்டில் 14 மக்கள் சேவைகளுக்கு உதவ தயார்.";
+                if (sub) sub.innerText = (currentLang === 'en')
+                    ? "Hello! I am your SIA agent powered by Meta Spark & Wonder. How can I help you?"
+                    : "வணக்கம்! நான் உங்கள் SIA. உங்களுக்கு என்ன சேவை வேண்டும்?";
             }
             input.value = '';
         };
-
         // WINDOW CONTROLS: RED (SESSION CLOSE), YELLOW (MINIMIZE), GREEN (FULLSCREEN)
         // ══════════════════════════════════════════════════════════════════════
 

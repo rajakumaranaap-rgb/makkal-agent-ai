@@ -173,7 +173,8 @@ class ChatRequest(BaseModel):
     history: Optional[List[dict]] = []
     use_deep_reasoning: Optional[bool] = False
     use_open_weight: Optional[bool] = False
-    language: Optional[str] = "ta"
+    language: Optional[str] = "en"
+    meta_engine: Optional[str] = "spark"
 
 
 class PetitionRequest(BaseModel):
@@ -842,22 +843,24 @@ async def chat_endpoint(req: ChatRequest):
             messages.extend(req.history[-6:])
         messages.append({"role": "user", "content": user_msg})
 
-        # Model routing & Deep Cognitive Reasoning Trace
+        # Model routing: Meta Spark 1.3 (Fast Chat) vs Meta Wonder 1.0 (Deep Reasoning)
         reasoning_steps = None
+        is_wonder = (req.meta_engine == "wonder") or req.use_deep_reasoning
+
         if req.use_open_weight:
             target_model = f"Baseten ({BASETEN_MODEL_ID})"
             res = meta_client.call_baseten_open_weight(messages=messages)
             reply_text = res.get("reply", "Baseten Open-Weight Inference active.")
-            if req.use_deep_reasoning:
-                reasoning_steps = meta_client.generate_reasoning_trace(user_msg, req.language or "ta")
-        elif req.use_deep_reasoning:
-            target_model = REASONING_MODEL
+            if is_wonder:
+                reasoning_steps = meta_client.generate_reasoning_trace(user_msg, req.language or "en")
+        elif is_wonder:
+            target_model = "Meta Wonder 1.0 (muse-wonder-1.0)"
             res = meta_client.deep_reasoning(messages=messages)
             reply_text = res["choices"][0]["message"]["content"]
-            reasoning_steps = meta_client.generate_reasoning_trace(user_msg, req.language or "ta")
+            reasoning_steps = meta_client.generate_reasoning_trace(user_msg, req.language or "en")
         else:
-            target_model = DEFAULT_CHAT_MODEL
-            res = meta_client.chat_completion(messages=messages, model=target_model)
+            target_model = "Meta Spark 1.3 (muse-spark-1.3)"
+            res = meta_client.chat_completion(messages=messages, model=DEFAULT_CHAT_MODEL)
             reply_text = res["choices"][0]["message"]["content"]
 
         solution_package = match_solution_package(user_msg)
