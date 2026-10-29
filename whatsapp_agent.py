@@ -136,6 +136,7 @@ from agriculture_engine import (
 from daily_news_air_engine import (
     get_daily_news_bulletin,
     format_whatsapp_news_briefing,
+    format_whatsapp_news_parts,
     format_whatsapp_news_menu,
     format_air_audio_news_card,
     AIR_METADATA
@@ -787,8 +788,9 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                         "sender": sender_phone
                     }
                 else:
-                    reply_text = format_whatsapp_news_briefing(user_name=u_name)
-                    send_whatsapp_message(sender_phone, reply_text)
+                    parts = format_whatsapp_news_parts(user_name=u_name)
+                    for p in parts:
+                        send_whatsapp_message(sender_phone, p)
 
                     menu = format_whatsapp_news_menu()
                     send_whatsapp_button_message(

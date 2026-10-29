@@ -208,6 +208,61 @@ def get_daily_news_bulletin() -> Dict[str, Any]:
     }
 
 
+def format_whatsapp_news_parts(user_name: str = "குடிமக்கள் தோழர்") -> List[str]:
+    """
+    Splits the 18-headline briefing into two clean messages to strictly adhere
+    to WhatsApp Cloud API's 4096-character limit per message.
+    """
+    bulletin = get_daily_news_bulletin()
+    date_str = bulletin["date_tamil"]
+
+    # Part 1: Tamil Nadu Top 10
+    part1_lines = [
+        f"🌅 *காலை வணக்கம், {user_name}!* ☀️",
+        f"📻 *SIA தினசரி காலை செய்தி அறிக்கை (பகுதி 1/2)*",
+        f"📅 *தேதி:* {date_str} | தமிழ்நாடு",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "🏛️ *தமிழ்நாடு முக்கிய 10 செய்திகள்:*",
+        "━━━━━━━━━━━━━━━━━━━━━━"
+    ]
+    for idx, item in enumerate(bulletin["tamil_nadu_news"], 1):
+        part1_lines.append(f"*{idx}. {item['headline']}*")
+        part1_lines.append(f"   _{item['summary']}_\n")
+    part1_lines.append("👉 *தேசிய & உலகச் செய்திகள் கீழே தொடர்கிறது... (2/2)*")
+
+    # Part 2: India 5 + World 3 + AIR Radio
+    part2_lines = [
+        f"📻 *SIA காலை செய்தி அறிக்கை (பகுதி 2/2)*",
+        f"📅 *தேதி:* {date_str} | இந்தியா & உலகம்",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "🇮🇳 *இந்திய தேசிய 5 முக்கிய செய்திகள்:*",
+        "━━━━━━━━━━━━━━━━━━━━━━"
+    ]
+    for idx, item in enumerate(bulletin["india_news"], 1):
+        part2_lines.append(f"*{idx}. {item['headline']}*")
+        part2_lines.append(f"   _{item['summary']}_\n")
+
+    part2_lines.extend([
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "🌍 *உலக முக்கிய 3 செய்திகள்:*",
+        "━━━━━━━━━━━━━━━━━━━━━━"
+    ])
+    for idx, item in enumerate(bulletin["world_news"], 1):
+        part2_lines.append(f"*{idx}. {item['headline']}*")
+        part2_lines.append(f"   _{item['summary']}_\n")
+
+    part2_lines.extend([
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "🎙️ *அகில இந்திய வானொலி (AIR Akashvani) செய்திகள்:*",
+        "• காலை பிராந்திய செய்தி: *07:15 AM IST* | இரவு: *06:45 PM IST*",
+        f"• அதிகாரப்பூர்வ வானொலி தளம்: {AIR_METADATA['official_portal']}",
+        "",
+        "💡 வானொலி செய்தியைக் கேட்க *AIR NEWS* என அனுப்பவும்!"
+    ])
+
+    return ["\n".join(part1_lines), "\n".join(part2_lines)]
+
+
 def format_whatsapp_news_briefing(user_name: str = "குடிமக்கள் தோழர்") -> str:
     """
     Synthesizes the complete morning news briefing for WhatsApp delivery.
