@@ -2435,3 +2435,66 @@ async def agri_grains_subsidy_endpoint(crop_key: str = "paddy"):
     from agriculture_engine import get_grains_subsidy_guidance
     res = get_grains_subsidy_guidance(crop_key=crop_key)
     return JSONResponse(content=res)
+
+
+# ==============================================================================
+# DAILY NEWS & ALL INDIA RADIO (AIR) AUDIO BULLETINS ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/news/daily-bulletin")
+async def get_daily_news_bulletin_endpoint():
+    """
+    Returns today's 10 Tamil Nadu, 5 India, and 3 World news items + AIR Akashvani details.
+    """
+    from daily_news_air_engine import get_daily_news_bulletin, format_whatsapp_news_briefing
+    bulletin = get_daily_news_bulletin()
+    bulletin["whatsapp_formatted"] = format_whatsapp_news_briefing("குடிமக்கள் தோழர்")
+    return JSONResponse(content=bulletin)
+
+
+@app.get("/api/news/air-audio")
+async def get_air_audio_news_endpoint():
+    """
+    Returns official All India Radio (Akashvani) Chennai Tamil news audio broadcast details.
+    """
+    from daily_news_air_engine import AIR_METADATA, format_air_audio_news_card
+    return JSONResponse(content={
+        "status": "success",
+        "air_metadata": AIR_METADATA,
+        "whatsapp_card": format_air_audio_news_card()
+    })
+
+
+@app.post("/api/news/push-to-whatsapp")
+async def push_news_to_whatsapp_endpoint(req: Request):
+    """
+    Pushes the full 18-headline daily morning briefing directly to citizen's WhatsApp.
+    """
+    from whatsapp_agent import send_whatsapp_message, send_whatsapp_button_message
+    from daily_news_air_engine import format_whatsapp_news_briefing, format_whatsapp_news_menu
+    from live_message_hub import live_hub
+
+    body = await req.json()
+    phone = body.get("phone", "6381029380")
+    user_name = body.get("user_name", "குடிமக்கள் தோழர்")
+
+    text = format_whatsapp_news_briefing(user_name=user_name)
+    res = send_whatsapp_message(to_number=phone, text=text)
+
+    menu = format_whatsapp_news_menu()
+    send_whatsapp_button_message(
+        to_number=phone,
+        body_text="📻 *வானொலி செய்தி விருப்பங்கள்:* கீழேயுள்ள பொத்தானை அழுத்தி அகில இந்திய வானொலி (AIR) செய்தியைக் கேட்கலாம் 👇",
+        buttons=menu["buttons"],
+        header_text=menu["header_text"],
+        footer_text=menu["footer_text"]
+    )
+
+    if live_hub:
+        live_hub.publish_event(
+            event_type="wa_outgoing",
+            data={"text": text, "type": "daily_news_briefing", "channel": "news_push"},
+            sender=phone
+        )
+
+    return JSONResponse(content={"status": "success", "delivery": res})

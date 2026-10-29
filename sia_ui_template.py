@@ -666,6 +666,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <button onclick="runJudgeTourPreset('redtaxi')" class="px-2.5 py-1.5 bg-cyan-600/30 hover:bg-cyan-600/60 border border-cyan-400 text-cyan-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer hover:scale-105 active:scale-95">
                     <span>🚖 5: RedTaxi Zero-Surge</span>
                 </button>
+                <button onclick="runJudgeTourPreset('news')" class="px-2.5 py-1.5 bg-sky-600/30 hover:bg-sky-600/60 border border-sky-400 text-sky-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer hover:scale-105 active:scale-95">
+                    <span>📰 6: Good Morning News & AIR</span>
+                </button>
             </div>
         </div>
     </div>
@@ -733,6 +736,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                         <button onclick="clickLivePhoneButton('btn_mental_health', '🧠 மன நலம்')" class="whitespace-nowrap px-2 py-0.8 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🧠 14416</button>
                         <button onclick="clickLivePhoneButton('btn_tuition', '📚 டியூஷன்')" class="whitespace-nowrap px-2 py-0.8 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40 rounded-lg text-[10px] font-bold cursor-pointer">📚 Tuition</button>
                         <button onclick="sendQuickPhoneQuery('பட்டா மாறுதல் RSO 31')" class="whitespace-nowrap px-2 py-0.8 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">📜 Patta</button>
+                        <button onclick="sendQuickPhoneQuery('Good morning SIA')" class="whitespace-nowrap px-2 py-0.8 bg-sky-950 hover:bg-sky-900 text-sky-300 border border-sky-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🌅 Good Morning</button>
+                        <button onclick="clickLivePhoneButton('btn_news_air', '🎙️ AIR Radio')" class="whitespace-nowrap px-2 py-0.8 bg-blue-950 hover:bg-blue-900 text-blue-300 border border-blue-500/40 rounded-lg text-[10px] font-bold cursor-pointer">📻 AIR News</button>
                     </div>
 
                     <!-- Bottom WhatsApp Chat Input Bar -->
@@ -5700,6 +5705,10 @@ window.openTravelModal = function() { document.getElementById('travelModal').cla
                 // 5. RedTaxi Zero-Surge Travel
                 openTravelModal();
                 await sendQuickPhoneQuery('Coimbatore to Madurai RedTaxi cab booking');
+            } else if (preset === 'news') {
+                // 6. Good Morning News (10 TN + 5 IN + 3 WD & AIR Akashvani)
+                showAuthBanner("📰 SIA காலை செய்தி (10 TN + 5 IN + 3 WD) & அகில இந்திய வானொலி...");
+                await sendQuickPhoneQuery('Good morning SIA! இன்றைய முக்கிய செய்திகள்');
             }
         }
 

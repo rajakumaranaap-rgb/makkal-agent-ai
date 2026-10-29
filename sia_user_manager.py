@@ -432,7 +432,8 @@ def handle_sia_whatsapp_flow(
         "SAMACHEER", "FAMILY", "HUB", "FAM", "IAS", "IPS", "DOCTOR", "ENGINEER",
         "JUDGE", "SCIENTIST", "CEO", "CA", "AUDITOR", "AMBITION", "GK", "TODAY",
         "PENSION", "OAP", "KMUT", "MAGALIR", "MANDI", "MARKET", "PATTA", "RATION",
-        "AADHAAR", "RTI", "ANS"
+        "AADHAAR", "RTI", "ANS", "GOOD MORNING", "GM", "MORNING", "காலை வணக்கம்",
+        "NEWS", "செய்திகள்", "செய்தி", "AIR", "வானொலி", "RADIO"
     }
     if any(upper == k or upper.startswith(k + " ") or upper.startswith(k + "-") for k in SYSTEM_COMMAND_KEYWORDS):
         return None
@@ -442,6 +443,10 @@ def handle_sia_whatsapp_flow(
     contains_sia = "SIA" in upper or "சியா" in text
     if not is_user_registered(clean_phone) and any(w in upper for w in ["ACCESS", "REGISTER", "SIGNUP", "NEW", "WANT TO ACCESS"]):
         return _start_registration(clean_phone)
+
+    # Bypass generic welcome for Good Morning and News requests
+    if any(k in upper for k in ["GOOD MORNING", "GM", "காலை வணக்கம்", "NEWS", "செய்திகள்", "AIR"]):
+        return None
 
     is_greeting = upper in [
         "HI", "HELLO", "START", "LOGIN", "MENU",

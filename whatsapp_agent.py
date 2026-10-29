@@ -133,6 +133,14 @@ from agriculture_engine import (
     get_all_mandi_prices
 )
 
+from daily_news_air_engine import (
+    get_daily_news_bulletin,
+    format_whatsapp_news_briefing,
+    format_whatsapp_news_menu,
+    format_air_audio_news_card,
+    AIR_METADATA
+)
+
 logger = logging.getLogger("makkal.whatsapp")
 logging.basicConfig(level=logging.INFO)
 
@@ -338,6 +346,52 @@ def download_whatsapp_media(media_id: str, save_path: str) -> bool:
     except Exception as e:
         logger.error(f"[WHATSAPP MEDIA ERROR] {e}")
         return False
+
+
+
+
+def send_whatsapp_audio(to_number: str, audio_url: str) -> Dict[str, Any]:
+    """
+    Sends an audio file (e.g. Akashvani All India Radio news bulletin)
+    directly to citizen's WhatsApp chat via Meta Cloud API.
+    """
+    clean_to = "".join([c for c in str(to_number) if c.isdigit()])
+    if not clean_to:
+        return {"success": False, "error": "Invalid recipient phone number"}
+
+    if not META_WHATSAPP_TOKEN:
+        logger.info(f"[WHATSAPP SIMULATION] Audio dispatched to {clean_to}: {audio_url}")
+        return {
+            "success": True,
+            "simulated": True,
+            "recipient": clean_to,
+            "audio_url": audio_url
+        }
+
+    url = f"{BASE_GRAPH_URL}/{META_WHATSAPP_PHONE_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {META_WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": clean_to,
+        "type": "audio",
+        "audio": {
+            "link": audio_url
+        }
+    }
+    try:
+        resp = requests.post(url, headers=headers, json=payload, timeout=20)
+        if resp.status_code == 200:
+            logger.info(f"[WHATSAPP AUDIO] Sent to {clean_to}")
+            return {"success": True, "data": resp.json()}
+        else:
+            logger.error(f"[WHATSAPP AUDIO ERROR] Status {resp.status_code}: {resp.text}")
+            return {"success": False, "error": resp.text}
+    except Exception as e:
+        logger.error(f"[WHATSAPP AUDIO EXCEPTION] {e}")
+        return {"success": False, "error": str(e)}
 
 
 
@@ -693,6 +747,64 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                     f"🛑 *ரிமோட் பாதுகாப்பு (Remote Kill-Switch):* நீங்கள் பிரவுசரில் வேலையை முடித்தவுடன், உங்கள் தனியுரிமையைப் பாதுகாக்க "
                     f"இந்த வாட்ஸ்அப் எண்ணிற்கு *CLOSE* அல்லது *LOGOUT* என்று மெசேஜ் அனுப்பினால் போதும் - உங்கள் கணினி அமர்வு நொடியில் துண்டிக்கப்படும்!"
                 )
+
+            # 2.30 Daily Morning News & All India Radio (AIR) Audio Update Trigger
+            elif (
+                interactive_id in ["btn_daily_news", "btn_news_full", "btn_news_air", "btn_news_tn", "btn_news"] or
+                any(clean_upper.startswith(k) or clean_upper == k or k in clean_upper for k in [
+                    "GOOD MORNING", "GM", "MORNING", "காலை வணக்கம்", "காலை செய்தி",
+                    "NEWS", "செய்திகள்", "செய்தி", "TODAY NEWS", "AIR NEWS", "வானொலி", "RADIO NEWS", "AKASHVANI"
+                ])
+            ):
+                from sia_user_manager import get_user_profile
+                user_prof = get_user_profile(sender_phone)
+                u_name = user_prof.get("name", "குடிமக்கள் தோழர்") if user_prof else "குடிமக்கள் தோழர்"
+
+                if interactive_id == "btn_news_air" or any(k in clean_upper for k in ["AIR", "வானொலி", "RADIO", "AKASHVANI"]):
+                    reply_text = format_air_audio_news_card()
+                    send_whatsapp_message(sender_phone, reply_text)
+                    return {
+                        "status": "processed",
+                        "handler": "daily_news_air_audio",
+                        "sender": sender_phone,
+                        "station": AIR_METADATA.get("station_name", "Akashvani AIR Chennai")
+                    }
+                elif interactive_id == "btn_news_tn":
+                    bulletin = get_daily_news_bulletin()
+                    lines = [
+                        f"🏛️ *தமிழ்நாடு முக்கிய 10 செய்திகள் ({bulletin['date_tamil']})* 🌟",
+                        "━━━━━━━━━━━━━━━━━━━━━━"
+                    ]
+                    for idx, item in enumerate(bulletin["tamil_nadu_news"], 1):
+                        lines.append(f"*{idx}. {item['headline']}*")
+                        lines.append(f"   _{item['summary']}_\n")
+                    lines.append("━━━━━━━━━━━━━━━━━━━━━━")
+                    lines.append("🎙️ வானொலி செய்தியைக் கேட்க *AIR NEWS* என அனுப்பவும்!")
+                    send_whatsapp_message(sender_phone, "\n".join(lines))
+                    return {
+                        "status": "processed",
+                        "handler": "daily_news_tamil_nadu_top10",
+                        "sender": sender_phone
+                    }
+                else:
+                    reply_text = format_whatsapp_news_briefing(user_name=u_name)
+                    send_whatsapp_message(sender_phone, reply_text)
+
+                    menu = format_whatsapp_news_menu()
+                    send_whatsapp_button_message(
+                        to_number=sender_phone,
+                        body_text="📻 *வானொலி செய்தி விருப்பங்கள்:* கீழேயுள்ள பொத்தானை அழுத்தி அகில இந்திய வானொலி (AIR) செய்தியைக் கேட்கலாம் 👇",
+                        buttons=menu["buttons"],
+                        header_text=menu["header_text"],
+                        footer_text=menu["footer_text"]
+                    )
+                    return {
+                        "status": "processed",
+                        "handler": "daily_news_full_briefing",
+                        "sender": sender_phone,
+                        "date": get_daily_news_bulletin()["date_tamil"],
+                        "total_news": 18
+                    }
 
             # 2.31 Spoken English Interactive WhatsApp Coach Trigger
             elif (
