@@ -1,0 +1,64 @@
+{
+  "916381029380": {
+    "phone": "916381029380",
+    "student_name": "செல்வன் / செல்வி (Student Scholar)",
+    "grade_level": "10th Standard (State Board / CBSE)",
+    "spoken_english": {
+      "current_level": "level_2_student",
+      "completed_scenarios": [
+        "daily_greetings",
+        "self_introduction"
+      ],
+      "total_practice_count": 5,
+      "latest_fluency_score": 90,
+      "streak_days": 4
+    },
+    "mental_health": {
+      "latest_mood": "calm_exam",
+      "checkin_count": 4,
+      "completed_breathing_sessions": 5,
+      "last_checkin_timestamp": "2026-10-29T12:58:24.652264"
+    },
+    "tuition_progress": {
+      "board": "Tamil Nadu State Board & CBSE",
+      "completed_topics": [
+        "class10_physics_electricity",
+        "primary_math_multiplication"
+      ],
+      "quizzes_taken": 4,
+      "average_quiz_score_pct": 94.0
+    },
+    "last_active_channel": "WhatsApp"
+  },
+  "6381029380": {
+    "phone": "6381029380",
+    "student_name": "செல்வன் / செல்வி (Student Scholar)",
+    "grade_level": "10th Standard (State Board / CBSE)",
+    "spoken_english": {
+      "current_level": "level_2_student",
+      "completed_scenarios": [
+        "daily_greetings"
+      ],
+      "total_practice_count": 5,
+      "latest_fluency_score": 72,
+      "streak_days": 4
+    },
+    "mental_health": {
+      "latest_mood": "calm",
+      "checkin_count": 3,
+      "completed_breathing_sessions": 4,
+      "last_checkin_timestamp": "2026-10-29T12:58:58.997802"
+    },
+    "tuition_progress": {
+      "board": "Tamil Nadu State Board & CBSE",
+      "completed_topics": [
+        "class10_physics_electricity",
+        "primary_math_multiplication",
+        "general_tuition"
+      ],
+      "quizzes_taken": 4,
+      "average_quiz_score_pct": 94.0
+    },
+    "last_active_channel": "Web"
+  }
+}

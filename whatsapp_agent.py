@@ -41,6 +41,65 @@ from whatsapp_auth_manager import (
     verify_magic_auth_token,
     get_session_status
 )
+from whatsapp_education_course_engine import (
+    get_available_courses,
+    get_course_daily_lesson,
+    evaluate_course_quiz,
+    generate_daily_study_plan
+)
+try:
+    from live_message_hub import live_hub
+except Exception:
+    live_hub = None
+
+def _publish_live_event(event_type: str, data: Dict[str, Any], sender: str = "6381029380", model: str = "muse-spark-open-1026"):
+    if live_hub:
+        try:
+            live_hub.publish_event(event_type=event_type, data=data, sender=sender, model=model)
+        except Exception as e:
+            logger.debug(f"[LIVE HUB] Publish failed: {e}")
+
+from family_daily_planner import (
+    add_family_task,
+    list_family_tasks,
+    complete_family_task,
+    generate_daily_family_briefing,
+    get_proactive_civic_alerts
+)
+from spoken_english_coach import (
+    get_all_english_levels,
+    get_scenario_details,
+    format_whatsapp_english_menu,
+    format_whatsapp_level_scenarios,
+    format_scenario_practice_message,
+    evaluate_spoken_sentence
+)
+from student_mental_health_coach import (
+    get_all_wellbeing_modules,
+    format_whatsapp_mental_health_menu,
+    format_wellbeing_module_message,
+    format_emergency_helpline_message,
+    handle_empathetic_counseling_query
+)
+from universal_tuition_engine import (
+    get_all_tuition_classes,
+    get_tuition_topic_by_id,
+    format_whatsapp_tuition_menu,
+    format_whatsapp_class_topics_list,
+    format_tuition_lesson_card
+)
+from student_learning_vault import (
+    get_student_profile,
+    record_spoken_english_practice,
+    record_mental_health_checkin,
+    record_tuition_quiz_attempt
+)
+from travel_booking_engine import (
+    calculate_ride_fare,
+    execute_ride_booking,
+    get_fleet_catalog,
+    get_temple_packages
+)
 
 logger = logging.getLogger("makkal.whatsapp")
 logging.basicConfig(level=logging.INFO)
@@ -79,6 +138,8 @@ def send_whatsapp_message(to_number: str, text: str) -> Dict[str, Any]:
     """
     Sends an outbound text message to a citizen via Meta WhatsApp Cloud API.
     """
+    clean_to = "".join([c for c in str(to_number) if c.isdigit()])
+    _publish_live_event("wa_outgoing", {"text": text, "type": "text"}, sender=clean_to or "6381029380")
     clean_to = "".join([c for c in str(to_number) if c.isdigit()])
     if not clean_to:
         return {"success": False, "error": "Invalid recipient phone number"}
@@ -255,6 +316,19 @@ def send_whatsapp_button_message(
     header_text: str = "",
     footer_text: str = "",
 ) -> Dict[str, Any]:
+    clean_to = "".join([c for c in str(to_number) if c.isdigit()])
+    _publish_live_event(
+        "wa_outgoing",
+        {
+            "text": body_text,
+            "buttons": [b.get("title") for b in buttons[:3]],
+            "button_objs": buttons[:3],
+            "header": header_text,
+            "footer": footer_text,
+            "type": "button"
+        },
+        sender=clean_to or "6381029380"
+    )
     """
     Sends an interactive reply-button message (max 3 buttons, title max 20 chars).
     buttons: [{"id": "btn_xxx", "title": "Label"}, ...]
@@ -312,6 +386,23 @@ def send_whatsapp_list_message(
     header_text: str = "",
     footer_text: str = "",
 ) -> Dict[str, Any]:
+    clean_to = "".join([c for c in str(to_number) if c.isdigit()])
+    _rows = []
+    for _s in sections:
+        _rows.extend(_s.get("rows", []))
+    _publish_live_event(
+        "wa_outgoing",
+        {
+            "text": body_text,
+            "button_label": button_label,
+            "sections": sections,
+            "rows": _rows,
+            "header": header_text,
+            "footer": footer_text,
+            "type": "list"
+        },
+        sender=clean_to or "6381029380"
+    )
     """
     Sends an interactive list-picker message.
     sections: [{"title": "...", "rows": [{"id": "...", "title": "...", "description": "..."}]}]
@@ -475,6 +566,7 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
         # ── Extract interactive reply data (button clicks / list selections) ──
         interactive_id = ""
         interactive_title = ""
+        user_text = ""
         if msg_type == "interactive":
             interactive_data = msg.get("interactive", {})
             itype = interactive_data.get("type", "")
@@ -489,10 +581,21 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                 interactive_title = lr.get("title", "")
                 user_text = interactive_title
             logger.info(f"[WA INTERACTIVE] type={itype} id={interactive_id} title={interactive_title}")
+        elif msg_type == "text":
+            user_text = msg.get("text", {}).get("body", "").strip()
+
+        _publish_live_event(
+            "wa_incoming",
+            {
+                "text": user_text if msg_type in ("text", "interactive") else f"[{msg_type} message]",
+                "msg_type": msg_type,
+                "interactive_id": interactive_id,
+                "interactive_title": interactive_title
+            },
+            sender=sender_phone
+        )
 
         if msg_type in ("text", "interactive"):
-            if msg_type == "text":
-                user_text = msg.get("text", {}).get("body", "").strip()
             clean_upper = (user_text or "").upper().strip()
 
             # Priority 0: SIA Interactive WhatsApp Onboarding & Access Flow (Cell: 6381029380)
@@ -558,6 +661,227 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                     f"🛑 *ரிமோட் பாதுகாப்பு (Remote Kill-Switch):* நீங்கள் பிரவுசரில் வேலையை முடித்தவுடன், உங்கள் தனியுரிமையைப் பாதுகாக்க "
                     f"இந்த வாட்ஸ்அப் எண்ணிற்கு *CLOSE* அல்லது *LOGOUT* என்று மெசேஜ் அனுப்பினால் போதும் - உங்கள் கணினி அமர்வு நொடியில் துண்டிக்கப்படும்!"
                 )
+
+            # 2.31 Spoken English Interactive WhatsApp Coach Trigger
+            elif (
+                interactive_id in ["btn_spoken_eng", "eng_menu", "eng_lvl_1", "eng_lvl_2", "eng_lvl_3"] or
+                interactive_id.startswith("scn_") or
+                any(clean_upper.startswith(k) or clean_upper == k for k in [
+                    "ENGLISH", "SPOKEN ENGLISH", "SPEAK", "ஆங்கிலம்", "பேச்சு ஆங்கிலம்", "SPOKEN", "TALK IN ENGLISH"
+                ])
+            ):
+                if interactive_id in ["btn_spoken_eng", "eng_menu"] or clean_upper in ["ENGLISH", "SPOKEN ENGLISH", "ஆங்கிலம்", "பேச்சு ஆங்கிலம்"]:
+                    m = format_whatsapp_english_menu()
+                    send_whatsapp_button_message(
+                        to_number=sender_phone,
+                        body_text=m["body_text"],
+                        buttons=m["buttons"],
+                        header_text=m["header_text"],
+                        footer_text=m["footer_text"]
+                    )
+                elif interactive_id in ["eng_lvl_1", "eng_lvl_2", "eng_lvl_3"]:
+                    lvl_map = {"eng_lvl_1": "level_1_beginner", "eng_lvl_2": "level_2_student", "eng_lvl_3": "level_3_interview"}
+                    target_lvl = lvl_map.get(interactive_id, "level_1_beginner")
+                    lm = format_whatsapp_level_scenarios(target_lvl)
+                    send_whatsapp_list_message(
+                        to_number=sender_phone,
+                        body_text=lm["body_text"],
+                        button_label=lm["button_label"],
+                        sections=lm["sections"],
+                        header_text=lm["header_text"],
+                        footer_text=lm["footer_text"]
+                    )
+                elif interactive_id.startswith("scn_"):
+                    sc_id = interactive_id[4:]
+                    reply_text = format_scenario_practice_message(sc_id)
+                    record_spoken_english_practice(sender_phone, sc_id, score=85, channel="WhatsApp")
+                    send_whatsapp_message(sender_phone, reply_text)
+                else:
+                    m = format_whatsapp_english_menu()
+                    send_whatsapp_button_message(sender_phone, m["body_text"], m["buttons"], m["header_text"], m["footer_text"])
+
+                return {
+                    "status": "processed",
+                    "handler": "spoken_english_coach",
+                    "sender": sender_phone,
+                    "interactive_id": interactive_id
+                }
+
+            # 2.32 Student Mental Health & Emotional Wellbeing Coach Trigger
+            elif (
+                interactive_id in ["btn_mental_health", "btn_stress", "mh_menu", "mh_exam", "mh_burnout", "mh_helpline"] or
+                any(clean_upper.startswith(k) or clean_upper == k for k in [
+                    "MENTAL HEALTH", "STRESS", "ANXIETY", "COUNSELING", "மன நலம்", "மன அழுத்தம்", "பயம்", "தேர்வு பயம்", "14416", "HELPLINE"
+                ])
+            ):
+                if interactive_id in ["btn_mental_health", "btn_stress", "mh_menu"] or clean_upper in ["MENTAL HEALTH", "STRESS", "மன நலம்", "மன அழுத்தம்"]:
+                    m = format_whatsapp_mental_health_menu()
+                    send_whatsapp_button_message(
+                        to_number=sender_phone,
+                        body_text=m["body_text"],
+                        buttons=m["buttons"],
+                        header_text=m["header_text"],
+                        footer_text=m["footer_text"]
+                    )
+                elif interactive_id == "mh_exam":
+                    reply_text = format_wellbeing_module_message("exam_anxiety")
+                    record_mental_health_checkin(sender_phone, mood="calm_exam", channel="WhatsApp")
+                    send_whatsapp_message(sender_phone, reply_text)
+                elif interactive_id == "mh_burnout":
+                    reply_text = format_wellbeing_module_message("study_burnout")
+                    record_mental_health_checkin(sender_phone, mood="calm_burnout", channel="WhatsApp")
+                    send_whatsapp_message(sender_phone, reply_text)
+                elif interactive_id == "mh_helpline" or clean_upper in ["14416", "HELPLINE", "உதவி எண்"]:
+                    reply_text = format_emergency_helpline_message()
+                    send_whatsapp_message(sender_phone, reply_text)
+                else:
+                    counsel_res = handle_empathetic_counseling_query(user_text)
+                    reply_text = counsel_res["reply_ta"]
+                    record_mental_health_checkin(sender_phone, mood="support_requested", channel="WhatsApp")
+                    send_whatsapp_message(sender_phone, reply_text)
+
+                return {
+                    "status": "processed",
+                    "handler": "student_mental_health_coach",
+                    "sender": sender_phone,
+                    "interactive_id": interactive_id
+                }
+
+            # 2.33 Universal Tuition Class (All Classes & CBSE / State Board) Trigger
+            elif (
+                interactive_id in ["btn_tuition", "tui_menu", "tui_cls_primary", "tui_cls_high", "tui_cls_higher"] or
+                interactive_id.startswith("tui_top_") or
+                any(clean_upper.startswith(k) or clean_upper == k for k in [
+                    "TUITION", "டியூஷன்", "CBSE", "STATE BOARD", "SAMACHEER", "வகுப்பு", "CLASS 10", "CLASS 12", "PHYSICS", "CHEMISTRY", "BIOLOGY", "MATHS"
+                ])
+            ):
+                if interactive_id in ["btn_tuition", "tui_menu"] or clean_upper in ["TUITION", "டியூஷன்", "CBSE", "STATE BOARD"]:
+                    m = format_whatsapp_tuition_menu()
+                    send_whatsapp_button_message(
+                        to_number=sender_phone,
+                        body_text=m["body_text"],
+                        buttons=m["buttons"],
+                        header_text=m["header_text"],
+                        footer_text=m["footer_text"]
+                    )
+                elif interactive_id in ["tui_cls_primary", "tui_cls_high", "tui_cls_higher"]:
+                    cls_map = {
+                        "tui_cls_primary": "primary_1_5",
+                        "tui_cls_high": "high_school_9_10",
+                        "tui_cls_higher": "higher_sec_11_12"
+                    }
+                    target_cls = cls_map.get(interactive_id, "high_school_9_10")
+                    lm = format_whatsapp_class_topics_list(target_cls)
+                    send_whatsapp_list_message(
+                        to_number=sender_phone,
+                        body_text=lm["body_text"],
+                        button_label=lm["button_label"],
+                        sections=lm["sections"],
+                        header_text=lm["header_text"],
+                        footer_text=lm["footer_text"]
+                    )
+                elif interactive_id.startswith("tui_top_"):
+                    top_id = interactive_id[8:]
+                    reply_text = format_tuition_lesson_card(top_id)
+                    record_tuition_quiz_attempt(sender_phone, top_id, is_correct=True, score_pct=100.0, channel="WhatsApp")
+                    send_whatsapp_message(sender_phone, reply_text)
+                else:
+                    m = format_whatsapp_tuition_menu()
+                    send_whatsapp_button_message(sender_phone, m["body_text"], m["buttons"], m["header_text"], m["footer_text"])
+
+                return {
+                    "status": "processed",
+                    "handler": "universal_tuition_engine",
+                    "sender": sender_phone,
+                    "interactive_id": interactive_id
+                }
+
+            # 2.35 WhatsApp Education Course & Micro-Learning Trigger
+            elif any(clean_upper.startswith(k) or clean_upper == k for k in [
+                "COURSE", "COURSES", "பாடங்கள்", "பயிற்சி", "START TNPSC", "START SAMACHEER", "START NEET", "START DIGITAL",
+                "10TH SPRINT", "NEET SPRINT", "DAY 1", "DAY 2", "DAY 3", "DAY 4", "DAY 5", "NEXT LESSON"
+            ]):
+                c_id = "tnpsc_g4"
+                day_num = 1
+                if any(k in clean_upper for k in ["10TH", "பத்தாம்", "SAMACHEER"]):
+                    c_id = "samacheer_10"
+                elif any(k in clean_upper for k in ["NEET", "மருத்துவம்"]):
+                    c_id = "neet_tamil"
+                elif any(k in clean_upper for k in ["DIGITAL", "டிஜிட்டல்"]):
+                    c_id = "digital_citizen"
+
+                import re
+                day_match = re.search(r"DAY\s*(\d+)", clean_upper)
+                if day_match:
+                    day_num = int(day_match.group(1))
+
+                if clean_upper in ["COURSE", "COURSES", "பாடங்கள்"]:
+                    courses = get_available_courses()
+                    reply_text = (
+                        "🎓 *SIA WhatsApp கல்விப் பாடத்திட்டங்கள் (AI Micro-Courses)* 📚\n\n"
+                        "Meta Muse Spark Open 816B மூலம் தினசரி WhatsApp-ல் பாடம் & வினாடி-வினா:\n\n"
+                    )
+                    for c in courses:
+                        reply_text += f"{c['icon']} *{c['title_ta']}* ({c['total_days']} நாட்கள் | {c['daily_time_min']} நிமிடம்)\n👉 தொடங்க: *START {c['id'].upper()}* என அனுப்பவும்.\n\n"
+                    reply_text += "💡 *இன்றைய மாதிரிப் பாடம் படிக்க:* *DAY 1* என அனுப்பவும்!"
+                else:
+                    lesson_res = get_course_daily_lesson(course_id=c_id, day=day_num)
+                    reply_text = lesson_res["whatsapp_display"]
+
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "whatsapp_education_course",
+                    "sender": sender_phone,
+                    "course_id": c_id,
+                    "day": day_num
+                }
+
+            # 2.36 Daily Study Schedule Planner Trigger
+            elif any(clean_upper.startswith(k) or clean_upper == k for k in ["STUDY PLAN", "TIME TABLE", "TIMETABLE", "டைம் டேபிள்", "படிப்பு திட்டம்"]):
+                persona = "working_aspirant"
+                if any(k in clean_upper for k in ["பள்ளி", "SCHOOL", "10TH", "12TH"]):
+                    persona = "school_student"
+                elif any(k in clean_upper for k in ["பெண்கள்", "ஹோம்", "HOMEMAKER"]):
+                    persona = "homemaker"
+
+                plan_res = generate_daily_study_plan(persona_type=persona, target_exam="TNPSC / Samacheer 10th", daily_hours=4)
+                reply_text = plan_res["whatsapp_text"]
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "daily_study_schedule_planner",
+                    "sender": sender_phone,
+                    "persona": persona
+                }
+
+            # 2.37 Family Day-to-Day Tasks & Morning Briefing Trigger
+            elif any(clean_upper.startswith(k) or clean_upper == k for k in [
+                "TASKS", "TASK", "பணிகள்", "வேலைகள்", "TODO", "ADD TASK", "பணி சேர்", "DONE ", "COMPLETE ", "முடி ", "BRIEFING", "MORNING", "காலை வணக்கம்"
+            ]):
+                if clean_upper in ["BRIEFING", "MORNING", "காலை வணக்கம்"]:
+                    b_res = generate_daily_family_briefing(sender_phone)
+                    reply_text = b_res["whatsapp_briefing"]
+                elif clean_upper.startswith("ADD TASK ") or clean_upper.startswith("பணி சேர் "):
+                    t_text = user_text[9:].strip() if clean_upper.startswith("ADD TASK ") else user_text[9:].strip()
+                    add_res = add_family_task(sender_phone, t_text)
+                    reply_text = add_res["message_ta"] + "\n\nஅனைத்து பணிகளைக் காண *TASKS* என அனுப்பவும்."
+                elif clean_upper.startswith("DONE ") or clean_upper.startswith("COMPLETE ") or clean_upper.startswith("முடி "):
+                    import re
+                    num_match = re.search(r"\d+", clean_upper)
+                    t_idx = int(num_match.group(0)) if num_match else 1
+                    done_res = complete_family_task(sender_phone, t_idx)
+                    reply_text = done_res.get("whatsapp_text", done_res.get("message", "பணி முடிக்கப்பட்டது."))
+                else:
+                    t_list = list_family_tasks(sender_phone)
+                    reply_text = t_list["whatsapp_text"]
+
+                send_whatsapp_message(sender_phone, reply_text)
+                return {
+                    "status": "processed",
+                    "handler": "family_daily_task_planner",
+                    "sender": sender_phone
+                }
 
             # 2.4 Educational Test & Homework Solver Trigger via Meta Wonder 1.0 ('TEST', 'EXAM', 'QUIZ', 'TNPSC', 'SAMACHEER', 'தேர்வு', 'படிப்பு')
             elif any(k in clean_upper for k in ["TEST", "EXAM", "QUIZ", "TNPSC", "SAMACHEER", "தேர்வு", "படிப்பு", "பாடத்திட்டம்"]):

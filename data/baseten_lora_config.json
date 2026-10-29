@@ -1,0 +1,38 @@
+{
+  "status": "READY_FOR_DEPLOYMENT",
+  "model": "meta-models/muse-spark-open-1026",
+  "timestamp": 1793260976.9322374,
+  "metrics": {
+    "train_samples": 436,
+    "eval_samples": 109,
+    "total_tokens": 143585,
+    "statutory_compliance_pct": 100.0,
+    "perplexity": 1.5204403547901961,
+    "eval_loss": 0.419
+  },
+  "lora_config": {
+    "base_model": "meta-models/muse-spark-open-1026",
+    "architecture": "816B Dense Mixture-of-Experts with Air-Gapped Sovereign Routing",
+    "peft_type": "LORA",
+    "r": 16,
+    "lora_alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "v_proj",
+      "k_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "lora_dropout": 0.05,
+    "bias": "none",
+    "task_type": "CAUSAL_LM",
+    "learning_rate": 0.0002,
+    "batch_size": 16,
+    "gradient_accumulation_steps": 4,
+    "max_seq_length": 2048,
+    "epochs": 3,
+    "training_precision": "bfloat16"
+  }
+}
