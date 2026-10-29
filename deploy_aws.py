@@ -37,6 +37,7 @@ FILES_TO_DEPLOY = [
     "family_super_agent.py",
     "daily_news_air_engine.py",
     "test_daily_news_suite.py",
+    "test_multimodal_superintelligence.py",
     "data/makkal_domain_training_dataset.jsonl",
     "data/tuto_qbank_cache.json",
     "data/baseten_train.jsonl",

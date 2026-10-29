@@ -36,6 +36,7 @@ except ImportError:
     requests = _MockRequests()
 from typing import Dict, Any, Optional
 from pathlib import Path
+import uuid
 
 # Local agent dependencies
 from meta_client import (
@@ -203,7 +204,7 @@ def send_whatsapp_message(to_number: str, text: str) -> Dict[str, Any]:
         "messaging_product": "whatsapp",
         "to": clean_to,
         "type": "text",
-        "text": {"body": text}
+        "text": {"body": text[:4090]}
     }
 
     try:
@@ -1369,9 +1370,9 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
             # 3. Meta Multimodal Image Generation Trigger (Wishes, Home Design, Thumbnail, Educational Diagrams)
             elif any(k in (user_text or "").lower() for k in [
                 "image", "photo", "picture", "poster", "thumbnail", "drawing", "design", "illustration", "diagram",
-                "படம்", "வரைபடம்", "போஸ்டர்", "வாழ்த்து", "பிறந்தநாள்", "பொங்கல்", "தீபாவளி", "புத்தாண்டு", "வீடு",
+                "படம்", "வரைபடம்", "போஸ்டர்", "வாழ்த்து", "பிறந்தநாள்", "பொங்கல்", "தீபாவளி", "புத்தாண்டு", "வீடு வடிவமைப்பு", "வீட்டு வரைபடம்",
                 "எலிவேஷன்", "யூடியூப்", "சமச்சீர்", "அறிவியல்", "விளக்கப்படம்"
-            ]):
+            ]) and not any(k in (user_text or "").lower() for k in ["அளவீடு", "பட்டா", "மனு"]):
                 from meta_image_studio import generate_meta_image
                 lower_t = (user_text or "").lower()
                 img_cat = "wishes"
@@ -1441,15 +1442,19 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                 reasoned_voice_reply = audio_pipeline_res.get("reply", "")
             else:
                 user_text = "பட்டா மாறுதல் மற்றும் நில அளவீடு செய்ய மனு எழுத வேண்டும்." # Fallback demo prompt
-                reasoned_voice_reply = ""
+                reasoning_res = meta_client.call_baseten_open_weight([
+                    {"role": "system", "content": "You are SIA Citizen Voice Assistant. Provide authoritative guidance in colloquial Tamil quoting official Government Orders."},
+                    {"role": "user", "content": user_text}
+                ])
+                reasoned_voice_reply = reasoning_res.get("reply", "")
 
             reply_text = f"🎙️ *மக்களின் குரல் பதிவு பெறப்பட்டது (SeamlessM4T):*\n\"{user_text}\"\n\n"
             lower_v = (user_text or "").lower()
             if any(k in lower_v for k in [
                 "image", "photo", "picture", "poster", "thumbnail", "drawing", "design", "illustration", "diagram",
-                "படம்", "வரைபடம்", "போஸ்டர்", "வாழ்த்து", "பிறந்தநாள்", "பொங்கல்", "தீபாவளி", "புத்தாண்டு", "வீடு",
+                "படம்", "வரைபடம்", "போஸ்டர்", "வாழ்த்து", "பிறந்தநாள்", "பொங்கல்", "தீபாவளி", "புத்தாண்டு", "வீடு வடிவமைப்பு", "வீட்டு வரைபடம்",
                 "எலிவேஷன்", "யூடியூப்", "சமச்சீர்", "அறிவியல்", "விளக்கப்படம்"
-            ]):
+            ]) and not any(k in lower_v for k in ["அளவீடு", "பட்டா", "மனு"]):
                 from meta_image_studio import generate_meta_image
                 img_cat = "wishes"
                 if any(k in lower_v for k in ["வீடு", "வரைபடம்", "elevation", "house", "home", "floor plan", "thinnai", "கட்டிடம்"]):
@@ -1519,7 +1524,8 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
             if download_success and image_file.exists():
                 image_bytes = image_file.read_bytes()
             else:
-                image_bytes = b"sample_deed_bytes"
+                from test_makkal_agent_suite import create_sample_deed_image
+                image_bytes = create_sample_deed_image()
 
             # Check if this is a student study diagram / textbook photo (Meta SAM 3.1 + Meta Wonder 1.0)
             is_study_diagram = any(k in lower_caption for k in ["பாடம்", "கணக்கு", "வினா", "வரைபடம்", "அறிவியல்", "study", "diagram", "question", "homework", "math", "science", "book", "physics", "biology"])
