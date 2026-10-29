@@ -14,7 +14,11 @@ import io
 import base64
 from pathlib import Path
 from typing import Dict, Any, List
-from PIL import Image, ImageDraw
+try:
+    from PIL import Image, ImageDraw
+except ImportError:
+    Image = None
+    ImageDraw = None
 
 from meta_client import meta_client, SEGMENT_MODEL
 

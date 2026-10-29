@@ -24,7 +24,17 @@ import logging
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+try:
+    from PIL import Image, ImageDraw, ImageFont, ImageFilter
+except ImportError:
+    class _MockImage:
+        Image = Any
+    Image = _MockImage()
+    class _MockImageDraw:
+        Draw = Any
+    ImageDraw = _MockImageDraw()
+    ImageFont = None
+    ImageFilter = None
 
 logger = logging.getLogger("makkal.image_studio")
 

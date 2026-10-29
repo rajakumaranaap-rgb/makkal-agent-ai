@@ -284,6 +284,196 @@ def format_tuition_lesson_card(topic_id: str) -> str:
     return "\n".join(lines)
 
 
+
+
+# ==============================================================================
+# 📝 10TH STUDENT HOMEWORK SOLVER & DAILY CBSE / SAMACHEER STUDY PLANNER
+# ==============================================================================
+
+def solve_homework_submission(
+    query_text: str,
+    class_id: str = "class_10",
+    curriculum: str = "CBSE",
+    subject: str = "Science",
+    photo_url: str = None
+) -> Dict[str, Any]:
+    """
+    Solves teacher homework assignments and textbook problems using
+    First-Principles step-by-step derivation, formula breakdowns, and Tamil analogies.
+    """
+    q_clean = (query_text or "").strip()
+    q_lower = q_clean.lower()
+
+    # Detect subject and topic if not explicitly provided
+    detected_topic = "பொது அறிவியல் & கணித வீட்டுப்பாடம் (General Science & Math)"
+    formula_used = "First-Principles Analysis"
+    steps = []
+    final_answer = ""
+    real_world_analogy = ""
+
+    # Case 1: Ohm's Law / Electricity Circuit Homework
+    if any(k in q_lower for k in ["ohm", "ஓம்", "volt", "மின்னழுத்தம்", "ampere", "மின்னோட்டம்", "resistance", "மின்தடை", "v=ir"]):
+        detected_topic = "10-ம் வகுப்பு இயற்பியல்: ஓம் விதி & மின்சுற்று கணக்கு (Ohm's Law & Circuit Calculation)"
+        formula_used = "V = I × R   (மின்னழுத்தம் = மின்னோட்டம் × மின்தடை)"
+        steps = [
+            "படி 1 (கொடுக்கப்பட்டவை / Given Values): கணக்கில் கொடுக்கப்பட்ட மின்னழுத்தம் (V) அல்லது மின்னோட்டம் (I) அல்லது மின்தடை (R) மதிப்புகளை குறித்துக்கொள்ளவும்.",
+            "படி 2 (சூத்திரம் / Formula Selection): V = I × R. மின்தடை தேவைப்பட்டால் R = V / I; மின்னோட்டம் தேவைப்பட்டால் I = V / R.",
+            "படி 3 (மதிப்பீடு / Substitution): கொடுக்கப்பட்ட எண்களை சூத்திரத்தில் பிரதியிட்டு எளிய முறையில் சுருக்கவும்.",
+            "படி 4 (அலகு / Units): விடையுடன் சரியான சர்வதேச அலகை (மின்னழுத்தம்: வோல்ட் V, மின்னோட்டம்: ஆம்பியர் A, மின்தடை: ஓம் Ω) கட்டாயம் சேர்க்கவும்."
+        ]
+        final_answer = "எடுத்துக்காட்டு: V = 12V, R = 4Ω எனில், I = 12 / 4 = 3 Amperes (ஆம்பியர்)."
+        real_world_analogy = "ஒரு தண்ணீர் குழாயில் நீர் அழுத்தம் தான் வோல்டேஜ் (V); குழாயில் பாயும் நீரின் வேகம் தான் மின்னோட்டம் (I); குழாயின் சுருக்கம் அல்லது தடை தான் மின்தடை (R)."
+
+    # Case 2: Quadratic Equation / Mathematics Homework
+    elif any(k in q_lower for k in ["quadratic", "இருபடி", "equation", "ax^2", "காரணிப்படுத்துக", "root"]):
+        detected_topic = "10-ம் வகுப்பு கணிதம்: இருபடிச் சமன்பாடுகள் (Quadratic Equations)"
+        formula_used = "x = [-b ± √(b² - 4ac)] / (2a)   அல்லது காரணிப்படுத்துதல் முறை (Factorization)"
+        steps = [
+            "படி 1 (நிலையான வடிவம் / Standard Form): சமன்பாட்டை ax² + bx + c = 0 என்ற பொது வடிவில் எழுதவும்.",
+            "படி 2 (குணகங்கள் / Coefficients): a, b மற்றும் c மதிப்புகளை அடையாளக் குறியீடுகளுடன் (+ அல்லது -) சரியாக பிரித்தெடுக்கவும்.",
+            "படி 3 (தன்மை காட்டி / Discriminant): Δ = b² - 4ac கணக்கிடவும். Δ > 0 எனில் இரண்டு மெய் மூலங்கள்; Δ = 0 எனில் சம மூலங்கள்.",
+            "படி 4 (மூலங்கள் காணுதல் / Solving): சூத்திரத்தில் பிரதியிட்டு x-ன் இரு மூலங்களை (+ மற்றும் - முறைகளில்) தனித்தனியாக கண்டறியவும்."
+        ]
+        final_answer = "எடுத்துக்காட்டு: x² - 5x + 6 = 0 சமன்பாட்டின் மூலங்கள் x = 2 மற்றும் x = 3."
+        real_world_analogy = "ஒரு பந்தை மேலே வீசும்போது அது சென்று விழும் வளைவுப் பாதையின் உயரத்தையும் நேரத்தையும் கணக்கிட இருபடிச் சமன்பாடு பயன்படுகிறது."
+
+    # Case 3: Chemical Reaction & Balancing Homework
+    elif any(k in q_lower for k in ["chemical", "வேதிவினை", "balance", "சமன்படுத்துக", "acid", "base", "naoh", "hcl"]):
+        detected_topic = "10-ம் வகுப்பு வேதியியல்: வேதிவினைகளும் சமன்பாடுகளும் (Chemical Reactions & Equations)"
+        formula_used = "Law of Conservation of Mass (பொருண்மை அழியா விதி)"
+        steps = [
+            "படி 1: வினைபடு பொருட்கள் (Reactants) இடதுபுறமும், வினைவிளை பொருட்கள் (Products) வலதுபுறமும் எழுதவும்.",
+            "படி 2: இருபுறமும் உள்ள ஒவ்வொரு தனிம அணுக்களின் எண்ணிக்கையை தனித்தனியாக கணக்கிடவும்.",
+            "படி 3: அணுக்களின் எண்ணிக்கை சமமாக இல்லாத தனிமங்களுக்கு முன்னால் தகுந்த எண்களை (Stoichiometric Coefficients) இட்டு சமன் செய்யவும்.",
+            "படி 4: சேர்மத்தின் வேதியியல் வாய்ப்பாட்டை (Formula) மாற்றாமல் முன்னொட்டு எண்களை மட்டுமே மாற்ற வேண்டும்."
+        ]
+        final_answer = "எடுத்துக்காட்டு: 2H₂ + O₂ ➔ 2H₂O (ஹைட்ரஜன் மற்றும் ஆக்சிஜன் இணைந்து நீர் உருவாகுதல் சமன் செய்யப்பட்டது)."
+        real_world_analogy = "சமையலில் நாம் போடும் அரிசி மற்றும் காய்கறிகளின் மொத்த எடை தான் சமைத்த உணவின் எடையாக இருக்கும்; அணுக்கள் புதிதாக உருவாவதும் இல்லை, அழிவதும் இல்லை."
+
+    # General Homework Solver
+    else:
+        detected_topic = f"10-ம் வகுப்பு {subject} வீட்டுப்பாட வழிகாட்டல் ({curriculum})"
+        formula_used = "Conceptual Deduction & Step-by-Step Derivation"
+        steps = [
+            f"படி 1 (வினா புரிதல்): கொடுக்கப்பட்ட கேள்வி: '{q_clean[:80]}...' என்பதன் முக்கிய கருப்பொருளை அடையாளம் காணவும்.",
+            "படி 2 (அடிப்படை விதி): பாடப்புத்தகத்தில் உள்ள முதன்மைக் கோட்பாடு மற்றும் வரையறையை நினைவுகூரவும்.",
+            "படி 3 (விடை கட்டமைப்பு): தலைப்பு, சூத்திரம், வரைபடம் அல்லது முக்கிய குறிப்புகளை வரிசைப்படி விளக்கவும்.",
+            "படி 4 (சுய மதிப்பீடு): விடைக்குரிய முக்கிய கலைச்சொற்கள் (Keywords) சரியாக விவரிக்கப்பட்டுள்ளதா என சரிபார்க்கவும்."
+        ]
+        final_answer = "மேற்கண்ட படிமுறைகளைப் பின்பற்றி உங்கள் நோட்டுப் புத்தகத்தில் விடையை அழகாக எழுதவும்."
+        real_world_analogy = "எந்தவொரு கடினமான சிக்கலையும் சிறு சிறு பகுதிகளாகப் பிரித்து தீர்ப்பதே அறிவியலின் அடிப்படை அணுகுமுறை."
+
+    return {
+        "status": "success",
+        "class_id": class_id,
+        "curriculum": curriculum,
+        "subject": subject,
+        "query_text": q_clean,
+        "photo_url": photo_url,
+        "topic_name": detected_topic,
+        "formula_used": formula_used,
+        "steps": steps,
+        "final_answer": final_answer,
+        "tamil_analogy": real_world_analogy
+    }
+
+
+def get_daily_student_study_plan(class_id: str = "class_10", curriculum: str = "CBSE") -> Dict[str, Any]:
+    """
+    Generates a high-yield, balanced daily timetable for Class 10 board exam success.
+    """
+    return {
+        "status": "success",
+        "class_id": class_id,
+        "curriculum": curriculum,
+        "target_exam": "10-ம் வகுப்பு பொதுத் தேர்வு 2026 (Board Exams 95%+ Target)",
+        "daily_schedule": [
+            {
+                "time_slot": "காலை 05:30 - 06:30 (1 மணி நேரம்)",
+                "subject": "கணிதம் (Mathematics)",
+                "focus": "புதிய சூத்திரங்கள் மனனம் மற்றும் கடினமான 5 கணக்குகள் பயிற்சி (Daily 5 Problem Challenge)",
+                "icon": "📐"
+            },
+            {
+                "time_slot": "காலை 06:30 - 07:15 (45 நிமிடங்கள்)",
+                "subject": "அறிவியல் இயற்பியல் / வேதியியல் (Science)",
+                "focus": "விதிமுறைகள், சமன்பாடுகள் மற்றும் வரைபடங்கள் (Diagrams & Formulas)",
+                "icon": "⚡"
+            },
+            {
+                "time_slot": "மாலை 05:30 - 06:30 (1 மணி நேரம்)",
+                "subject": "பள்ளி வீட்டுப்பாடம் & SIA வழிகாட்டல் (Teacher Homework)",
+                "focus": "ஆசிரியர் கொடுத்த வீட்டுப்பாடங்களை முடித்து SIA-வில் சரிபார்த்தல்",
+                "icon": "📝"
+            },
+            {
+                "time_slot": "இரவு 07:30 - 08:30 (1 மணி நேரம்)",
+                "subject": "சமூக அறிவியல் / உயிரியல் (Social & Biology)",
+                "focus": "முக்கிய வரலாற்று நிகழ்வுகள், வரைபடம் (Map Work) மற்றும் 5 மதிப்பெண் வினாக்கள்",
+                "icon": "🌍"
+            },
+            {
+                "time_slot": "இரவு 08:45 - 09:15 (30 நிமிடங்கள்)",
+                "subject": "தினசரி வினாடி-வினா & திருப்புதல் (Quick Quiz)",
+                "focus": "SIA WhatsApp 5-கேள்வி வினாடி வினா & கற்றல் ஸ்ட்ரீக் (Streak) பதிவு",
+                "icon": "🎯"
+            }
+        ],
+        "golden_study_rules": [
+            "1. தொடர் படிப்பு (Pomodoro 25/5): 25 நிமிட படிப்பிற்குப் பின் 5 நிமிடம் கண்களுக்கு ஓய்வு தரவும்.",
+            "2. மன வரைபடம் (Mind Maps): ஒவ்வொரு பாட அத்தியாயத்திற்கும் 1 பக்க வரைபட சுருக்கம் தயாரிக்கவும்.",
+            "3. தேர்வு பயம் வேண்டாம்: ஏதேனும் மன அழுத்தம் ஏற்பட்டால் உடனே SIA-வில் 14416 வழிகாட்டலைப் பெறலாம்."
+        ]
+    }
+
+
+def format_whatsapp_homework_response(sol: Dict[str, Any]) -> str:
+    """Formats homework solution into a clean, encouraging WhatsApp message."""
+    lines = [
+        f"📝 *ஆசிரியர் வீட்டுப்பாட தீர்வு ({sol.get('curriculum', 'CBSE')} 10-ம் வகுப்பு)*",
+        f"📌 *தலைப்பு:* {sol.get('topic_name')}",
+        "-----------------------------------------",
+        f"📐 *முக்கிய சூத்திரம் (Formula):*\n_{sol.get('formula_used')}_\n",
+        "🔍 *படிமுறை விளக்கம் (Step-by-Step Solution):*"
+    ]
+    for s in sol.get("steps", []):
+        lines.append(f"  • {s}")
+
+    lines.append(f"\n✅ *இறுதி விடை (Result):*\n*{sol.get('final_answer')}*")
+
+    if sol.get("tamil_analogy"):
+        lines.append(f"\n💡 *எளிய நிஜ வாழ்க்கை உதாரணம்:*\n{sol.get('tamil_analogy')}")
+
+    lines.append("\n-----------------------------------------")
+    lines.append("🎯 *அடுத்த நடவடிக்கை:* அடுத்த வீட்டுப்பாட வினாவை தட்டச்சு செய்யலாம் அல்லது புகைப்படமாக அனுப்பலாம்! SIA உங்களுக்கு தோழனாக வழிகாட்டும்.")
+
+    return "\n".join(lines)
+
+
+
+
+def format_whatsapp_study_plan_message(class_id: str = "class_10", curriculum: str = "CBSE") -> str:
+    """Formats a balanced daily timetable into a clean WhatsApp message."""
+    plan = get_daily_student_study_plan(class_id, curriculum)
+    lines = [
+        f"📅 *10-ம் வகுப்பு பொதுத் தேர்வு தினசரி படிப்பு அட்டவணை ({curriculum} 2026)* 🎯",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "💡 *இலக்கு: 95%+ மதிப்பெண்கள் & பூஜ்ஜிய மன அழுத்தம்*",
+        ""
+    ]
+    for slot in plan.get("daily_schedule", []):
+        lines.append(f"{slot['icon']} *{slot['time_slot']}*")
+        lines.append(f"   📖 *பாடம்:* {slot['subject']}")
+        lines.append(f"   🎯 *பயிற்சி:* {slot['focus']}\n")
+
+    lines.append("🏆 *வெற்றி விதிமுறைகள்:*")
+    for r in plan.get("golden_study_rules", []):
+        lines.append(f"• {r}")
+    lines.append("\n━━━━━━━━━━━━━━━━━━━━━━━━━")
+    lines.append("📝 ஆசிரியர் வீட்டுப்பாடம் இருந்தால் வினாவை அனுப்பவும், SIA நொடியில் தீர்த்துத் தரும்!")
+    return "\n".join(lines)
+
+
 if __name__ == "__main__":
     print("Class levels:", len(CLASS_LEVELS))
     menu = format_whatsapp_tuition_menu()

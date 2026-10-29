@@ -4270,9 +4270,9 @@ window.openTravelModal = function() { document.getElementById('travelModal').cla
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    let out = 🎯 STUDY ROUTINE:  ()\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n;
+                    let out = "🎯 STUDY ROUTINE: " + (data.persona || persona) + "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
                     (data.routine || []).forEach(r => {
-                        out += ⏰  ➜ \n;
+                        out += "⏰ " + (r.time || '') + " ➜ " + (r.activity || '') + "\n";
                     });
                     area.textContent = out;
                 }

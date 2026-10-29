@@ -18,7 +18,15 @@ import json
 import base64
 import logging
 from typing import Dict, Any, List, Optional
-from PIL import Image, ImageDraw, ImageFilter, ImageStat
+try:
+    from PIL import Image, ImageDraw, ImageFilter, ImageStat
+except ImportError:
+    class _MockImage:
+        Image = Any
+    Image = _MockImage()
+    ImageDraw = None
+    ImageFilter = None
+    ImageStat = None
 
 from meta_client import meta_client
 import tnega_civic_engine

@@ -319,10 +319,11 @@ def _build_service_menu() -> Dict[str, Any]:
                 ]
             },
             {
-                "title": "🌾 வேளாண் & கல்வி",
+                "title": "🌾 வேளாண், கல்வி & பயணம்",
                 "rows": [
-                    {"id": "svc_agri",    "title": "🌾 வேளாண்மை",          "description": "பயிர் நோய், மானியம், PM-KISAN"},
-                    {"id": "svc_edu",     "title": "📚 கல்வி உதவி",        "description": "சமச்சீர் கல்வி, NEET, TNPSC"},
+                    {"id": "svc_agri",    "title": "🌾 வேளாண்மை & மானியம்", "description": "TNAU உரம், SAM 3.1 நோய், 100% பாசனம்"},
+                    {"id": "svc_edu",     "title": "📚 10th டியூஷன் & கல்வி", "description": "CBSE/சமச்சீர் வீட்டுப்பாடம் & அட்டவணை"},
+                    {"id": "svc_travel",  "title": "🚖 RedTaxi & சுற்றுலா",  "description": "0% Surge டாக்ஸி, ராமேஸ்வரம் யாத்திரை"},
                     {"id": "svc_health",  "title": "💊 மருத்துவ காப்பீடு",  "description": "CMCHIS அரசு மருத்துவ காப்பீடு"},
                 ]
             },
@@ -331,16 +332,12 @@ def _build_service_menu() -> Dict[str, Any]:
                 "rows": [
                     {"id": "svc_vault",   "title": "📄 ஆவண பெட்டகம்",     "description": "சான்றிதழ்கள் பாதுகாப்பு சேமிப்பு"},
                     {"id": "svc_dash",    "title": "🧠 3D Dashboard",       "description": "SIA Super Intelligence Portal"},
+                    {"id": "svc_logout",  "title": "🔒 வெளியேறு",          "description": "பாதுகாப்பாக Session முடக்கு"},
                 ]
-            },
-        ],
-        footer="SIA • Super Intelligent Agent • Meta AI 2026"
+            }
+        ]
     )
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# Main conversational flow  –  returns {messages: [...], reply: "...", ...}
-# ══════════════════════════════════════════════════════════════════════════════
 
 def handle_sia_whatsapp_flow(
     sender_phone: str,
@@ -879,6 +876,42 @@ def _handle_service_action(
                 ],
             )
         ], stage="LOGGED_OUT")
+
+    if action == "svc_travel":
+        from travel_booking_engine import format_whatsapp_travel_menu
+        m = format_whatsapp_travel_menu()
+        return _result([
+            _msg_buttons(
+                header=m["header_text"],
+                body=m["body_text"],
+                buttons=m["buttons"],
+                footer=m["footer_text"]
+            )
+        ], stage="TRAVEL_MENU")
+
+    if action == "svc_edu":
+        from universal_tuition_engine import format_whatsapp_tuition_menu
+        m = format_whatsapp_tuition_menu()
+        return _result([
+            _msg_buttons(
+                header=m["header_text"],
+                body=m["body_text"],
+                buttons=m["buttons"],
+                footer=m["footer_text"]
+            )
+        ], stage="TUITION_MENU")
+
+    if action == "svc_agri":
+        from agriculture_engine import format_whatsapp_agri_menu
+        m = format_whatsapp_agri_menu()
+        return _result([
+            _msg_buttons(
+                header=m["header_text"],
+                body=m["body_text"],
+                buttons=m["buttons"],
+                footer=m["footer_text"]
+            )
+        ], stage="AGRI_MENU")
 
     if action == "svc_dash":
         auth_token = create_magic_auth_token(phone=clean_phone, secret_pin=user.get("pin", "7890") if user else "7890")

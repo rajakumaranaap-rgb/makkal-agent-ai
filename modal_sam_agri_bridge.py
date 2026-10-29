@@ -17,7 +17,12 @@ import time
 import base64
 import random
 from typing import Dict, Any, List, Optional
-from PIL import Image, ImageDraw, ImageFont
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ImportError:
+    Image = None
+    ImageDraw = None
+    ImageFont = None
 
 from agriculture_engine import CROP_DISEASES_DB, MODAL_ARCHITECTURE_METADATA
 

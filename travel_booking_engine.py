@@ -290,6 +290,51 @@ def get_temple_packages() -> List[Dict[str, Any]]:
     return TEMPLE_DARSHAN_PACKAGES
 
 
+
+
+def format_whatsapp_travel_menu() -> Dict[str, Any]:
+    """Generates interactive WhatsApp button menu for zero-surge cab and pilgrimage booking."""
+    body_text = (
+        "🚖 *SIA RedTaxi / பயண முன்பதிவு & ஆன்மீக சுற்றுலா* 🌟\n\n"
+        "தமிழ்நாடு முழுவதும் 0% கூடுதல் கட்டணம் (Zero-Surge Guarantee) கொண்ட நம்பகமான டாக்ஸி சேவை!\n\n"
+        "• 🛺 நம்ம ஆட்டோ (₹30 + ₹15/km)\n"
+        "• 🚗 மினி ஏசி (₹99 + ₹11/km)\n"
+        "• 🚘 செடான் RedTaxi (₹149 + ₹13/km)\n"
+        "• 🚙 இன்னோவா SUV (₹299 + ₹17/km)\n"
+        "• 🛕 ராமேஸ்வரம், திருப்பதி, அறுபடை வீடு சிறப்பு பேக்கேஜ்கள்!\n\n"
+        "பயண வகையைத் தேர்வு செய்யவும் 👇"
+    )
+    buttons = [
+        {"id": "btn_taxi_sedan", "title": "🚘 RedTaxi / கார்"},
+        {"id": "btn_taxi_temple", "title": "🛕 கோயில் சுற்றுலா"},
+        {"id": "btn_taxi_auto", "title": "🛺 நம்ம ஆட்டோ"}
+    ]
+    return {
+        "body_text": body_text,
+        "buttons": buttons,
+        "header_text": "🚖 SIA Namma Travel & RedTaxi",
+        "footer_text": "Zero Surge • 112 SOS Protection"
+    }
+
+
+def format_whatsapp_temple_list() -> Dict[str, Any]:
+    """Generates interactive list message for temple packages."""
+    rows = []
+    for pkg in TEMPLE_DARSHAN_PACKAGES:
+        rows.append({
+            "id": f"ride_pkg_{pkg['id']}",
+            "title": pkg["name_ta"][:24],
+            "description": f"₹{pkg['fixed_package_rs']:,} • {pkg['days']} • {', '.join(pkg['circuit'][:2])}"[:72]
+        })
+    return {
+        "header_text": "🛕 SIA ஆன்மீக யாத்திரை",
+        "body_text": "தமிழ்நாட்டின் முக்கிய புண்ணிய ஸ்தலங்களுக்கான சிறப்பு பேக்கேஜ்கள். ஏசி வாகனம் & அனுபவமிக்க ஓட்டுநர் உறுதி செய்யப்படுகிறது.",
+        "button_label": "🛕 யாத்திரை தேர்வு",
+        "sections": [{"title": "கோயில் சுற்றுலா பேக்கேஜ்கள்", "rows": rows}],
+        "footer_text": "SIA Verified Pilgrimage Partner"
+    }
+
+
 # Singleton export
 travel_engine = {
     "calculate_ride_fare": calculate_ride_fare,

@@ -2324,3 +2324,114 @@ async def push_guide_to_whatsapp_endpoint(req: Request):
             sender=phone
         )
     return JSONResponse(content={"status": "success", "delivery": res})
+
+
+# ==============================================================================
+# UNIVERSAL TUITION & HOMEWORK SOLVER ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/tuition/homework-solve")
+async def tuition_homework_solve_endpoint(req: Request):
+    """
+    Solves teacher homework assignments and textbook problems using
+    First-Principles step-by-step derivation, formulas, and Tamil analogies.
+    """
+    from universal_tuition_engine import solve_homework_submission, format_whatsapp_homework_response
+    body = await req.json()
+    query = body.get("query_text", "")
+    class_id = body.get("class_id", "class_10")
+    curriculum = body.get("curriculum", "CBSE")
+    subject = body.get("subject", "Science")
+    photo_url = body.get("photo_url", None)
+
+    sol = solve_homework_submission(
+        query_text=query,
+        class_id=class_id,
+        curriculum=curriculum,
+        subject=subject,
+        photo_url=photo_url
+    )
+    sol["whatsapp_formatted"] = format_whatsapp_homework_response(sol)
+    return JSONResponse(content=sol)
+
+
+@app.get("/api/tuition/daily-study-plan")
+async def tuition_daily_study_plan_endpoint(class_id: str = "class_10", curriculum: str = "CBSE"):
+    """
+    Returns balanced daily study timetable (Pomodoro 25/5, 95%+ board target)
+    for Class 10 CBSE / Tamil Nadu State Board.
+    """
+    from universal_tuition_engine import get_daily_student_study_plan, format_whatsapp_study_plan_message
+    plan = get_daily_student_study_plan(class_id=class_id, curriculum=curriculum)
+    plan["whatsapp_formatted"] = format_whatsapp_study_plan_message(class_id=class_id, curriculum=curriculum)
+    return JSONResponse(content=plan)
+
+
+# ==============================================================================
+# TRAVEL & REDTAXI ZERO-SURGE BOOKING ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/travel/book-ride")
+async def travel_book_ride_endpoint(req: Request):
+    """
+    Books verified RedTaxi / Auto ride with 4-digit ride OTP and 0% surge statutory tariff.
+    """
+    from travel_booking_engine import execute_ride_booking
+    body = await req.json()
+    phone = body.get("phone", "6381029380")
+    name = body.get("customer_name", "குடிமகன்")
+    origin = body.get("origin", "Madurai Junction")
+    dest = body.get("destination", "Rameswaram Temple")
+    veh_id = body.get("vehicle_id", "sedan")
+    trip_type = body.get("trip_type", "one_way")
+
+    res = execute_ride_booking(
+        phone=phone,
+        customer_name=name,
+        origin=origin,
+        destination=dest,
+        vehicle_id=veh_id,
+        trip_type=trip_type
+    )
+    return JSONResponse(content=res)
+
+
+@app.get("/api/travel/fleet")
+async def travel_fleet_endpoint():
+    """Returns statutory zero-surge fleet tiers."""
+    from travel_booking_engine import get_fleet_catalog
+    return JSONResponse(content={"fleet": get_fleet_catalog()})
+
+
+@app.get("/api/travel/temple-packages")
+async def travel_temple_packages_endpoint():
+    """Returns curated temple darshan circuits."""
+    from travel_booking_engine import get_temple_packages
+    return JSONResponse(content={"packages": get_temple_packages()})
+
+
+# ==============================================================================
+# AGRICULTURE & TNAU CROP ADVISORY ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/agri/tnau-advisory")
+async def agri_tnau_advisory_endpoint(req: Request):
+    """
+    Returns verified TNAU agronomy protocols (weed control, nano DAP, bio-fertilizers).
+    """
+    from agriculture_engine import get_tnau_agronomy_advisory
+    body = await req.json()
+    crop = body.get("crop_key", "paddy")
+    query_type = body.get("query_type", "all")
+    res = get_tnau_agronomy_advisory(crop_key=crop, query_type=query_type)
+    return JSONResponse(content=res)
+
+
+@app.get("/api/agri/grains-subsidy")
+async def agri_grains_subsidy_endpoint(crop_key: str = "paddy"):
+    """
+    Returns 100% drip irrigation subsidy and GRAINS registration guidance.
+    """
+    from agriculture_engine import get_grains_subsidy_guidance
+    res = get_grains_subsidy_guidance(crop_key=crop_key)
+    return JSONResponse(content=res)

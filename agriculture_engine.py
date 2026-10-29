@@ -511,3 +511,43 @@ def get_grains_subsidy_guidance(crop_key: str) -> Dict[str, Any]:
     """Returns GRAINS & Uzhavan App subsidy eligibility and steps for the given crop."""
     adv = get_tnau_agronomy_advisory(crop_key, query_type="grains_subsidy")
     return adv
+
+
+def format_whatsapp_agri_menu() -> Dict[str, Any]:
+    """Generates interactive WhatsApp button menu for farmer welfare & advisory."""
+    body_text = (
+        "🌾 *SIA உழவர் & விவசாய நல மையம் (Farmer Welfare Engine)* 🚜\n\n"
+        "தமிழ்நாடு விவசாயிகளுக்கான நவீன AI வழிகாட்டி & அரசு நலத்திட்டங்கள்:\n\n"
+        "🌿 *பயிர் நோய் ஆய்வு:* பயிர் இலை புகைப்படத்தை அனுப்பினால் SAM 3.1 AI நொடியில் நோய் கண்டறியும்!\n"
+        "📅 *சாகுபடி காலண்டர்:* குறுவை / சம்பா நடவு, உரம் & களைக்கொல்லி அளவுகள் (TNAU வழிகாட்டல்)\n"
+        "💰 *அரசு மானியங்கள்:* 100% சொட்டுநீர்ப் பாசனம், PM-KISAN ₹6,000, இலவச விவசாய மின்சாரம்\n\n"
+        "உங்களுக்குத் தேவையான சேவையைத் தேர்ந்தெடுக்கவும் 👇"
+    )
+    buttons = [
+        {"id": "btn_agri_sow", "title": "📅 சாகுபடி காலண்டர்"},
+        {"id": "btn_agri_subsidy", "title": "💰 100% பாசன மானியம்"},
+        {"id": "btn_agri_mandi", "title": "📈 சந்தை காய்கறி விலை"}
+    ]
+    return {
+        "body_text": body_text,
+        "buttons": buttons,
+        "header_text": "🌾 SIA விவசாய நலன்",
+        "footer_text": "TNAU Certified Agronomy • GRAINS Portal"
+    }
+
+
+def format_whatsapp_agri_crops_list() -> Dict[str, Any]:
+    """Generates interactive list of crops for agronomy protocols."""
+    rows = [
+        {"id": "agri_crop_paddy", "title": "🌾 நெல் சாகுபடி (Paddy)", "description": "குறுவை / சம்பா உழவு, பென்டிமெத்தலின், நானோ DAP"},
+        {"id": "agri_crop_turmeric", "title": "🟡 மஞ்சள் (Turmeric)", "description": "கிழங்கு அழுகல், இலைப்புள்ளி, சூடோமோனாஸ்"},
+        {"id": "agri_crop_banana", "title": "🍌 வாழை சாகுபடி (Banana)", "description": "பனாமா வாடல், சொட்டுநீர் உரம், தார் பெருக்கம்"},
+        {"id": "agri_crop_pulses", "title": "🌱 பயறு வகைகள் (Pulses)", "description": "உளுந்து/பச்சைப்பயறு, TNAU Pulse Wonder, YMV"}
+    ]
+    return {
+        "header_text": "🌱 பயிர் வாரியான வழிகாட்டல்",
+        "body_text": "உங்கள் பயிரைத் தேர்வு செய்து TNAU அங்கீகரித்த உரம், களைக்கொல்லி மற்றும் மானிய விவரங்களைப் பெறுங்கள்:",
+        "button_label": "🌱 பயிரைத் தேர்ந்தெடுக்க",
+        "sections": [{"title": "தமிழ்நாடு முக்கிய பயிர்கள்", "rows": rows}],
+        "footer_text": "TNAU Crop Protection Protocol"
+    }

@@ -16,7 +16,12 @@ import urllib.parse
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
-from PIL import Image, ImageDraw, ImageFont
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ImportError:
+    Image = None
+    ImageDraw = None
+    ImageFont = None
 
 # Local directory for generated greeting cards
 GREETINGS_DIR = Path(__file__).parent / "static" / "greetings"
