@@ -2281,3 +2281,46 @@ async def serve_ui():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=8001, reload=True)
+
+
+# ==============================================================================
+# 🗺️ 7. UNIVERSAL DIAGRAMMATIC ROADMAP & GOVERNMENT PORTAL GUIDE ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/guide/diagrammatic-solve")
+async def diagrammatic_solve_endpoint(req: Request):
+    """
+    Parses any voice or text query into an innovative diagrammatic step-by-step
+    visual roadmap with verified government portal URLs, fee locks, and document checklists.
+    """
+    from diagrammatic_guide_engine import solve_diagrammatic_guide
+    body = await req.json()
+    query = body.get("query", "")
+    phone = body.get("phone", "6381029380")
+    res = solve_diagrammatic_guide(query_text=query, phone=phone)
+    return JSONResponse(content=res)
+
+
+@app.post("/api/guide/push-to-whatsapp")
+async def push_guide_to_whatsapp_endpoint(req: Request):
+    """
+    Pushes a formatted diagrammatic roadmap guide and legal/syllabus details
+    directly to the citizen's WhatsApp chat (+1 555-019-2834 / recipient phone).
+    """
+    from whatsapp_agent import send_whatsapp_message
+    from live_message_hub import live_hub
+    body = await req.json()
+    phone = body.get("phone", "6381029380")
+    text = body.get("whatsapp_text", "")
+    
+    if not text:
+        return JSONResponse(content={"status": "error", "message": "No message text provided"}, status_code=400)
+    
+    res = send_whatsapp_message(to_number=phone, text=text)
+    if live_hub:
+        live_hub.publish_event(
+            event_type="wa_outgoing",
+            data={"text": text, "type": "text", "channel": "guide_push"},
+            sender=phone
+        )
+    return JSONResponse(content={"status": "success", "delivery": res})

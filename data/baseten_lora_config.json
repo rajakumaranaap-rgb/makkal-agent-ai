@@ -1,11 +1,11 @@
 {
   "status": "READY_FOR_DEPLOYMENT",
   "model": "meta-models/muse-spark-open-1026",
-  "timestamp": 1793260976.9322374,
+  "timestamp": 1793261643.8488765,
   "metrics": {
-    "train_samples": 436,
-    "eval_samples": 109,
-    "total_tokens": 143585,
+    "train_samples": 520,
+    "eval_samples": 130,
+    "total_tokens": 170059,
     "statutory_compliance_pct": 100.0,
     "perplexity": 1.5204403547901961,
     "eval_loss": 0.419
