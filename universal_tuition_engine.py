@@ -312,7 +312,7 @@ def solve_homework_submission(
     real_world_analogy = ""
 
     # Case 1: Ohm's Law / Electricity Circuit Homework
-    if any(k in q_lower for k in ["ohm", "ஓம்", "volt", "மின்னழுத்தம்", "ampere", "மின்னோட்டம்", "resistance", "மின்தடை", "v=ir"]):
+    if any(k in q_lower for k in ["ohm", "ஓம்", "volt", "மின்னழுத்தம்", "ampere", "மின்னோட்டம்", "resistance", "மின்தடை", "v=ir", "v=", "r=", "current"]):
         detected_topic = "10-ம் வகுப்பு இயற்பியல்: ஓம் விதி & மின்சுற்று கணக்கு (Ohm's Law & Circuit Calculation)"
         formula_used = "V = I × R   (மின்னழுத்தம் = மின்னோட்டம் × மின்தடை)"
         steps = [
