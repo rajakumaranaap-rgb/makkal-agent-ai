@@ -175,7 +175,13 @@ class DomainTrainingEngine:
             "spoken_english": ["english", "spoken english", "self-introduction", "tanglish", "grammar", "interview", "ptm", "ஹலோ", "உச்சரிப்பு", "fluency", "பேச்சு ஆங்கிலம்"],
             "mental_health": ["stress", "anxiety", "mental health", "மன நலம்", "மன அழுத்தம்", "பயம்", "தேர்வு பயம்", "14416", "counseling", "helpline", "burnout", "சுவாசப் பயிற்சி", "pomodoro"],
             "tuition_curriculum": ["cbse", "ncert", "tuition", "டியூஷன்", "வகுப்பு 10", "வகுப்பு 12", "இரட்டை இரத்த ஓட்டம்", "ஓம் விதி", "sn1", "sn2", "பின்னங்கள்", "multiplication", "science", "maths"],
-            "education": ["நியூட்டன்", "ஒளியியல்", "physics", "maths", "science", "tnpsc", "சமச்சீர்", "தேர்வு", "quiz", "course"]
+            "education": ["நியூட்டன்", "ஒளியியல்", "physics", "maths", "science", "tnpsc", "சமச்சீர்", "தேர்வு", "quiz", "course"],
+            "hyperlocal_gig": ["bike", "rapido", "auto", "taxi", "cab", "van", "truck", "tractor", "harvester", "drone", "labor", "wage", "mason", "carpenter", "electrician", "plumber", "coconut", "pincode", "location", "upi", "gpay", "phonepe", "பைக்", "ரேபிடோ", "ஆட்டோ", "டிராக்டர்", "அறுவடை", "ட்ரோன்", "கொத்தனார்", "சித்தாள்", "விவசாய கூலி", "கூலி", "சரக்கு வேன்", "பின்கோடு", "இடம்", "ஜிபே", "போன்பே"],
+            "cbt_exam_notes": ["exam", "quiz", "cbt", "notes", "certificate", "தேர்வு", "நோட்ஸ்", "வினாத்தாள்", "சான்றிதழ்", "மதிப்பெண்", "upsc", "tnpsc", "ias", "குடிமைப்பணி"],
+            "share_market": ["share", "stock", "nifty", "banknifty", "fno", "option", "crypto", "bitcoin", "boto", "பங்கு", "பங்குச் சந்தை", "பங்குச்சந்தை", "நிஃப்டி", "கிரிப்டோ", "ஆப்ஷன்ஸ்", "reliance", "tata", "sebi", "முதலீடு"],
+            "citizen_life_vault": ["vault", "accounts", "expense", "income", "contacts", "doctor", "electrician", "proof", "ration", "aadhaar", "patta", "needs", "diary", "plans", "family", "secret", "வரவு", "செலவு", "கணக்கு", "மீதி", "தொடர்பு", "ஆவணம்", "தேவை", "டைரி", "நாட்குறிப்பு", "திட்டம்", "குடும்பம்", "ரகசியம்", "பெட்டகம்"],
+            "partner_registry": ["கூட்டாளர்", "பதிவு", "ஓட்டுநர்", "இயந்திரம்", "வாடகை", "கொத்தனார்", "பிளம்பர்", "ஆசிரியர்", "partner", "driver", "harvester", "registry", "provider", "dispatch"],
+            "universal_assistant": ["சேவை", "சேவைகள்", "services", "help", "menu", "உதவி", "வழிகாட்டி", "guide", "விவரம்", "செயல்பாடுகள்", "என்னென்ன", "சாத்தியம்", "options", "அனைத்து", "முறை"]
         }
 
         # Determine target domain intent

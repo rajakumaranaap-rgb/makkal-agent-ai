@@ -9,15 +9,15 @@
         "daily_greetings",
         "self_introduction"
       ],
-      "total_practice_count": 5,
+      "total_practice_count": 12,
       "latest_fluency_score": 90,
-      "streak_days": 4
+      "streak_days": 11
     },
     "mental_health": {
       "latest_mood": "calm_exam",
-      "checkin_count": 4,
-      "completed_breathing_sessions": 5,
-      "last_checkin_timestamp": "2026-10-29T12:58:24.652264"
+      "checkin_count": 18,
+      "completed_breathing_sessions": 19,
+      "last_checkin_timestamp": "2026-10-30T11:15:08.510053"
     },
     "tuition_progress": {
       "board": "Tamil Nadu State Board & CBSE",
@@ -25,8 +25,8 @@
         "class10_physics_electricity",
         "primary_math_multiplication"
       ],
-      "quizzes_taken": 4,
-      "average_quiz_score_pct": 94.0
+      "quizzes_taken": 11,
+      "average_quiz_score_pct": 97.8
     },
     "last_active_channel": "WhatsApp"
   },
@@ -39,15 +39,15 @@
       "completed_scenarios": [
         "daily_greetings"
       ],
-      "total_practice_count": 5,
+      "total_practice_count": 9,
       "latest_fluency_score": 72,
-      "streak_days": 4
+      "streak_days": 8
     },
     "mental_health": {
       "latest_mood": "calm",
-      "checkin_count": 3,
-      "completed_breathing_sessions": 4,
-      "last_checkin_timestamp": "2026-10-29T12:58:58.997802"
+      "checkin_count": 7,
+      "completed_breathing_sessions": 8,
+      "last_checkin_timestamp": "2026-10-30T11:14:59.135582"
     },
     "tuition_progress": {
       "board": "Tamil Nadu State Board & CBSE",
@@ -56,8 +56,8 @@
         "primary_math_multiplication",
         "general_tuition"
       ],
-      "quizzes_taken": 4,
-      "average_quiz_score_pct": 94.0
+      "quizzes_taken": 8,
+      "average_quiz_score_pct": 97.0
     },
     "last_active_channel": "Web"
   }

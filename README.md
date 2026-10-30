@@ -2,10 +2,11 @@
 ### Autonomous Multimodal Citizen Action & Civic Entitlements Agent for Tamil Nadu
 **Built for the Meta AI Developer Hackathon 2026 — Indie Developer Track ($150,000 USD Target)**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-HTTPS%20Cloud-emerald.svg)](https://brighton-decorative-opposite-attendance.trycloudflare.com)
+[![Release](https://img.shields.io/badge/Release-v1.0%20(Stable%20Beta)-10B981.svg)](https://regulatory-stack-counter-lady.trycloudflare.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-HTTPS%20Cloud-emerald.svg)](https://regulatory-stack-counter-lady.trycloudflare.com)
 [![Meta Model API](https://img.shields.io/badge/Meta%20AI-Muse%20Spark%20%7C%20Muse%20Wonder%20%7C%20SAM%203.1-0081FB.svg)](https://dev.meta.ai)
 [![Meta Open Weight](https://img.shields.io/badge/Baseten-Muse%20Spark%20Open%201026-teal.svg)](https://baseten.co)
-[![AWS Cloud](https://img.shields.io/badge/AWS%20EC2-Production%20Host-FF9900.svg)](https://brighton-decorative-opposite-attendance.trycloudflare.com)
+[![AWS Cloud](https://img.shields.io/badge/AWS%20EC2-Production%20Host-FF9900.svg)](https://regulatory-stack-counter-lady.trycloudflare.com)
 [![WhatsApp Cloud](https://img.shields.io/badge/Meta%20WhatsApp-Cloud%20API%20Bot-25D366.svg)](#-meta-whatsapp-cloud-api-integration)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -13,9 +14,9 @@
 
 ## 🌐 Live Application Links
 
-- 🚀 **Live Production Web Portal (HTTPS):** [https://brighton-decorative-opposite-attendance.trycloudflare.com](https://brighton-decorative-opposite-attendance.trycloudflare.com)
-- 🩺 **Health Check API:** [https://brighton-decorative-opposite-attendance.trycloudflare.com/health](https://brighton-decorative-opposite-attendance.trycloudflare.com/health)
-- 📱 **Meta WhatsApp Webhook:** `https://brighton-decorative-opposite-attendance.trycloudflare.com/api/whatsapp/webhook`
+- 🚀 **Live Production Web Portal (HTTPS):** [https://regulatory-stack-counter-lady.trycloudflare.com](https://regulatory-stack-counter-lady.trycloudflare.com)
+- 🩺 **Health Check API:** [https://regulatory-stack-counter-lady.trycloudflare.com/health](https://regulatory-stack-counter-lady.trycloudflare.com/health)
+- 📱 **Meta WhatsApp Webhook:** `https://regulatory-stack-counter-lady.trycloudflare.com/api/whatsapp/webhook`
 - 🖥️ **AWS EC2 Production Host:** `52.66.255.113` (Ubuntu 24.04 LTS, Multi-Worker FastAPI Engine)
 
 ---
