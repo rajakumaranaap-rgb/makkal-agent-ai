@@ -1002,6 +1002,9 @@ def process_provider_query_conversational(phone: str, text: str) -> Dict[str, An
     elif any(k in clean_text for k in ["நீட்", "neet", "டிஎன்பிஎஸ்சி", "tnpsc", "upsc"]):
         matched_key = "competitive_exam_mentor"
 
+    if not target_pin and not matched_key:
+        return {"status": "unhandled"}
+
     results = search_service_providers(pincode=target_pin, service_key=matched_key)
     if results:
         top_partner = results[0]
