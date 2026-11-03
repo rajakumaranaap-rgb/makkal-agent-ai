@@ -1028,24 +1028,99 @@ def handle_sia_whatsapp_flow(
         ], stage="TAXI_BOOKING_CONFIRMED")
 
     # ────────────────────────────────────────────────────────────────────────
-    #  SERVICE 5: COMMUNITY KITCHEN 1-TAP ORDER ACTION
+    #  SERVICE 5: COMMUNITY KITCHEN CHOOSE FOOD & ORDER ACTIONS
     # ────────────────────────────────────────────────────────────────────────
-    if action in ["food_order", "btn_food_quick_order", "btn_food_meals", "btn_food_tiffin"]:
+    if action in ["food_order", "btn_food_quick_order", "btn_food_order", "உணவு ஆர்டர்"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
         return _result([
             _msg_buttons(
-                header="🍱 வாழை இலை சாப்பாடு உறுதி செய்யப்பட்டது!",
+                header="🍲 எந்த உணவு வேண்டும்? (Choose Food)",
                 body=(
-                    "• *உணவகம்:* அன்னலட்சுமி மகளிர் சுயஉதவிக் குழு சமையல்\n"
-                    "• *விலை:* ₹60 மட்டுமே (0% கமிஷன்)\n"
-                    "• *டெலிவரி:* அடுத்த 20 நிமிடங்களில் சுடச்சுட வரும்!\n"
-                    "• *ஓட்டுநர்:* குமார் (OTP: *5821*)"
+                    f"வணக்கம் *{u_name}*! நீங்கள் விரும்பும் சமுதாய உணவைத் தேர்வு செய்யவும்:\n\n"
+                    "1. 🍱 *வாழை இலை சைவ சாப்பாடு* (₹65)\n"
+                    "   (பொன்னி சாதம், சாம்பார், ரசம், கூட்டு, அப்பளம்)\n\n"
+                    "2. 🍗 *பாரம்பரிய அசைவ சாப்பாடு* (₹140)\n"
+                    "   (நாட்டுக்கோழி வறுவல் சாப்பாடு + பிரியாணி சாதம்)\n\n"
+                    "3. 🥞 *சூடான டிபன் & சிற்றுண்டி* (₹40)\n"
+                    "   (3 பரோட்டா சால்னா அல்லது 4 இட்லி சாம்பார்)\n\n"
+                    "👉 கீழேயுள்ள பொத்தானைத் தொடவும் அல்லது விரும்பும் உணவை 10 விநாடி வாய்ஸ் பேசவும்!"
+                    if lang == "ta" else
+                    f"Welcome *{u_name}*! Please choose your preferred food option:\n\n"
+                    "1. 🍱 *Banana Leaf Veg Meals* (₹65)\n"
+                    "2. 🍗 *Country Chicken Meals* (₹140)\n"
+                    "3. 🥞 *Hot Tiffin / Parotta* (₹40)\n\n"
+                    "👉 Tap a button below or send a 10s voice note with your food choice!"
                 ),
                 buttons=[
+                    {"id": "btn_food_veg", "title": "🍱 சைவ சாப்பாடு" if lang == "ta" else "🍱 Veg Meals (₹65)"},
+                    {"id": "btn_food_nonveg", "title": "🍗 அசைவ சாப்பாடு" if lang == "ta" else "🍗 Chicken (₹140)"},
+                    {"id": "btn_food_tiffin", "title": "🥞 இரவு டிபன்" if lang == "ta" else "🥞 Hot Tiffin (₹40)"},
+                ],
+                footer="SIA • மகளிர் சமுதாய சமையல் (0% Fee)"
+            )
+        ], stage="FOOD_CHOOSE_SELECTION")
+
+    # ── Service 5 Confirmation: Veg Meals ──
+    if action in ["btn_food_veg", "btn_food_meals", "சைவ சாப்பாடு", "சாப்பாடு"]:
+        return _result([
+            _msg_buttons(
+                header="🍱 வாழை இலை சைவ சாப்பாடு உறுதி செய்யப்பட்டது!",
+                body=(
+                    "• *உணவகம்:* அன்னலட்சுமி மகளிர் சுயஉதவிக் குழு சமையல்\n"
+                    "• *உணவு:* வாழை இலை சைவ சாப்பாடு (சாம்பார், ரசம், கூட்டு, அப்பளம்)\n"
+                    "• *விலை:* ₹65 மட்டுமே (0% கமிஷன், நேரடி சமையல் விலை)\n"
+                    "• *டெலிவரி:* அடுத்த 20 நிமிடங்களில் உங்கள் வீடு தேடி சுடச்சுட வரும்!\n"
+                    "• *ஓட்டுநர்:* குமார் (பாதுகாப்பு OTP: *5821*)"
+                ),
+                buttons=[
+                    {"id": "food_order", "title": "🍲 வேறு உணவு"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • மகளிர் சமுதாய சமையல்"
             )
-        ], stage="FOOD_MEALS_CONFIRMED")
+        ], stage="FOOD_VEG_CONFIRMED")
+
+    # ── Service 5 Confirmation: Non-Veg Meals ──
+    if action in ["btn_food_nonveg", "btn_food_chicken", "அசைவ சாப்பாடு", "பிரியாணி", "கோழி சாப்பாடு"]:
+        return _result([
+            _msg_buttons(
+                header="🍗 நாட்டுக் கோழி சாப்பாடு உறுதி செய்யப்பட்டது!",
+                body=(
+                    "• *உணவகம்:* வடிவேல் பாரம்பர்ய மெஸ் (சோழவந்தான்)\n"
+                    "• *உணவு:* நாட்டுக் கோழி வறுவல் சாப்பாடு + பிரியாணி சாதம்\n"
+                    "• *விலை:* ₹140 மட்டுமே (0% கமிஷன், உணவக விலையே)\n"
+                    "• *டெலிவரி:* அடுத்த 25 நிமிடங்களில் சுடச்சுட வீடு வந்து சேரும்!\n"
+                    "• *ஓட்டுநர்:* முருகன் (பாதுகாப்பு OTP: *7241*)"
+                ),
+                buttons=[
+                    {"id": "food_order", "title": "🍲 வேறு உணவு"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • பாரம்பர்ய அசைவ மெஸ்"
+            )
+        ], stage="FOOD_NONVEG_CONFIRMED")
+
+    # ── Service 5 Confirmation: Tiffin / Parotta ──
+    if action in ["btn_food_tiffin", "btn_food_parotta", "டிபன்", "இரவு டிபன்", "பரோட்டா", "இட்லி"]:
+        return _result([
+            _msg_buttons(
+                header="🥞 சுடச்சுட இரவு டிபன் உறுதி செய்யப்பட்டது!",
+                body=(
+                    "• *உணவகம்:* முனியாண்டி விலாஸ் உள்ளூர் மெஸ்\n"
+                    "• *உணவு:* 3 மொறுமொறு பரோட்டா + நாட்டு சால்னா (அல்லது 4 இட்லி சாம்பார்)\n"
+                    "• *விலை:* ₹40 மட்டுமே (0% கமிஷன்)\n"
+                    "• *டெலிவரி:* அடுத்த 15 நிமிடங்களில் உங்கள் கதவைத் தட்டும்!\n"
+                    "• *ஓட்டுநர்:* சக்திவேல் (பாதுகாப்பு OTP: *9163*)"
+                ),
+                buttons=[
+                    {"id": "food_order", "title": "🍲 வேறு உணவு"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • சுடச்சுட இரவு டிபன்"
+            )
+        ], stage="FOOD_TIFFIN_CONFIRMED")
 
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 6: PATTA QUICK AUDIT ACTION
