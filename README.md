@@ -153,6 +153,48 @@ graph TD
 
 ---
 
+## 💳 Hyperlocal UPI Payments & Dynamic QR Architecture (Zero Middleman)
+
+For all commercial, rental, supply, and government statutory services, **SIA SuperApp** integrates native **1-Click UPI Intent Links** and **Dynamic Scan-to-Pay QR Codes** directly within WhatsApp:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Citizen as 🧑‍🌾 Rural Citizen (WhatsApp)
+    participant SIA as 🤖 SIA Autonomous Agent
+    participant UPI as 📲 UPI App (GPay / PhonePe / Paytm / BHIM)
+    participant Provider as 🏪 Local Merchant / Farmer / Driver
+
+    Citizen->>SIA: Taps Product / Service Button (e.g. 🍚 Rice Kit / 🚜 Rotavator / 🍱 Veg Meals)
+    SIA-->>Citizen: Invoice + 4-digit OTP + Clickable upi://pay Link + Dynamic QR Code URL
+    
+    alt Option A: 1-Click Mobile UPI Payment
+        Citizen->>UPI: Taps upi://pay link (Pre-fills VPA, Name, Exact Amount, Ref Note)
+        UPI-->>Provider: 100% Direct Account Credit (0% Platform Fee)
+        Citizen->>SIA: Taps [💳 UPI செலுத்தினேன்] (Paid)
+        SIA-->>Citizen: Instant Verified Receipt (TXN_SIA_...) + Live Dispatch Status
+    else Option B: Dynamic QR Code Scan
+        Citizen->>UPI: Other phone / family member scans 300x300 QR Code URL
+        UPI-->>Provider: Direct Bank Transfer
+        Citizen->>SIA: Taps [💳 UPI செலுத்தினேன்]
+        SIA-->>Citizen: Payment Verified & Dispatch Confirmed
+    else Option C: Cash on Delivery (COD)
+        Citizen->>SIA: Taps [💵 நேரில் பணம் (COD)]
+        SIA-->>Citizen: COD Confirmed (Pay direct upon delivery with OTP verification)
+    end
+```
+
+### Supported Payees & Statutory Rates:
+- **Service 1 (TNAU Bio-Agri):** Pseudomonas Bio-Cure (₹80), Fall Armyworm Neem Pack (₹110), Tomato Blight Copper Shield (₹95).
+- **Service 2 (TANUVAS Livestock):** Mastitis Herbal Emergency Pack (₹45), Milk Booster Azolla + Mineral Mix (₹120).
+- **Service 3 (Murugan Stores):** Ponni Rice & Dal Kit (₹450), Cooking Oil & Spices (₹380), Complete Monthly Kit (₹1,200).
+- **Service 4 (RedTaxi Mobility):** Bajaj Auto Ride (₹60 base token), Mini Car (₹140), Sedan AC (₹250).
+- **Service 5 (Community Kitchen):** Banana Leaf Veg Meals (₹65), Vadivel Mess Chicken (₹140), Hot Tiffin (₹40).
+- **Service 6 (TN Revenue Dept):** Statutory Subdivision e-Treasury Challan (₹60) under TN Survey & Boundaries Act.
+- **Service 12 (RentO Machinery):** Tractor Rotavator Advance (₹100 token @ ₹850/hr), Cultivator Advance (₹100 @ ₹750/hr), Harvester Advance (₹200 @ ₹2,200/hr).
+
+---
+
 ## 🧠 Comprehensive Meta AI Tooling Matrix
 
 | Meta AI Technology | Model Identifier | Functional Mission in SIA / Namma Ooru SuperApp | Output Modality & Artifact |
