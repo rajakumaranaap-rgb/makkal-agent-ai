@@ -37,6 +37,7 @@ from sia_admin_and_menu_engine import (
     get_super_admin_response,
     get_menu_guide_response,
     get_simplified_pictorial_menu,
+    get_inactivity_nudge,
     get_admin_login_prompt,
     get_language_picker_prompt,
     sanitize_whatsapp_text,
@@ -764,6 +765,87 @@ def handle_sia_whatsapp_flow(
         ], stage="SUPER_ADMIN_COCKPIT", magic_url=admin_data.get("magic_url"))
 
     # ────────────────────────────────────────────────────────────────────────
+    #  INACTIVITY NUDGE & RE-ENGAGEMENT HANDLERS (Judging Mode)
+    # ────────────────────────────────────────────────────────────────────────
+    if action.lower() in ["btn_nudge_wait", "wait", "waiting", "காத்திரு", "wait 2m"] or upper in ["WAIT", "WAITING", "காத்திரு"]:
+        lang = get_user_language(clean_phone)
+        wait_text = (
+            "✅ All right! I will gladly wait for you. Send a message anytime whenever you are ready to continue! 🙏"
+            if lang == "en" else
+            "✅ சரிங்க! தங்களின் வசதிக்கேற்ப காத்திருக்கிறேன். தொடர விரும்பும்போது எப்போது வேண்டுமானாலும் செய்தி அனுப்பலாம் அல்லது கீழே உள்ள மெனுவைத் தேர்ந்தெடுக்கலாம்! 🙏"
+        )
+        return _result([
+            _msg_buttons(
+                header="⏳ SIA காத்திருக்கிறது (Waiting)" if lang == "ta" else "⏳ SIA Waiting",
+                body=wait_text,
+                buttons=[
+                    {"id": "btn_nudge_menu", "title": "🔄 முதன்மை மெனு" if lang == "ta" else "🔄 Restart Menu"},
+                    {"id": "btn_nudge_close", "title": "🔒 அமர்வை முடிக்க" if lang == "ta" else "🔒 Close Session"},
+                ],
+                footer="SIA • Citizen First Care"
+            )
+        ], stage="NUDGE_WAITING")
+
+    if action.lower() in ["btn_nudge_menu", "btn_menu_all_list", "restart_menu", "மீண்டும் தொடங்கு", "முதன்மை மெனு"] or upper in ["RESTART", "RESTART MENU", "RESET MENU", "முதன்மை மெனு"]:
+        return _send_welcome(clean_phone)
+
+    if action.lower() in ["btn_nudge_close", "close_session", "முடிக்க", "வெளியேறு"] or upper in ["CLOSE", "QUIT", "EXIT", "முடிக்க"]:
+        from whatsapp_auth_manager import terminate_session_by_whatsapp
+        try:
+            terminate_session_by_whatsapp(clean_phone)
+        except Exception:
+            pass
+        lang = get_user_language(clean_phone)
+        close_text = (
+            "🔒 *SIA Session Concluded (Closed)*\n\nYour session has been safely saved and closed. Send *Hi SIA* or *வணக்கம்* anytime to start again! 🙏"
+            if lang == "en" else
+            "🔒 *SIA அமர்வு நிறைவுற்றது (Session Closed)*\n\nவணக்கம்! உங்கள் அமர்வு வெற்றிகரமாக நிறைவுபெற்று பாதுகாப்பாக மூடப்பட்டது. மீண்டும் தொடர்பு கொள்ள எப்போது வேண்டுமானாலும் *Hi SIA* அல்லது *வணக்கம்* என அனுப்பலாம்! 🙏"
+        )
+        return _result([
+            _msg_buttons(
+                header="🔒 அமர்வு நிறைவுற்றது" if lang == "ta" else "🔒 Session Closed",
+                body=close_text,
+                buttons=[
+                    {"id": "btn_nudge_menu", "title": "🌟 Hi SIA (தொடங்கு)" if lang == "ta" else "🌟 Hi SIA (Start)"},
+                ],
+                footer="SIA • Air-Gapped Sovereign Security"
+            )
+        ], stage="NUDGE_CLOSED")
+
+    if action.lower() in ["trigger_inactivity_nudge", "nudge_inactivity", "idle_nudge"] or upper in ["IDLE", "INACTIVITY", "NUDGE"]:
+        lang = get_user_language(clean_phone)
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        nudge_data = get_inactivity_nudge(citizen_name=u_name, lang=lang)
+        return _result([
+            _msg_buttons(
+                header=nudge_data["header"],
+                body=nudge_data["body"],
+                buttons=nudge_data["buttons"],
+                footer=nudge_data["footer"]
+            )
+        ], stage="INACTIVITY_NUDGE")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  INTERACTIVE QUICK MENU BUTTONS (btn_menu_1_agri, btn_menu_4_taxi, etc.)
+    # ────────────────────────────────────────────────────────────────────────
+    if action.startswith("btn_menu_"):
+        clean_target = action.replace("btn_menu_", "").split("_")[0]
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
+        guide_data = get_menu_guide_response(clean_target, citizen_name=u_name, lang=lang)
+        if guide_data:
+            return _result([
+                _msg_buttons(
+                    header=guide_data["header"],
+                    body=guide_data["body"],
+                    buttons=guide_data["buttons"],
+                    footer=guide_data["footer"]
+                )
+            ], stage=f"MENU_GUIDE_{clean_target}")
+
+    # ────────────────────────────────────────────────────────────────────────
     #  PRIMARY PORTAL ACTIONS (1, 2, 3, 4)
     # ────────────────────────────────────────────────────────────────────────
     if action.lower() in ["portal_govt", "portal_commerce", "portal_finance", "portal_vault"]:
@@ -980,25 +1062,8 @@ def handle_sia_whatsapp_flow(
 
     # ────────────────────────────────────────────────────────────────────────
 
-    if action in ("btn_services", "btn_menu"):
-
-        if is_user_registered(clean_phone):
-
-            user = get_user_profile(clean_phone)
-
-            msgs = [
-
-                _msg_text(f"🙏 வணக்கம் *{user.get('name', '')}*!"),
-
-                _build_service_menu()
-
-            ]
-
-            return _result(msgs, stage="SERVICE_MENU")
-
-        else:
-
-            return _send_welcome(clean_phone)
+    if action in ("btn_services", "btn_menu", "btn_menu_restart"):
+        return _send_welcome(clean_phone)
 
     # ────────────────────────────────────────────────────────────────────────
 

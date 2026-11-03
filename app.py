@@ -3630,6 +3630,62 @@ async def whatsapp_sim_endpoint(payload: Dict[str, Any]):
     }
 
 
+@app.post("/api/sia/inactivity-nudge")
+@app.get("/api/sia/inactivity-nudge")
+async def trigger_inactivity_nudge_endpoint(payload: Optional[Dict[str, Any]] = None):
+    """
+    Triggers or simulates a proactive inactivity re-engagement nudge event.
+    Returns the prompt with [Wait 2m], [Restart Menu], [Close Session] buttons
+    and broadcasts to the Web UI live stream.
+    """
+    from whatsapp_agent import process_incoming_whatsapp_message, SIA_OFFICIAL_NUMBER
+    import time
+    phone = (payload or {}).get("sender_phone", SIA_OFFICIAL_NUMBER) if payload else SIA_OFFICIAL_NUMBER
+    sim_webhook = {
+        "object": "whatsapp_business_account",
+        "entry": [{
+            "id": "WHATSAPP_NUDGE_ENTRY",
+            "changes": [{
+                "value": {
+                    "messaging_product": "whatsapp",
+                    "metadata": {"display_phone_number": "15550192834", "phone_number_id": "1213113635214047"},
+                    "messages": [{
+                        "from": phone,
+                        "id": f"sim_nudge_{int(time.time()*1000)}",
+                        "timestamp": str(int(time.time())),
+                        "type": "interactive",
+                        "interactive": {
+                            "type": "button_reply",
+                            "button_reply": {"id": "trigger_inactivity_nudge", "title": "Inactivity Check"}
+                        }
+                    }]
+                },
+                "field": "messages"
+            }]
+        }]
+    }
+    res = process_incoming_whatsapp_message(sim_webhook)
+    reply_text = res.get("reply_text") or res.get("reply") or ""
+    button_objs = res.get("button_objs") or res.get("buttons") or []
+    if not reply_text and "messages" in res:
+        for m in res.get("messages", []):
+            if m.get("type") == "button":
+                hdr = m.get("header", "")
+                bdy = m.get("body", "")
+                ftr = m.get("footer", "")
+                reply_text = (hdr + "\n\n" + bdy + "\n\n_" + ftr + "_").strip() if (hdr or ftr) else bdy
+                button_objs = m.get("buttons", [])
+                break
+    return {
+        "status": "success",
+        "reply_text": reply_text,
+        "reply": reply_text,
+        "button_objs": button_objs,
+        "buttons": button_objs,
+        "result": res
+    }
+
+
 
 
 

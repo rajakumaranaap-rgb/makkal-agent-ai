@@ -2988,50 +2988,17 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
 
 
-                        <!-- Initial SIA Greeting Message -->
-
-
-
+                        <!-- Initial SIA Greeting Message (Judging Mode 1-12 Menu) -->
                         <div class="bg-[#202c33] text-slate-100 p-2.5 rounded-2xl rounded-tl-none text-xs mr-auto max-w-[92%] shadow border border-slate-700/60">
-
-
-
-                            <p class="font-bold text-emerald-400 mb-1">🌟 வணக்கம்! SIA Makkal AI தயாராக உள்ளது.</p>
-
-
-
-                            <p class="text-[11px] text-slate-300 leading-relaxed">நீங்கள் வாட்ஸ்அப் அல்லது இந்த திரையிலேயே 1-கிளிக் பட்டன் மூலம் பாடங்கள், மனநல வழிகாட்டல், அல்லது பட்டா ஆவணங்களை ஆய்வு செய்யலாம்.</p>
-
-
-
-                            
-
-
-
+                            <p class="font-bold text-emerald-400 mb-1">🌟 வணக்கம்! (Welcome to SIA)</p>
+                            <p class="text-[11px] text-slate-300 leading-relaxed mb-2">அனைத்து 12 மக்கள் சேவைகளுக்கும் கீழே உள்ள பட்டன்களை அழுத்தவும் அல்லது 1 முதல் 12 எண்ணை வாட்ஸ்அப்பில் அனுப்பவும்.</p>
                             <!-- Interactive Quick Buttons inside the bubble -->
-
-
-
                             <div class="mt-2.5 pt-2 border-t border-slate-700/60 flex flex-wrap gap-1.5">
-
-
-
-                                <button onclick="clickLivePhoneButton('btn_spoken_eng', '🗣️ Spoken English')" class="px-2 py-1 bg-emerald-600/40 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg text-[10px] font-bold border border-emerald-500/40 transition cursor-pointer">🗣️ Spoken English</button>
-
-
-
-                                <button onclick="clickLivePhoneButton('btn_mental_health', '🧠 மன நலம்')" class="px-2 py-1 bg-rose-600/40 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg text-[10px] font-bold border border-rose-500/40 transition cursor-pointer">🧠 மன நலம் (14416)</button>
-
-
-
-                                <button onclick="clickLivePhoneButton('btn_tuition', '📚 டியூஷன்')" class="px-2 py-1 bg-amber-600/40 hover:bg-amber-600 text-amber-300 hover:text-white rounded-lg text-[10px] font-bold border border-amber-500/40 transition cursor-pointer">📚 டியூஷன் (CBSE/TNSB)</button>
-
-
-
+                                <button onclick="clickLivePhoneButton('btn_menu_1_agri', '🌾 1: Agri வழிகாட்டி')" class="px-2 py-1 bg-emerald-600/40 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg text-[10px] font-bold border border-emerald-500/40 transition cursor-pointer">🌾 1: Agri வழிகாட்டி</button>
+                                <button onclick="clickLivePhoneButton('btn_menu_4_taxi', '🚖 4: ரெட் டாக்ஸி')" class="px-2 py-1 bg-cyan-600/40 hover:bg-cyan-600 text-cyan-300 hover:text-white rounded-lg text-[10px] font-bold border border-cyan-500/40 transition cursor-pointer">🚖 4: ரெட் டாக்ஸி</button>
+                                <button onclick="clickLivePhoneButton('btn_menu_8_mla', '📜 8: MLA மனு')" class="px-2 py-1 bg-amber-600/40 hover:bg-amber-600 text-amber-300 hover:text-white rounded-lg text-[10px] font-bold border border-amber-500/40 transition cursor-pointer">📜 8: MLA மனு</button>
+                                <button onclick="sendQuickPhoneQuery('Hi SIA')" class="px-2 py-1 bg-indigo-600/40 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg text-[10px] font-bold border border-indigo-500/40 transition cursor-pointer">📋 1-12 அனைத்து சேவைகள்</button>
                             </div>
-
-
-
                         </div>
 
 
@@ -3044,31 +3011,22 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
 
 
-                    <!-- Quick Tap Action Chips (Zero-Typing Bar) -->
-
-
-
+                    <!-- Quick Tap Action Chips (Zero-Typing Bar - All 12 Services + Inactivity Simulation) -->
                     <div class="mt-2 flex items-center gap-1 overflow-x-auto pb-1 custom-scroll">
-
-
-
-                        <button onclick="sendQuickPhoneQuery('Hi SIA')" class="whitespace-nowrap px-2 py-0.8 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">1️⃣ Hi SIA</button>
-
-
-
-                        <button onclick="sendQuickPhoneQuery('PIN 7890')" class="whitespace-nowrap px-2 py-0.8 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">2️⃣ PIN 7890</button>
-
-
-
-                        <button onclick="clickLivePhoneButton('btn_spoken_eng', '🗣️ Spoken English')" class="whitespace-nowrap px-2 py-0.8 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🗣️ Spoken</button>
-
-
-
-                        <button onclick="clickLivePhoneButton('btn_mental_health', '🧠 மன நலம்')" class="whitespace-nowrap px-2 py-0.8 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🧠 14416</button>
-
-
-
-                        <button onclick="clickLivePhoneButton('btn_tuition', '📚 டியூஷன்')" class="whitespace-nowrap px-2 py-0.8 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40 rounded-lg text-[10px] font-bold cursor-pointer">📚 Tuition</button>
+                        <button onclick="sendQuickPhoneQuery('Hi SIA')" class="whitespace-nowrap px-2 py-0.8 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🌟 Hi SIA</button>
+                        <button onclick="sendQuickPhoneQuery('1')" class="whitespace-nowrap px-2 py-0.8 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🌾 1: Agri</button>
+                        <button onclick="sendQuickPhoneQuery('2')" class="whitespace-nowrap px-2 py-0.8 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🐄 2: Cattle</button>
+                        <button onclick="sendQuickPhoneQuery('3')" class="whitespace-nowrap px-2 py-0.8 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🏪 3: Store</button>
+                        <button onclick="sendQuickPhoneQuery('4')" class="whitespace-nowrap px-2 py-0.8 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🚖 4: RedTaxi</button>
+                        <button onclick="sendQuickPhoneQuery('5')" class="whitespace-nowrap px-2 py-0.8 bg-orange-950 hover:bg-orange-900 text-orange-300 border border-orange-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🍲 5: Food</button>
+                        <button onclick="sendQuickPhoneQuery('6')" class="whitespace-nowrap px-2 py-0.8 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 rounded-lg text-[10px] font-bold cursor-pointer">📑 6: Patta</button>
+                        <button onclick="sendQuickPhoneQuery('7')" class="whitespace-nowrap px-2 py-0.8 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🎓 7: Education</button>
+                        <button onclick="sendQuickPhoneQuery('8')" class="whitespace-nowrap px-2 py-0.8 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40 rounded-lg text-[10px] font-bold cursor-pointer">📜 8: MLA மனு</button>
+                        <button onclick="sendQuickPhoneQuery('9')" class="whitespace-nowrap px-2 py-0.8 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🗣️ 9: Spoken</button>
+                        <button onclick="sendQuickPhoneQuery('10')" class="whitespace-nowrap px-2 py-0.8 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🧠 10: 14416</button>
+                        <button onclick="sendQuickPhoneQuery('11')" class="whitespace-nowrap px-2 py-0.8 bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🗺️ 11: Roadmap</button>
+                        <button onclick="sendQuickPhoneQuery('12')" class="whitespace-nowrap px-2 py-0.8 bg-lime-950 hover:bg-lime-900 text-lime-300 border border-lime-500/40 rounded-lg text-[10px] font-bold cursor-pointer">🚜 12: RentO</button>
+                        <button onclick="triggerPhoneInactivityNudgeSim()" class="whitespace-nowrap px-2 py-0.8 bg-amber-900/60 hover:bg-amber-800 text-amber-200 border border-amber-400/50 rounded-lg text-[10px] font-bold cursor-pointer shadow">⏳ Simulate Inactivity</button>
 
 
 
@@ -29015,6 +28973,7 @@ window.openJudgesTourModal = function(stepIdx = 0) {
         }
 
         async function clickLivePhoneButton(btnId, btnTitle) {
+            resetPhoneInactivityTimer();
             appendLivePhoneMessage('citizen', { text: btnTitle });
             showPhoneTypingIndicator();
             try {
@@ -29045,6 +29004,7 @@ window.openJudgesTourModal = function(stepIdx = 0) {
         }
 
         async function sendQuickPhoneQuery(text) {
+            resetPhoneInactivityTimer();
             appendLivePhoneMessage('citizen', { text });
             showPhoneTypingIndicator();
             try {
@@ -29086,6 +29046,46 @@ window.openJudgesTourModal = function(stepIdx = 0) {
 
 
 
+
+        async function triggerPhoneInactivityNudgeSim() {
+            showPhoneTypingIndicator();
+            try {
+                const res = await fetch('/api/sia/inactivity-nudge', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender_phone: (currentUser && currentUser.phone) ? currentUser.phone : '6381029380'
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const replyText = data.reply_text || data.reply || (data.result && (data.result.reply_text || data.result.reply)) || '';
+                    const buttonObjs = data.button_objs || data.buttons || (data.result && (data.result.button_objs || data.result.buttons)) || [];
+                    if (replyText) {
+                        appendLivePhoneMessage('agent', { text: replyText, button_objs: buttonObjs });
+                    }
+                }
+            } catch(e) {
+                console.error('Failed to trigger phone inactivity nudge sim:', e);
+            } finally {
+                const typingInd = document.getElementById('phoneTypingIndicator');
+                if (typingInd) typingInd.remove();
+            }
+        }
+
+        // Proactive Inactivity Watchdog (Nudges after 45s of idle time)
+        let phoneInactivityTimer = null;
+        let inactivityNudged = false;
+        function resetPhoneInactivityTimer() {
+            if (phoneInactivityTimer) clearTimeout(phoneInactivityTimer);
+            if (!inactivityNudged) {
+                phoneInactivityTimer = setTimeout(() => {
+                    inactivityNudged = true;
+                    console.log('[SIA NUDGE] Citizen delayed response, triggering proactive re-engagement...');
+                    triggerPhoneInactivityNudgeSim();
+                }, 45000);
+            }
+        }
 
         function triggerPhoneVoiceNoteSim() {
 
