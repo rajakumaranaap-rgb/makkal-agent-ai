@@ -15,6 +15,7 @@
 
 ## 🌐 Live Application & Evaluation Endpoints
 
+- 🎬 **Official 3-Minute Demo Video (YouTube):** [https://youtu.be/lmDmh7nQHV0](https://youtu.be/lmDmh7nQHV0)
 - 🚀 **Live Production Web Portal (HTTPS):** [https://regulatory-stack-counter-lady.trycloudflare.com](https://regulatory-stack-counter-lady.trycloudflare.com)
 - 🩺 **System Health Check API:** [https://regulatory-stack-counter-lady.trycloudflare.com/health](https://regulatory-stack-counter-lady.trycloudflare.com/health)
 - 📊 **Telemetry & Active Model Telemetry:** [https://regulatory-stack-counter-lady.trycloudflare.com/api/system/telemetry](https://regulatory-stack-counter-lady.trycloudflare.com/api/system/telemetry)
