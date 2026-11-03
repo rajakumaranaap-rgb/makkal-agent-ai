@@ -693,7 +693,7 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
     #  LANGUAGE SWITCH COMMANDS ('EN', 'ENGLISH', 'TAMIL', 'தமிழ்')
     # ────────────────────────────────────────────────────────────────────────
-    if action in ["LANG_EN", "EN", "ENGLISH"] or upper in ["EN", "ENGLISH", "LANG EN"]:
+    if action in ["LANG_EN", "EN", "ENGLISH", "lang_en"] or upper in ["EN", "ENGLISH", "LANG EN"]:
         set_user_language(clean_phone, "en")
         u_prof = get_user_profile(clean_phone)
         u_name = u_prof.get("name", "Citizen") if u_prof else "Citizen"
@@ -710,7 +710,7 @@ def handle_sia_whatsapp_flow(
             )
         ], stage="LANGUAGE_CHANGED_EN")
 
-    if action in ["LANG_TA", "TAMIL", "தமிழ்"] or upper in ["TAMIL", "தமிழ்", "LANG TA", "TM"]:
+    if action in ["LANG_TA", "TAMIL", "தமிழ்", "lang_ta"] or upper in ["TAMIL", "தமிழ்", "LANG TA", "TM"]:
         set_user_language(clean_phone, "ta")
         u_prof = get_user_profile(clean_phone)
         u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
@@ -786,7 +786,7 @@ def handle_sia_whatsapp_flow(
             )
         ], stage="NUDGE_WAITING")
 
-    if action.lower() in ["btn_nudge_menu", "btn_menu_all_list", "restart_menu", "மீண்டும் தொடங்கு", "முதன்மை மெனு"] or upper in ["RESTART", "RESTART MENU", "RESET MENU", "முதன்மை மெனு"]:
+    if action.lower() in ["btn_nudge_menu", "btn_menu_all_list", "btn_master_menu", "restart_menu", "மீண்டும் தொடங்கு", "முதன்மை மெனு", "menu", "மெனு"] or upper in ["RESTART", "RESTART MENU", "RESET MENU", "முதன்மை மெனு", "MENU", "மெனு"]:
         return _send_welcome(clean_phone)
 
     if action.lower() in ["btn_nudge_close", "close_session", "முடிக்க", "வெளியேறு"] or upper in ["CLOSE", "QUIT", "EXIT", "முடிக்க"]:
@@ -1167,7 +1167,7 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 2: VET DOCTOR ACTION
     # ────────────────────────────────────────────────────────────────────────
-    if action in ["btn_cattle_vet", "கால்நடை மருத்துவர்", "டாக்டர்", "VET"]:
+    if action in ["btn_cattle_vet", "btn_vet_doc", "கால்நடை மருத்துவர்", "டாக்டர்", "VET"]:
         return _result([
             _msg_buttons(
                 header="🩺 அரசு கால்நடை மருத்துவமனை (சோழவந்தான்)",
@@ -1208,6 +1208,44 @@ def handle_sia_whatsapp_flow(
                 footer="SIA • உழவர் சந்தை நேரடி விலை"
             )
         ], stage="VYABAR_MANDI_PRICES")
+    # ── Service 3 Sub-actions: Voice Order & Catalog ──
+    if action in ["store_voice", "btn_store_voice", "வாய்ஸ் ஆர்டர்"]:
+        return _result([
+            _msg_buttons(
+                header="🎤 வாய்ஸ் ஆர்டர் (10 விநாடி குரல் பதிவு)",
+                body=(
+                    "உங்களுக்கு தேவையான மளிகைப் பொருட்களை (எ.கா: '2 கிலோ பொன்னி அரிசி, 1 லிட்டர் நல்லெண்ணெய், அரை கிலோ பருப்பு') பேசி வாட்ஸ்அப்பில் 10 விநாடி வாய்ஸ் நோட்டாக அனுப்பவும்!\n\n"
+                    "Meta Voice உடனே படித்து உங்கள் ஊர் கடைக்காரருக்கு அனுப்பி 20 நிமிடங்களில் டெலிவரி செய்யும்!"
+                ),
+                buttons=[
+                    {"id": "store_order", "title": "🛒 மளிகை ஆர்டர்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • வாய்ஸ் மளிகை ஆர்டர்"
+            )
+        ], stage="VYABAR_VOICE_ORDER_INFO")
+
+    if action in ["store_catalog", "btn_store_catalog", "முழு பட்டியல்"]:
+        return _result([
+            _msg_buttons(
+                header="📜 உள்ளூர் மளிகை அத்தியாவசிய பட்டியல்",
+                body=(
+                    "• *பொன்னி அரிசி (முதல் ரகம்):* ₹62 / kg\n"
+                    "• *இட்லி அரிசி:* ₹42 / kg\n"
+                    "• *துவரம் பருப்பு:* ₹160 / kg\n"
+                    "• *உளுத்தம் பருப்பு:* ₹145 / kg\n"
+                    "• *சமையல் எண்ணெய்:* ₹145 / L\n"
+                    "• *நாட்டுச் சர்க்கரை:* ₹65 / kg\n\n"
+                    "0% கமிஷன் - உள்ளூர் கடை விலையிலேயே 20 நிமிடங்களில் டெலிவரி!"
+                ),
+                buttons=[
+                    {"id": "store_order", "title": "🛒 மளிகை ஆர்டர்"},
+                    {"id": "store_voice", "title": "🎤 வாய்ஸ் ஆர்டர்"}
+                ],
+                footer="SIA • உள்ளூர் வியாபார் அங்காடி"
+            )
+        ], stage="VYABAR_CATALOG_DISPATCHED")
+
 
     if action in ["btn_vyabar_status", "ஆர்டர் நிலை"]:
         return _result([
@@ -1260,6 +1298,44 @@ def handle_sia_whatsapp_flow(
                 footer="SIA • ரெட் டாக்ஸி மக்கள் சேவை"
             )
         ], stage="REDTAXI_DISPATCHED")
+    # ── Service 4 Sub-actions: 112 SOS & Live Tracking ──
+    if action in ["btn_taxi_sos", "taxi_sos", "112 SOS", "112 SOS பாதுகாப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="🚨 112 காவல்துறை அவசர SOS இயக்கம்!",
+                body=(
+                    "• உங்கள் அவசர அழைப்பு தமிழ்நாடு காவல் கட்டுப்பாட்டு அறைக்கு (112) உடனடியாக பகிரப்பட்டது.\n"
+                    "• தற்போதைய நேரடி ஜிபிஎஸ் இருப்பிடம் அவசரப் பிரிவுக்கு அனுப்பப்படுகிறது.\n"
+                    "• அவசர உதவிக்கு: 112 அல்லது 100-ஐ உடனடியாக அழைக்கவும்.\n\n"
+                    "SIA கண்காணிப்பு உங்கள் பாதுகாப்பை உறுதி செய்கிறது."
+                ),
+                buttons=[
+                    {"id": "btn_taxi_live", "title": "📍 இருப்பிடம் பகிர்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • 112 அவசர பாதுகாப்பு"
+            )
+        ], stage="TAXI_SOS_DISPATCHED")
+
+    if action in ["btn_taxi_live", "taxi_live", "டிரைவர் இருப்பிடம்", "டிரைவர் எங்கே"]:
+        return _result([
+            _msg_buttons(
+                header="📍 வாகனம் & ஓட்டுநர் நேரடி இருப்பிடம்",
+                body=(
+                    "• *ஓட்டுநர்:* எஸ். வேலு (SIA Verified)\n"
+                    "• *வாகனம்:* TN 58 AZ 3522 (பஜாஜ் ஆட்டோ)\n"
+                    "• *நிலை:* உங்களை நோக்கி 350 மீட்டரில் வந்துகொண்டிருக்கிறது.\n"
+                    "• *அடையும் நேரம்:* இன்னும் 2 நிமிடங்கள்\n"
+                    "• *பாதுகாப்பு OTP:* *6395*"
+                ),
+                buttons=[
+                    {"id": "btn_taxi_sos", "title": "🚨 112 SOS"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • நேரடி ஜிபிஎஸ் கண்காணிப்பு"
+            )
+        ], stage="TAXI_LIVE_TRACKING")
+
 
     if action in ["redtaxi_status", "டாக்ஸி நிலை"]:
         return _result([
@@ -1724,29 +1800,29 @@ def handle_sia_whatsapp_flow(
     # Map natural single-word keywords to service numbers 1-12
     KEYWORD_SERVICE_MAP = {
         # Service 1: Agri
-        "பயிர்": "1", "விவசாயம்": "1", "வேளாண்மை": "1", "பூச்சி": "1", "நெல்": "1", "AGRI": "1", "AGRICULTURE": "1", "CROP": "1", "PEST": "1",
+        "பயிர்": "1", "விவசாய": "1", "வேளாண்": "1", "பூச்சி": "1", "நெல்": "1", "உழவர்": "1", "கரும்பு": "1", "மண்டி": "1", "AGRI": "1", "AGRICULTURE": "1", "CROP": "1", "PEST": "1", "FARM": "1",
         # Service 2: Cattle
-        "மாடு": "2", "கால்நடை": "2", "மடிவீக்கம்": "2", "CATTLE": "2", "COW": "2", "DAIRY": "2",
+        "மாடு": "2", "மாட்டு": "2", "கால்நடை": "2", "மடி": "2", "பசு": "2", "எருமை": "2", "ஆடு": "2", "பால்": "2", "CATTLE": "2", "COW": "2", "DAIRY": "2", "VET": "2",
         # Service 3: Store
-        "மளிகை": "3", "கடை": "3", "அரிசி": "3", "பருப்பு": "3", "STORE": "3", "KIRANA": "3", "GROCERY": "3",
+        "மளிகை": "3", "கடை": "3", "அரிசி": "3", "பருப்பு": "3", "எண்ணெய்": "3", "சீட்டு": "3", "சாமான்கள்": "3", "STORE": "3", "KIRANA": "3", "GROCERY": "3", "PROVISION": "3",
         # Service 4: Taxi
-        "டாக்ஸி": "4", "ஆட்டோ": "4", "கார்": "4", "TAXI": "4", "AUTO": "4", "CAB": "4", "RIDE": "4",
+        "டாக்ஸி": "4", "ஆட்டோ": "4", "கார்": "4", "சவாரி": "4", "வண்டி": "4", "TAXI": "4", "AUTO": "4", "CAB": "4", "RIDE": "4", "REDTAXI": "4",
         # Service 5: Food
-        "உணவு": "5", "சாப்பாடு": "5", "பசி": "5", "FOOD": "5", "MEALS": "5", "LUNCH": "5",
+        "உணவு": "5", "சாப்பாடு": "5", "பசி": "5", "மெஸ்": "5", "ஹோட்டல்": "5", "டிபன்": "5", "FOOD": "5", "MEALS": "5", "LUNCH": "5", "MESS": "5",
         # Service 6: Patta / eSevai
-        "பட்டா": "6", "சிட்டா": "6", "இசேவை": "6", "நிலம்": "6", "PATTA": "6", "CHITTA": "6", "ESEVAI": "6",
+        "பட்டா": "6", "சிட்டா": "6", "இசேவை": "6", "நிலம்": "6", "ரேஷன்": "6", "வாரிசு": "6", "சான்றிதழ்": "6", "PATTA": "6", "CHITTA": "6", "ESEVAI": "6", "RATION": "6",
         # Service 7: Education
-        "கல்வி": "7", "பள்ளி": "7", "மாணவர்": "7", "EDUCATION": "7", "EDU": "7", "SCHOOL": "7", "STUDENT": "7",
+        "கல்வி": "7", "பள்ளி": "7", "மாணவர்": "7", "பாடம்": "7", "வகுப்பு": "7", "EDUCATION": "7", "EDU": "7", "SCHOOL": "7", "STUDENT": "7", "SAMACHEER": "7",
         # Service 8: Petition
-        "மனு": "8", "கோரிக்கை": "8", "MLA": "8", "MP": "8", "PETITION": "8", "MANU": "8",
+        "மனு": "8", "கோரிக்கை": "8", "எம்எல்ஏ": "8", "எம்பி": "8", "MLA": "8", "MP": "8", "PETITION": "8", "MANU": "8", "GRIEVANCE": "8",
         # Service 9: Spoken English
-        "ஆங்கிலம்": "9", "பேச்சு": "9", "ENGLISH": "9", "SPOKEN": "9",
+        "ஆங்கிலம்": "9", "பேச்சு": "9", "இங்கிலீஷ்": "9", "ENGLISH": "9", "SPOKEN": "9", "SPEAK": "9",
         # Service 10: Mental Health
-        "மனநலம்": "10", "பதற்றம்": "10", "பயம்": "10", "14416": "10", "MENTAL": "10", "STRESS": "10", "CALM": "10",
+        "மனநலம்": "10", "மன அழுத்தம்": "10", "பதற்றம்": "10", "பயம்": "10", "அழுத்தம்": "10", "14416": "10", "MENTAL": "10", "MENTAL HEALTH": "10", "STRESS": "10", "ANXIETY": "10", "CALM": "10", "COUNSEL": "10", "TELE-MANAS": "10",
         # Service 11: Exam
-        "தேர்வு": "11", "TNPSC": "11", "NEET": "11", "UPSC": "11", "EXAM": "11", "ROADMAP": "11",
+        "தேர்வு": "11", "டிஎன்பிஎஸ்சி": "11", "நீட்": "11", "TNPSC": "11", "NEET": "11", "UPSC": "11", "EXAM": "11", "ROADMAP": "11", "QUIZ": "11",
         # Service 12: RentO Machinery
-        "டிராக்டர்": "12", "அறுவடை": "12", "இயந்திரம்": "12", "வாடகை": "12", "TRACTOR": "12", "HARVESTER": "12", "RENTO": "12", "MACHINERY": "12"
+        "டிராக்டர்": "12", "அறுவடை": "12", "இயந்திரம்": "12", "வாடகை": "12", "மெஷின்": "12", "TRACTOR": "12", "HARVESTER": "12", "RENTO": "12", "MACHINERY": "12"
     }
 
     clean_num = upper.strip().rstrip(".").replace("️⃣", "")
@@ -1754,6 +1830,12 @@ def handle_sia_whatsapp_flow(
         clean_num = KEYWORD_SERVICE_MAP[clean_num]
     elif text in KEYWORD_SERVICE_MAP:
         clean_num = KEYWORD_SERVICE_MAP[text]
+    else:
+        # Check if any service keyword is present inside user's sentence (longer/specific keywords first)
+        for kw in sorted(KEYWORD_SERVICE_MAP.keys(), key=len, reverse=True):
+            if kw in upper or kw in text:
+                clean_num = KEYWORD_SERVICE_MAP[kw]
+                break
 
     if clean_num in [str(i) for i in range(1, 18)]:
 
