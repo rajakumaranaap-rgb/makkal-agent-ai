@@ -1206,7 +1206,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
 
 
-            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]">v1.0 Stable Beta</span>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]">v1.1 Stable Production</span>
 
             <span class="text-amber-400 hidden sm:inline">🇮🇳 Meta AI</span>
 

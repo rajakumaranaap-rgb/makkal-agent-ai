@@ -225,7 +225,7 @@ app = FastAPI(
 
     description="Autonomous Multimodal Citizen Action Agent for Tamil Nadu powered by Meta Model API & SAM 3.1",
 
-    version="1.0 (Stable Beta Release)"
+    version="1.1 (Stable Production Release)"
 
 )
 
@@ -694,7 +694,7 @@ async def health_check():
 
         "service": "SIA (Super Intelligent Agent)",
 
-        "version": "1.0 (Stable Beta Release)",
+        "version": "1.1 (Stable Production Release)",
         "release_channel": "Stable Beta Release",
 
         "host": "AWS EC2 Production (52.66.255.113)",

@@ -1,7 +1,7 @@
 """
 ==============================================================================
 SIA (Makkal Agent AI) - End-to-End End-User UAT Simulation Suite
-Target: Version 1.0 (Stable Beta Release)
+Target: Version 1.1 (Stable Production Release)
 Citizen Classes of Tamil Nadu:
   1. Farmer / Rural Citizen (உழவர் / விவசாயி)
   2. Student / Competitive Aspirant (மாணவர் / இளைஞர்)
@@ -33,7 +33,7 @@ client = TestClient(app)
 
 print("=" * 80)
 print("🇮🇳 SIA MAKKAL AGENT AI - END-TO-END CITIZEN UAT SIMULATION SUITE")
-print("   Target Release: Version 1.0 (Stable Beta Release)")
+print("   Target Release: Version 1.1 (Stable Production Release)")
 print("=" * 80)
 
 uat_results = []
@@ -366,11 +366,11 @@ t0 = time.perf_counter()
 resp = client.get("/health")
 lat = (time.perf_counter() - t0) * 1000
 health = resp.json() if resp.status_code == 200 else {}
-is_beta_10 = health.get("version") == "1.0 (Stable Beta Release)" and health.get("release_channel") == "Stable Beta Release"
+is_beta_10 = health.get("version") == "1.1 (Stable Production Release)" and health.get("release_channel") == "Stable Beta Release"
 passed = resp.status_code == 200 and is_beta_10
 record_uat(
     "Evaluator",
-    "System Health Check & Version 1.0 (Stable Beta Release) Status",
+    "System Health Check & Version 1.1 (Stable Production Release) Status",
     passed,
     f"Status: {health.get('status')}, Version: {health.get('version')}, Channel: {health.get('release_channel')}",
     lat
@@ -384,7 +384,7 @@ html = resp.text
 has_personas = "selectCitizenPersona('farmer')" in html and "selectCitizenPersona('student')" in html and "selectCitizenPersona('women')" in html
 has_dock = "mobileBottomNav" in html
 has_fee_lock = "₹60" in html and "statutory" in html.lower()
-has_badge = "v1.0 Stable Beta" in html
+has_badge = "v1.1 Stable Production" in html
 passed = resp.status_code == 200 and has_personas and has_dock and has_fee_lock and has_badge
 record_uat(
     "Evaluator",

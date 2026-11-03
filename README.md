@@ -2,7 +2,7 @@
 ### *Sovereign Multimodal Vernacular AI for 800M+ Citizens across Rural & Semi-Urban India*
 **Official Submission for the Meta AI Developer Hackathon 2026 — Indie Developer Track ($150,000 USD Target) & Baseten Open-Weight Prize ($10,000 USD Target)**
 
-[![Release](https://img.shields.io/badge/Release-v2.5%20(Production%20Live)-10B981.svg)](https://regulatory-stack-counter-lady.trycloudflare.com/?unlocked=1)
+[![Release](https://img.shields.io/badge/Release-v1.1%20(Production%20Live)-10B981.svg)](https://regulatory-stack-counter-lady.trycloudflare.com/?unlocked=1)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-HTTPS%20Cloud-emerald.svg)](https://regulatory-stack-counter-lady.trycloudflare.com/?unlocked=1)
 [![Meta Model API](https://img.shields.io/badge/Meta%20AI-Llama%203.3%20%7C%20Llama%203.2%20Vision%20%7C%20Whisper%20v3%20%7C%20SAM%202-0081FB.svg)](https://dev.meta.ai)
 [![Meta Open Weight](https://img.shields.io/badge/Baseten%20A100-muse--spark--open--1026%20(322.4%20tok%2Fs)-teal.svg)](https://baseten.co)
