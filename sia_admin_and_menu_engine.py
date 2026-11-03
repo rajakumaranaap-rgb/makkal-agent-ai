@@ -618,7 +618,7 @@ def get_menu_guide_response(option_num: str, citizen_name: str = "நண்ப�
             "buttons": [
                 {"id": "btn_pet_water", "title": "💧 குடிநீர் வசதி மனு"},
                 {"id": "btn_pet_road", "title": "🛣️ சாலை & விளக்கு"},
-                {"id": "btn_pet_pension", "title": "🏛️ முதியோர் உதவித்தொகை"},
+                {"id": "btn_pet_pension", "title": "🏛️ முதியோர் உதவி"},
             ],
             "footer": "SIA • 1-கிளிக் சட்டமன்ற உறுப்பினர் மனு"
         }
@@ -775,7 +775,7 @@ def get_menu_guide_response(option_num: str, citizen_name: str = "நண்ப�
             "buttons": [
                 {"id": "btn_rent_tractor", "title": "🚜 டிராக்டர் வாடகை"},
                 {"id": "btn_rent_harvester", "title": "🌾 அறுவடை இயந்திரம்"},
-                {"id": "btn_rent_nearby", "title": "📍 அருகில் உள்ள கருவிகள்"},
+                {"id": "btn_rent_nearby", "title": "📍 அருகில் உள்ளவை"},
             ],
             "footer": "SIA • RentO உழவர் இயந்திர மையம்"
         }

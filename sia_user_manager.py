@@ -578,13 +578,13 @@ def _build_service_menu() -> Dict[str, Any]:
 
             {
 
-                "title": "🌾 வேளாண், கல்வி & பயணம்",
+                "title": "🌾 வேளாண்மை & கல்வி",
 
                 "rows": [
 
                     {"id": "svc_agri",    "title": "🌾 வேளாண்மை & மானியம்", "description": "TNAU உரம், SAM 3.1 நோய், 100% பாசனம்"},
 
-                    {"id": "svc_edu",     "title": "📚 10th டியூஷன் & கல்வி", "description": "CBSE/சமச்சீர் வீட்டுப்பாடம் & அட்டவணை"},
+                    {"id": "svc_edu",     "title": "📚 10th கல்வி வகுப்பு", "description": "CBSE/சமச்சீர் வீட்டுப்பாடம் & அட்டவணை"},
 
                     {"id": "svc_travel",  "title": "🚖 RedTaxi & சுற்றுலா",  "description": "0% Surge டாக்ஸி, ராமேஸ்வரம் யாத்திரை"},
 
@@ -857,7 +857,7 @@ def handle_sia_whatsapp_flow(
                 buttons=[
                     {"id": "btn_pet_water", "title": "💧 குடிநீர் வசதி மனு" if lang == "ta" else "💧 Drinking Water"},
                     {"id": "btn_pet_road", "title": "🛣️ சாலை & விளக்கு" if lang == "ta" else "🛣️ Road & Light"},
-                    {"id": "btn_pet_pension", "title": "🏛️ முதியோர் உதவித்தொகை" if lang == "ta" else "🏛️ OAP Pension"},
+                    {"id": "btn_pet_pension", "title": "🏛️ முதியோர் உதவி" if lang == "ta" else "🏛️ OAP Pension"},
                 ],
                 footer="SIA • 1-கிளிக் சட்டமன்ற உறுப்பினர் மனு"
             )
@@ -925,9 +925,32 @@ def handle_sia_whatsapp_flow(
         return _result(messages, stage="PETITION_GENERATED_DISPATCHED")
 
     # ────────────────────────────────────────────────────────────────────────
-    #  SERVICE 1: CROP DISEASE DIRECT CURE ACTION
+    #  SERVICE 1: CROP DISEASE CHOOSE PEST & BIO-CURE ACTIONS
     # ────────────────────────────────────────────────────────────────────────
-    if action in ["btn_crop_blast_cure", "btn_crop_pest", "பூச்சி மருத்துவம்", "குலைநோய்"]:
+    if action in ["btn_crop_pest", "பூச்சி மருத்துவம்", "பயிர் நோய்"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
+        return _result([
+            _msg_buttons(
+                header="🌾 எந்த பயிரில் பூச்சி / நோய் பாதிப்பு?",
+                body=(
+                    f"வணக்கம் *{u_name}*! உங்கள் பயிரின் நோய் பாதிப்பைத் தேர்ந்தெடுக்கவும்:\n\n"
+                    "1. *நெல் குலை நோய்:* இலைகளில் கண் வடிவப் புள்ளிகள்\n"
+                    "2. *சோளப் படைப்புழு:* இலை மற்றும் குருத்து சேதம்\n"
+                    "3. *தக்காளி இலைக்கருகல்:* இலை கருகி உதிர்தல்\n\n"
+                    "📸 அல்லது பாதிக்கப்பட்ட பயிர் இலையை படம் பிடித்து அனுப்பவும் (SAM 3.1 விஷன் உடனே பரிசோதிக்கும்)!"
+                ),
+                buttons=[
+                    {"id": "btn_crop_blast", "title": "🌾 நெல் குலை நோய்" if lang == "ta" else "🌾 Paddy Blast"},
+                    {"id": "btn_crop_armyworm", "title": "🌽 சோளப் படைப்புழு" if lang == "ta" else "🌽 Armyworm"},
+                    {"id": "btn_crop_blight", "title": "🌿 தக்காளி நோய்" if lang == "ta" else "🌿 Leaf Blight"}
+                ],
+                footer="SIA • TNAU பயிர் மருத்துவர்"
+            )
+        ], stage="AGRI_CROP_PEST_SELECTION")
+
+    if action in ["btn_crop_blast", "btn_crop_blast_cure", "குலைநோய்", "நெல் நோய்"]:
         return _result([
             _msg_buttons(
                 header="✅ நெல் குலைநோய் (Paddy Blast) TNAU இயற்கை மருந்து",
@@ -938,12 +961,48 @@ def handle_sia_whatsapp_flow(
                     "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
                 ),
                 buttons=[
-                    {"id": "btn_weather_rep", "title": "🌧️ வானிலை அறிக்கை"},
+                    {"id": "btn_crop_pest", "title": "🌾 பிற பயிர் நோய்"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • TNAU இயற்கை வேளாண்மை"
             )
         ], stage="AGRI_CURE_DISPATCHED")
+
+    if action in ["btn_crop_armyworm", "படைப்புழு", "சோளப் படைப்புழு"]:
+        return _result([
+            _msg_buttons(
+                header="✅ சோளப் படைப்புழு (Fall Armyworm) TNAU தீர்வு",
+                body=(
+                    "1. *வேப்ப எண்ணெய் 3%:* 30 மி.லி / லிட்டர் தண்ணீரில் ஒட்டும் பசையுடன் கலந்து தெளிக்கவும்.\n"
+                    "2. *பேசில்லஸ் துரிஞ்சியென்சிஸ் (Bt):* 2 கிராம் / லிட்டர் நீரில் மாலை வேளையில் தெளிக்கவும்.\n"
+                    "3. *செலவு:* ₹110 மட்டுமே (ரசாயன பூச்சிக்கொல்லி ₹1,800 மிச்சம்)!\n\n"
+                    "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
+                ),
+                buttons=[
+                    {"id": "btn_crop_pest", "title": "🌾 பிற பயிர் நோய்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • TNAU படைப்புழு கட்டுப்பாடு"
+            )
+        ], stage="AGRI_ARMYWORM_DISPATCHED")
+
+    if action in ["btn_crop_blight", "இலைக்கருகல்", "தக்காளி இலைக்கருகல்"]:
+        return _result([
+            _msg_buttons(
+                header="✅ தக்காளி இலைக்கருகல் நோய் (Early/Late Blight) தீர்வு",
+                body=(
+                    "1. *காப்பர் ஆக்ஸிகுளோரைடு:* 2.5 கிராம் / லிட்டர் தண்ணீரில் கலந்து இலைகளில் நனைய தெளிக்கவும்.\n"
+                    "2. *சூடோமோனாஸ்:* வேர்ப்பகுதியில் 10 கிராம் / செடிக்கு இடவும்.\n"
+                    "3. *செலவு:* ₹95 மட்டுமே (தனியார் மருந்து ₹1,200 மிச்சம்)!\n\n"
+                    "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
+                ),
+                buttons=[
+                    {"id": "btn_crop_pest", "title": "🌾 பிற பயிர் நோய்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • TNAU தோட்டக்கலை பாதுகாப்பு"
+            )
+        ], stage="AGRI_BLIGHT_DISPATCHED")
 
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 2: CATTLE CARE DIRECT HERBAL CURE ACTION
@@ -976,7 +1035,7 @@ def handle_sia_whatsapp_flow(
                     "செலவு: ₹20 மட்டுமே (தனியார் டாக்டர் கட்டணம் ₹2,000 மிச்சம்)!"
                 ),
                 buttons=[
-                    {"id": "btn_feed_plan", "title": "🥛 பால் பெருக்க தீவனம்"},
+                    {"id": "btn_feed_plan", "title": "🥛 பால் பெருக்க"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • TANUVAS கால்நடை முதலுதவி"
@@ -984,18 +1043,79 @@ def handle_sia_whatsapp_flow(
         ], stage="CATTLE_MASTITIS_DISPATCHED")
 
     # ────────────────────────────────────────────────────────────────────────
-    #  SERVICE 3: VYABAR LOCAL STORE 1-TAP ORDER ACTION
+    #  SERVICE 3: VYABAR LOCAL STORE CHOOSE GROCERY KIT & ORDER ACTIONS
     # ────────────────────────────────────────────────────────────────────────
     if action in ["store_order", "btn_vyabar_quick_order", "மளிகை ஆர்டர்"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
         return _result([
             _msg_buttons(
-                header="✅ மளிகை ஆர்டர் உறுதி செய்யப்பட்டது!",
+                header="🛒 எந்த மளிகைத் தொகுப்பு வேண்டும்? (Choose Kit)",
+                body=(
+                    f"வணக்கம் *{u_name}*! சோழவந்தான் முருகன் ஸ்டோர்ஸ் 0% கமிஷன் நேரடி மளிகைத் தொகுப்புகள்:\n\n"
+                    "1. *அரிசி பருப்பு கிட்:* 5kg பொன்னி அரிசி + 1kg துவரம் பருப்பு (₹450)\n"
+                    "2. *எண்ணெய் மசாலா கிட்:* 1L நல்லெண்ணெய் + 500g மசாலா காம்போ (₹380)\n"
+                    "3. *குடும்ப மளிகை கிட்:* 10kg அரிசி + 2kg பருப்பு + 2L எண்ணெய் (₹1,200)\n\n"
+                    "📸 அல்லது மளிகை சீட்டை போட்டோ எடுத்து அனுப்பலாம் / 10 விநாடி வாய்ஸ் நோட் அனுப்பலாம்!"
+                ),
+                buttons=[
+                    {"id": "btn_store_rice_kit", "title": "🍚 அரிசி பருப்பு கிட்" if lang == "ta" else "🍚 Rice & Dal (₹450)"},
+                    {"id": "btn_store_oil_kit", "title": "🌻 எண்ணெய் மசாலா" if lang == "ta" else "🌻 Oil & Spices (₹380)"},
+                    {"id": "btn_store_monthly_kit", "title": "📦 குடும்ப மளிகை கிட்" if lang == "ta" else "📦 Monthly Kit (₹1200)"}
+                ],
+                footer="SIA • சோழவந்தான் முருகன் ஸ்டோர்ஸ்"
+            )
+        ], stage="VYABAR_KIT_SELECTION")
+
+    if action in ["btn_store_rice_kit", "அரிசி பருப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="✅ அரிசி பருப்பு கிட் உறுதி செய்யப்பட்டது!",
                 body=(
                     "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
-                    "• *பொருட்கள்:* பொன்னி அரிசி 10kg + துவரம் பருப்பு 1kg\n"
-                    "• *மொத்தத் தொகை:* ₹780 (0% கமிஷன், நேரடி கடை விலையே)\n"
+                    "• *பொருட்கள்:* முதல் ரக பொன்னி அரிசி 5kg + முதல் ரக துவரம் பருப்பு 1kg\n"
+                    "• *மொத்தத் தொகை:* ₹450 (0% கமிஷன், நேரடி கடை விலையே)\n"
                     "• *டெலிவரி:* அடுத்த 30 நிமிடங்களில் உங்கள் வீடு தேடி வரும்!\n"
                     "• *டெலிவரி OTP:* *4182*"
+                ),
+                buttons=[
+                    {"id": "store_order", "title": "🛒 வேறு மளிகை"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • 100% உள்ளூர் வணிகம்"
+            )
+        ], stage="VYABAR_RICE_KIT_CONFIRMED")
+
+    if action in ["btn_store_oil_kit", "எண்ணெய் மசாலா"]:
+        return _result([
+            _msg_buttons(
+                header="✅ சமையல் எண்ணெய் மசாலா கிட் உறுதியானது!",
+                body=(
+                    "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
+                    "• *பொருட்கள்:* 1L மரச்செக்கு நல்லெண்ணெய் + சாம்பார், மிளகாய் மசாலா தூள் (500g)\n"
+                    "• *மொத்தத் தொகை:* ₹380 (0% கமிஷன், தூய தரம்)\n"
+                    "• *டெலிவரி:* அடுத்த 30 நிமிடங்களில் வீடு தேடி வரும்!\n"
+                    "• *டெலிவரி OTP:* *5291*"
+                ),
+                buttons=[
+                    {"id": "store_order", "title": "🛒 வேறு மளிகை"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • 100% உள்ளூர் வணிகம்"
+            )
+        ], stage="VYABAR_OIL_KIT_CONFIRMED")
+
+    if action in ["btn_store_monthly_kit", "குடும்ப மளிகை"]:
+        return _result([
+            _msg_buttons(
+                header="✅ குடும்ப மாத மளிகை கிட் உறுதியானது!",
+                body=(
+                    "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
+                    "• *பொருட்கள்:* 10kg பொன்னி அரிசி + 2kg பருப்பு + 2L எண்ணெய் + முழுக் குடும்ப மளிகைப் பொருட்கள்\n"
+                    "• *மொத்தத் தொகை:* ₹1,200 (இலவச வீட்டு டெலிவரி)\n"
+                    "• *டெலிவரி:* அடுத்த 45 நிமிடங்களில் உங்கள் வீடு தேடி வரும்!\n"
+                    "• *டெலிவரி OTP:* *8314*"
                 ),
                 buttons=[
                     {"id": "btn_vyabar_status", "title": "📦 ஆர்டர் நிலை"},
@@ -1003,12 +1123,35 @@ def handle_sia_whatsapp_flow(
                 ],
                 footer="SIA • 100% உள்ளூர் வணிகம்"
             )
-        ], stage="VYABAR_ORDER_CONFIRMED")
+        ], stage="VYABAR_MONTHLY_KIT_CONFIRMED")
 
     # ────────────────────────────────────────────────────────────────────────
-    #  SERVICE 4: REDTAXI 1-TAP DISPATCH ACTION
+    #  SERVICE 4: REDTAXI CHOOSE VEHICLE & DISPATCH ACTIONS
     # ────────────────────────────────────────────────────────────────────────
     if action in ["btn_book_taxi", "btn_taxi_instant_book", "ஆட்டோ புக் செய்"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
+        return _result([
+            _msg_buttons(
+                header="🚖 எந்த வாகனம் முன்பதிவு செய்ய வேண்டும்?",
+                body=(
+                    f"வணக்கம் *{u_name}*! தமிழ்நாடு அரசு நிர்ணய கட்டணம் (Zero Surge & 112 SOS):\n\n"
+                    "1. *பஜாஜ் ஆட்டோ:* ₹12/கி.மீ (குறைந்த தூர விரைவுப் பயணம்)\n"
+                    "2. *மினி கார்:* ₹14/கி.மீ (4 பேர் கொண்ட குடும்பப் பயணம்)\n"
+                    "3. *செடான் ஏசி கார்:* ₹16/கி.மீ (நீண்ட தூர சொகுசு குளிர்சாதன பயணம்)\n\n"
+                    "🚨 தமிழ்நாடு காவல்துறை 112 SOS நேரடி பாதுகாப்பில் உள்ளது."
+                ),
+                buttons=[
+                    {"id": "btn_taxi_auto", "title": "🛺 ஆட்டோ (₹12/km)" if lang == "ta" else "🛺 Auto (₹12/km)"},
+                    {"id": "btn_taxi_mini", "title": "🚗 மினி கார் (₹14/km)" if lang == "ta" else "🚗 Mini (₹14/km)"},
+                    {"id": "btn_taxi_sedan", "title": "🚘 செடான் ஏசி (₹16)" if lang == "ta" else "🚘 Sedan AC (₹16/km)"}
+                ],
+                footer="SIA • ரெட் டாக்ஸி மக்கள் சேவை"
+            )
+        ], stage="TAXI_CHOOSE_SELECTION")
+
+    if action in ["btn_taxi_auto", "ஆட்டோ"]:
         return _result([
             _msg_buttons(
                 header="✅ ஆட்டோ முன்பதிவு உறுதியானது!",
@@ -1023,9 +1166,47 @@ def handle_sia_whatsapp_flow(
                     {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
-                footer="SIA • பாதுகாப்பான பயணம்"
+                footer="SIA • பாதுகாப்பான ஆட்டோ பயணம்"
             )
-        ], stage="TAXI_BOOKING_CONFIRMED")
+        ], stage="TAXI_AUTO_CONFIRMED")
+
+    if action in ["btn_taxi_mini", "மினி கார்"]:
+        return _result([
+            _msg_buttons(
+                header="✅ மினி கார் முன்பதிவு உறுதியானது!",
+                body=(
+                    "• *ஓட்டுநர்:* M. கார்த்திக் (SIA சரிபார்க்கப்பட்ட ஓட்டுநர்)\n"
+                    "• *வாகனம்:* TN 58 BC 1190 (வேகன்ஆர் கார்)\n"
+                    "• *உங்கள் புறப்படும் OTP:* *4218*\n"
+                    "• *கட்டணம்:* அரசு நிர்ணய கட்டணம் ₹14/கி.மீ (Zero Surge)\n"
+                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பில் உள்ளது."
+                ),
+                buttons=[
+                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • பாதுகாப்பான கார் பயணம்"
+            )
+        ], stage="TAXI_MINI_CONFIRMED")
+
+    if action in ["btn_taxi_sedan", "செடான்"]:
+        return _result([
+            _msg_buttons(
+                header="✅ செடான் ஏசி கார் முன்பதிவு உறுதியானது!",
+                body=(
+                    "• *ஓட்டுநர்:* R. சுரேஷ் (SIA சரிபார்க்கப்பட்ட ஓட்டுநர்)\n"
+                    "• *வாகனம்:* TN 58 CA 7721 (டிசையர் ஏசி கார்)\n"
+                    "• *உங்கள் புறப்படும் OTP:* *8124*\n"
+                    "• *கட்டணம்:* அரசு நிர்ணய கட்டணம் ₹16/கி.மீ (Zero Surge)\n"
+                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பில் உள்ளது."
+                ),
+                buttons=[
+                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • சொகுசு ஏசி பயணம்"
+            )
+        ], stage="TAXI_SEDAN_CONFIRMED")
 
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 5: COMMUNITY KITCHEN CHOOSE FOOD & ORDER ACTIONS
@@ -1123,62 +1304,179 @@ def handle_sia_whatsapp_flow(
         ], stage="FOOD_TIFFIN_CONFIRMED")
 
     # ────────────────────────────────────────────────────────────────────────
-    #  SERVICE 6: PATTA QUICK AUDIT ACTION
+    #  SERVICE 6: PATTA QUICK AUDIT & SUBDIVISION ACTIONS
     # ────────────────────────────────────────────────────────────────────────
     if action in ["btn_patta_quick_survey", "svc_patta", "btn_patta_audit_action"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
         return _result([
             _msg_buttons(
-                header="📑 பட்டா நில ஆவண ஆய்வு முடிவு (RSO 31)",
+                header="📑 பட்டா நில ஆவண ஆய்வு & மனு (RSO 31)",
                 body=(
-                    "• *சர்வே எண்:* 142/3A (சோழவந்தான் கிராமம்)\n"
-                    "• *அசோகா முத்திரை & சீல்:* 100% அதிகாரப்பூர்வமானது ✅\n"
-                    "• *அரசு நிர்ணய கட்டணம்:* உட்பிரிவு ₹60 மட்டுமே!\n"
-                    "• *எச்சரிக்கை:* இடைத்தரகர்களுக்கு ₹3,000-₹5,000 கொடுக்க வேண்டாம்."
+                    f"வணக்கம் *{u_name}*! தமிழ்நாடு நில அளவை மற்றும் பட்டா மாறுதல் வழிகாட்டி:\n\n"
+                    "1. *உட்பிரிவு அற்ற பட்டா மாறுதல்:* கட்டணம் *₹0 (முற்றிலும் இலவசம்)*\n"
+                    "2. *உட்பிரிவு உள்ள பட்டா மாறுதல்:* அரசு கட்டணம் *₹60 மட்டுமே*\n"
+                    "3. *அதிகாரப்பூர்வ மனு PDF:* வருவாய்த்துறைக்கு 1-கிளிக் சீல் வைக்கப்பட்ட மனு\n\n"
+                    "⚠️ இடைத்தரகர்களுக்கு ₹3,000-₹5,000 லஞ்சம் கொடுக்க வேண்டாம்!"
                 ),
                 buttons=[
-                    {"id": "btn_pet_water", "title": "📄 பட்டா பெயர் மாற்ற மனு"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_patta_non_subdiv", "title": "📄 உட்பிரிவு அற்றது" if lang == "ta" else "📄 Free Patta (₹0)"},
+                    {"id": "btn_patta_subdiv", "title": "📑 உட்பிரிவு உள்ளது" if lang == "ta" else "📑 Subdiv (₹60)"},
+                    {"id": "btn_pet_patta", "title": "✍️ பட்டா மனு PDF" if lang == "ta" else "✍️ Patta PDF"}
                 ],
                 footer="SIA • நில ஆவண பாதுகாப்பு"
             )
         ], stage="PATTA_SURVEY_AUDITED")
 
-    # ────────────────────────────────────────────────────────────────────────
-    #  SERVICE 7: CBT QUIZ 1-TAP LAUNCH ACTION
-    # ────────────────────────────────────────────────────────────────────────
-    if action in ["btn_quiz_start_now", "btn_cbt_quiz"]:
+    if action in ["btn_patta_non_subdiv", "உட்பிரிவு அற்றது"]:
         return _result([
             _msg_buttons(
-                header="🎯 TNPSC குரூப் 4 மாதிரி தேர்வு (கேள்வி 1/5)",
+                header="📄 உட்பிரிவு இல்லாத பட்டா மாறுதல் (கட்டணம்: ₹0 இலவசம்)",
+                body=(
+                    "• *சட்ட விதி:* தமிழ்நாடு வருவாய்த்துறை நிலை ஆணை RSO 31.\n"
+                    "• *அரசுக் கட்டணம்:* *₹0 (முற்றிலும் இலவசம்)* - எவருக்கும் ஒரு ரூபாய் தர வேண்டாம்.\n"
+                    "• *அதிகாரப்பூர்வ தளம்:* eservices.tn.gov.in\n"
+                    "• *தேவையான ஆவணங்கள்:* கிரையப் பத்திரம், முந்தைய பட்டா நகல், வில்லங்கச் சான்றிதழ் (EC), ஆதார் அட்டை.\n"
+                    "• *ஒப்புதல் காலம்:* 15 முதல் 30 நாட்களுக்குள் தாலுகா தலைமையிடத்து துணை வட்டாட்சியரால் ஒப்புதல் வழங்கப்படும்."
+                ),
+                buttons=[
+                    {"id": "btn_pet_patta", "title": "✍️ பட்டா மனு PDF"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • RSO 31 சட்டப்பூர்வ பாதுகாப்பு"
+            )
+        ], stage="PATTA_NON_SUBDIV_INFO")
+
+    if action in ["btn_patta_subdiv", "உட்பிரிவு உள்ளது"]:
+        return _result([
+            _msg_buttons(
+                header="📑 உட்பிரிவு உள்ள பட்டா மாறுதல் (அரசு கட்டணம்: ₹60)",
+                body=(
+                    "• *சட்ட விதி:* நில அளவை மற்றும் எல்லைகள் சட்டம் (Survey & Boundaries Act).\n"
+                    "• *அரசு அதிகாரப்பூர்வ கட்டணம்:* *₹60 மட்டுமே* (வங்கிக் கருவூலம் / இ-சேவை செல்லான்).\n"
+                    "• *நடைமுறை:* நில அளவர் (Surveyor) வயல்/வீட்டுமனைக்கு நேரில் வந்து அளவீடு செய்து FMB வரைபடம் தயாரிப்பார்.\n"
+                    "• *ஒப்புதல் காலம்:* 30 நாட்களுக்குள் புதிய பட்டா மற்றும் புல வரைபடம் வழங்கப்படும்.\n"
+                    "• எச்சரிக்கை: இடைத்தரகர்களுக்கு கூடுதல் பணம் தர வேண்டாம்!"
+                ),
+                buttons=[
+                    {"id": "btn_pet_patta", "title": "✍️ பட்டா மனு PDF"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • நில அளவை விதிமுறைகள்"
+            )
+        ], stage="PATTA_SUBDIV_INFO")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 7: CBT QUIZ CHOOSE SUBJECT & INTERACTIVE QUESTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_cbt_quiz", "மாதிரி தேர்வு"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
+        return _result([
+            _msg_buttons(
+                header="📝 எந்த மாதிரித் தேர்வு எழுத வேண்டும்? (Choose Quiz)",
+                body=(
+                    f"வணக்கம் *{u_name}*! தமிழ்நாடு சமச்சீர் கல்வி & TNPSC மாதிரி வினாடி வினா கூடம்:\n\n"
+                    "1. *TNPSC பொதுத்தமிழ்:* இலக்கணம், அணிகள், திருக்குறள் (குரூப் 4)\n"
+                    "2. *10-ஆம் வகுப்பு அறிவியல்:* சமச்சீர் முக்கிய 1-மதிப்பெண் வினாக்கள்\n"
+                    "3. *12-ஆம் வகுப்பு இயற்பியல்:* பொதுத்தேர்வு விதிகள் & அலகுகள்\n\n"
+                    "கீழேயுள்ள பொத்தானைத் தொட்டு உடனடி வினாடி வினாவைத் தொடங்கவும் 👇"
+                ),
+                buttons=[
+                    {"id": "btn_cbt_tamil", "title": "🏛️ TNPSC பொதுத்தமிழ்" if lang == "ta" else "🏛️ TNPSC Tamil"},
+                    {"id": "btn_cbt_science", "title": "🔬 10th அறிவியல்" if lang == "ta" else "🔬 10th Science"},
+                    {"id": "btn_cbt_physics", "title": "⚡ 12th இயற்பியல்" if lang == "ta" else "⚡ 12th Physics"}
+                ],
+                footer="SIA • டிஜிட்டல் தேர்வு கூடம்"
+            )
+        ], stage="CBT_SUBJECT_SELECTION")
+
+    if action in ["btn_cbt_tamil", "btn_quiz_start_now", "தமிழ் தேர்வு"]:
+        return _result([
+            _msg_buttons(
+                header="🎯 TNPSC குரூப் 4 பொதுத்தமிழ் (கேள்வி 1/5)",
                 body=(
                     "❓ *'அகர முதல எழுத்தெல்லாம் ஆதி பகவன் முதற்றே உலகு'*\n"
                     "இதில் பயின்று வரும் அணி எது?\n\n"
                     "சரியான விடையைத் தேர்ந்தெடுக்கவும்:"
                 ),
                 buttons=[
-                    {"id": "btn_quiz_opt_b", "title": "B) எடுத்துக்காட்டு உவமை"},
+                    {"id": "btn_quiz_opt_b", "title": "B) எடு-காட்டு உவமை"},
                     {"id": "btn_quiz_opt_a", "title": "A) உவமை அணி"},
-                    {"id": "btn_quiz_opt_c", "title": "C) பிறிது மொழிதல் அணி"}
+                    {"id": "btn_quiz_opt_c", "title": "C) பிறிது மொழிதல்"}
                 ],
                 footer="SIA • சமச்சீர் கல்வி தேர்வு கூடம்"
             )
         ], stage="CBT_QUESTION_1")
 
-    if action == "btn_quiz_opt_b":
+    if action in ["btn_cbt_science", "அறிவியல் தேர்வு"]:
+        return _result([
+            _msg_buttons(
+                header="🔬 10-ஆம் வகுப்பு அறிவியல் மாதிரி தேர்வு (கேள்வி 1/5)",
+                body=(
+                    "❓ *தாவரங்கள் பகல் நேரத்தில் ஒளிச்சேர்க்கையின் (Photosynthesis) போது எந்த வாயுவை வெளிவிடுகின்றன?*\n\n"
+                    "சரியான விடையைத் தேர்ந்தெடுக்கவும்:"
+                ),
+                buttons=[
+                    {"id": "btn_quiz_sci_opt_b", "title": "B) ஆக்ஸிஜன் (O2)"},
+                    {"id": "btn_quiz_sci_opt_a", "title": "A) கார்பன் வாயு"},
+                    {"id": "btn_quiz_sci_opt_c", "title": "C) நைட்ரஜன் வாயு"}
+                ],
+                footer="SIA • 10-ஆம் வகுப்பு அறிவியல் வினா"
+            )
+        ], stage="CBT_QUESTION_SCIENCE")
+
+    if action in ["btn_cbt_physics", "இயற்பியல் தேர்வு"]:
+        return _result([
+            _msg_buttons(
+                header="⚡ 12-ஆம் வகுப்பு இயற்பியல் மாதிரி தேர்வு (கேள்வி 1/5)",
+                body=(
+                    "❓ *மின்னோட்டத்தை (Electric Current) அளவிடும் சர்வதேச SI அலகு எது?*\n\n"
+                    "சரியான விடையைத் தேர்ந்தெடுக்கவும்:"
+                ),
+                buttons=[
+                    {"id": "btn_quiz_phy_opt_b", "title": "B) ஆம்பியர் (A)"},
+                    {"id": "btn_quiz_phy_opt_a", "title": "A) வோல்ட் (V)"},
+                    {"id": "btn_quiz_phy_opt_c", "title": "C) ஓம் (Ohm)"}
+                ],
+                footer="SIA • 12-ஆம் வகுப்பு இயற்பியல் வினா"
+            )
+        ], stage="CBT_QUESTION_PHYSICS")
+
+    if action in ["btn_quiz_opt_b", "btn_quiz_sci_opt_b", "btn_quiz_phy_opt_b"]:
         return _result([
             _msg_buttons(
                 header="🎉 சரியான விடை! (Grade: A+)",
                 body=(
-                    "✅ *அருமை! 'எடுத்துக்காட்டு உவமை அணி' என்பது மிகச் சரியான விடை.*\n\n"
-                    "விளக்கம்: உவமையும் உவமேயமும் தனித்தனி வாக்கியங்களாக அமைந்து உவம உருபு மறைந்து வருவது எடுத்துக்காட்டு உவமை அணி ஆகும்."
+                    "✅ *மிகச் சிறப்பு! நீங்கள் தேர்ந்தெடுத்த விடை 100% சரியானது.*\n\n"
+                    "விளக்கம்: கருத்து தெளிவும் சூத்திர தெளிவும் உங்கள் அரசு பொதுத்தேர்வு மதிப்பெண்ணை உயர்த்தும்!"
                 ),
                 buttons=[
-                    {"id": "btn_quiz_start_now", "title": "➡️ அடுத்த கேள்வி"},
+                    {"id": "btn_cbt_quiz", "title": "➡️ அடுத்த தேர்வு"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
-                footer="SIA • டிஜிட்டல் கல்வி"
+                footer="SIA • டிஜிட்டல் கல்வி வெற்றி"
             )
         ], stage="CBT_QUESTION_CORRECT")
+
+    if action in ["btn_quiz_sci_opt_a", "btn_quiz_sci_opt_c", "btn_quiz_phy_opt_a", "btn_quiz_phy_opt_c"]:
+        return _result([
+            _msg_buttons(
+                header="ℹ️ தவறான விடை - சரியான விளக்கம்",
+                body=(
+                    "❌ நீங்கள் தேர்ந்தெடுத்த விடை தவறானது.\n\n"
+                    "💡 *சரியான விடை B ஆகும்.*\n"
+                    "விடைக் குறிப்பு: தாவரங்கள் ஒளிச்சேர்க்கையில் ஆக்ஸிஜனை வெளிவிடுகின்றன; மின்னோட்டத்தின் SI அலகு ஆம்பியர் (Ampere)."
+                ),
+                buttons=[
+                    {"id": "btn_cbt_quiz", "title": "🔄 மீண்டும் முயற்சி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • கற்றல் வழிகாட்டி"
+            )
+        ], stage="CBT_QUESTION_INCORRECT")
 
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 10: 4-7-8 CALMING BREATHING ACTION
@@ -1441,7 +1739,7 @@ def handle_sia_whatsapp_flow(
                     "🛡️ இரவு நேர கூடுதல் கட்டணம் இல்லை, 0% சர்ஜ் (Zero Surge Commission)!"
                 ),
                 buttons=[
-                    {"id": "btn_taxi_auto", "title": "🛺 ஆட்டோ புக் (₹12/km)"},
+                    {"id": "btn_taxi_auto", "title": "🛺 ஆட்டோ புக் (₹12)"},
                     {"id": "btn_taxi_sedan", "title": "🚗 கார் புக் (₹14/km)"}
                 ],
                 footer="SIA • ரெட் டாக்ஸி வெளிப்படை கட்டணம்"
@@ -1744,31 +2042,113 @@ def handle_sia_whatsapp_flow(
         ], stage="EXAM_ROADMAP_NEET")
 
     if action in ["btn_roadmap_study", "இலவச பாடக்குறிப்பு"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
         return _result([
             _msg_buttons(
-                header="📖 அரசுப் போட்டித் தேர்வு இலவச பாடக்குறிப்புகள்",
+                header="📖 எந்த இலவச பாடக்குறிப்பு வேண்டும்? (Choose Notes)",
                 body=(
-                    "• *TNPSC பொதுத்தமிழ் 100/100 வினா வங்கி*\n"
-                    "• *இந்திய அரசியலமைப்பு முக்கிய சரத்துகள் அட்டவணை*\n"
-                    "• *சமச்சீர் அறிவியல் & சமூக அறிவியல் 1-வரி குறிப்புகள்*\n"
-                    "• *கணிதம் குறுக்குவழி முறைகள் (Maths Shortcuts)*\n\n"
-                    "அனைத்து பாடக்குறிப்புகளும் உங்கள் வாட்ஸ்அப்பில் இலவசமாக பதிவிறக்கத் தயார்!"
+                    f"வணக்கம் *{u_name}*! தமிழ்நாடு அரசுப் போட்டித் தேர்வுக்கான இலவச பாடக்குறிப்புகள்:\n\n"
+                    "1. *TNPSC பொதுத்தமிழ் குறிப்பு:* இலக்கணம், திருக்குறள், 100/100 வினா வங்கி\n"
+                    "2. *கணிதம் குறுக்குவழி சூத்திரங்கள்:* தனிவட்டி, சுருக்குக, விகிதங்கள்\n"
+                    "3. *சமச்சீர் அறிவியல் 1-வரி வினா:* 6-10 வகுப்பு முக்கிய குறிப்புகள்\n\n"
+                    "கீழேயுள்ள பொத்தானைத் தொட்டு இலவசமாகப் படிக்கலாம் 👇"
                 ),
                 buttons=[
-                    {"id": "btn_roadmap_tnpsc", "title": "🗺️ TNPSC வரைபடம்"},
+                    {"id": "btn_notes_tamil", "title": "📖 பொதுத்தமிழ்" if lang == "ta" else "📖 Tamil Notes"},
+                    {"id": "btn_notes_maths", "title": "📐 கணிதம் குறுக்குவழி" if lang == "ta" else "📐 Maths Tricks"},
+                    {"id": "btn_notes_science", "title": "🔬 அறிவியல் குறிப்பு" if lang == "ta" else "🔬 Science Q&A"}
+                ],
+                footer="SIA • தமிழ்நாடு டிஜிட்டல் நூலகம்"
+            )
+        ], stage="EXAM_ROADMAP_NOTES_SELECTION")
+
+    if action in ["btn_notes_tamil", "தமிழ் குறிப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="📖 TNPSC பொதுத்தமிழ் 100/100 முக்கிய குறிப்புகள்",
+                body=(
+                    "• *பகுதி அ (இலக்கணம்):* வேற்றுமை உருபுகள் (ஐ, ஆல், கு, இன், அது, கண்), வலிமிகும்/வலிமிகா இடங்கள், புணர்ச்சி விதிகள்.\n"
+                    "• *பகுதி ஆ (இலக்கியம்):* திருக்குறள் (அறத்துப்பால், பொருட்பால் முக்கிய குறள்கள்), நாலடியார், சிலப்பதிகாரம், மணிமேகலை ஆசிரியர்கள்.\n"
+                    "• *பகுதி இ (தமிழ் அறிஞர்கள்):* பாரதியார், பாரதிதாசன், நாமக்கல் கவிஞர், பெருஞ்சித்திரனார் சிறப்புப் பெயர்கள்.\n\n"
+                    "இலவச முழு பிடிஎஃப் உங்கள் வாட்ஸ்அப்பில் பதிவிறக்கம் செய்யத் தயாராக உள்ளது!"
+                ),
+                buttons=[
+                    {"id": "btn_roadmap_study", "title": "📖 பிற பாடக்குறிப்பு"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
-                footer="SIA • டிஜிட்டல் நூலகம்"
+                footer="SIA • டிஜிட்டல் தமிழ் கூடம்"
             )
-        ], stage="EXAM_ROADMAP_STUDY_NOTES")
+        ], stage="EXAM_NOTES_TAMIL_DELIVERED")
+
+    if action in ["btn_notes_maths", "கணித குறிப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="📐 TNPSC & K-12 கணிதம் குறுக்குவழி சூத்திரங்கள்",
+                body=(
+                    "• *தனிவட்டி (Simple Interest):* SI = (P × N × R) / 100\n"
+                    "• *கூட்டுவட்டி (Compound Interest):* A = P(1 + R/100)^N\n"
+                    "• *வேலை மற்றும் காலம்:* A ஒரு வேலையை X நாட்களிலும், B அதே வேலையை Y நாட்களிலும் செய்தால், இருவரும் சேர்ந்து முடிக்க = (X × Y) / (X + Y) நாட்கள்.\n"
+                    "• *விகிதம் & சதவீதம்:* குறுக்கு பெருக்கல் முறையில் 10 விநாடிகளில் விடை காணலாம்!"
+                ),
+                buttons=[
+                    {"id": "btn_roadmap_study", "title": "📖 பிற பாடக்குறிப்பு"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • கணித குறுக்குவழி சூத்திரம்"
+            )
+        ], stage="EXAM_NOTES_MATHS_DELIVERED")
+
+    if action in ["btn_notes_science", "அறிவியல் குறிப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="🔬 சமச்சீர் அறிவியல் 1-வரி முக்கிய வினா-விடைகள்",
+                body=(
+                    "• *நியூட்டனின் முதல் விதி:* நிலைம விதி (Law of Inertia).\n"
+                    "• *இரத்தத்தின் இயல்பான pH மதிப்பு:* 7.35 முதல் 7.45 (லேசான காரத்தன்மை).\n"
+                    "• *மனித உடலின் மிக நீளமான எலும்பு:* தொடை எலும்பு (Femur).\n"
+                    "• *சூரிய குடும்பத்தின் வெப்பமான கோள்:* வெள்ளி (Venus - பசுமைக்குடில் விளைவு).\n"
+                    "• *வைட்டமின் C குறைபாட்டால் ஏற்படும் நோய்:* ஸ்கர்வி (Scurvy)."
+                ),
+                buttons=[
+                    {"id": "btn_roadmap_study", "title": "📖 பிற பாடக்குறிப்பு"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • அறிவியல் சுருக்கக் குறிப்பு"
+            )
+        ], stage="EXAM_NOTES_SCIENCE_DELIVERED")
 
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 12: RENTO TRACTOR, HARVESTER & NEARBY MACHINERY ACTIONS
     # ────────────────────────────────────────────────────────────────────────
     if action in ["btn_rent_tractor", "டிராக்டர் வாடகை"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
         return _result([
             _msg_buttons(
-                header="✅ டிராக்டர் வாடகை முன்பதிவு உறுதியானது!",
+                header="🚜 என்ன உழவு கருவி பொருத்த வேண்டும்? (Choose Implement)",
+                body=(
+                    f"வணக்கம் உழவர் *{u_name}*! உங்கள் நிலத்திற்கு ஏற்ற டிராக்டர் கருவியைத் தேர்ந்தெடுக்கவும்:\n\n"
+                    "1. *ரோட்டவேட்டர்:* மண் துகளாக்கும் உழவு (₹850 / மணி)\n"
+                    "2. *9-கலப்பை உழவு:* ஆழ உழவு மற்றும் புழுதி உழவு (₹750 / மணி)\n"
+                    "3. *டிரெய்லர் சரக்கு:* எரு, வைக்கோல் ஏற்றிச் செல்ல (₹600 / மணி)\n\n"
+                    "நேரடி உழவர் வாடகை - 0% கமிஷன்! டீசல் மற்றும் ஓட்டுநர் உட்பட."
+                ),
+                buttons=[
+                    {"id": "btn_tractor_rotavator", "title": "🚜 ரோட்டவேட்டர்" if lang == "ta" else "🚜 Rotavator (₹850)"},
+                    {"id": "btn_tractor_cultivator", "title": "🌾 கலப்பை உழவு (₹750)" if lang == "ta" else "🌾 Cultivator (₹750)"},
+                    {"id": "btn_tractor_trailer", "title": "🛻 சரக்கு டிரெய்லர்" if lang == "ta" else "🛻 Trailer (₹600)"}
+                ],
+                footer="SIA • RentO உழவர் இயந்திர மையம்"
+            )
+        ], stage="RENTO_TRACTOR_SELECTION")
+
+    if action in ["btn_tractor_rotavator", "ரோட்டவேட்டர்"]:
+        return _result([
+            _msg_buttons(
+                header="✅ ரோட்டவேட்டர் டிராக்டர் முன்பதிவு உறுதியானது!",
                 body=(
                     "• *இயந்திரம்:* மஹிந்திரா 45HP டிராக்டர் + 36-பிளேடு ரோட்டவேட்டர்\n"
                     "• *உழவர் உரிமையாளர்:* பி. முருகேசன்\n"
@@ -1778,12 +2158,52 @@ def handle_sia_whatsapp_flow(
                     "• 0% இடைத்தரகர் கட்டணம்! உரிமையாளர் உங்கள் வயலுக்கு வரத் தயாராக உள்ளார்."
                 ),
                 buttons=[
-                    {"id": "btn_rent_harvester", "title": "🌾 அறுவடை இயந்திரம்"},
+                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
-                footer="SIA • RentO உழவர் இயந்திர மையம்"
+                footer="SIA • RentO ரோட்டவேட்டர் சேவை"
             )
-        ], stage="RENTO_TRACTOR_BOOKED")
+        ], stage="RENTO_ROTAVATOR_CONFIRMED")
+
+    if action in ["btn_tractor_cultivator", "கலப்பை உழவு"]:
+        return _result([
+            _msg_buttons(
+                header="✅ 9-கலப்பை உழவு டிராக்டர் உறுதியானது!",
+                body=(
+                    "• *இயந்திரம்:* ஸ்வராஜ் 744 FE டிராக்டர் + 9-கொழு கலப்பை (9-Tyne Cultivator)\n"
+                    "• *உழவர் உரிமையாளர்:* கே. ஆறுமுகம்\n"
+                    "• *முகவரி:* அலங்காநல்லூர் (உங்கள் வயலிலிருந்து 3 கிமீ)\n"
+                    "• *வாடகை:* *₹750 / மணி* (டீசல் & அனுபவ ஓட்டுநர் உட்பட)\n"
+                    "• *தொலைபேசி:* 98421 11223\n"
+                    "• ஆழ உழவுக்கு மிகச் சிறந்தது, களைகள் வேரோடு அகற்றப்படும்."
+                ),
+                buttons=[
+                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • RentO கலப்பை உழவு"
+            )
+        ], stage="RENTO_CULTIVATOR_CONFIRMED")
+
+    if action in ["btn_tractor_trailer", "டிரெய்லர்"]:
+        return _result([
+            _msg_buttons(
+                header="✅ டிராக்டர் ஹைட்ராலிக் டிரெய்லர் உறுதியானது!",
+                body=(
+                    "• *இயந்திரம்:* சோனாலிகா 50HP டிராக்டர் + 3 டன் ஹைட்ராலிக் டிரெய்லர்\n"
+                    "• *உழவர் உரிமையாளர்:* எம். செல்வம்\n"
+                    "• *முகவரி:* சமயநல்லூர் (உங்கள் வயலிலிருந்து 2 கிமீ)\n"
+                    "• *வாடகை:* *₹600 / மணி* (சரக்கு ஏற்றி இறக்க ஹைட்ராலிக் வசதி உண்டு)\n"
+                    "• *தொலைபேசி:* 97865 44332\n"
+                    "• எரு, நெல் மூட்டைகள் மற்றும் விளைபொருட்கள் ஏற்றிச் செல்ல தயார்."
+                ),
+                buttons=[
+                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • RentO சரக்கு டிரெய்லர்"
+            )
+        ], stage="RENTO_TRAILER_CONFIRMED")
 
     if action in ["btn_rent_harvester", "அறுவடை இயந்திரம்"]:
         return _result([
@@ -2553,7 +2973,7 @@ def _handle_onboarding_step(
 
         ]
 
-        sections = [{"title": "📍 முக்கிய மாவட்டங்கள்", "rows": top_districts}]
+        sections = [{"title": "📍 மாவட்டங்கள்", "rows": top_districts}]
 
         return _result([
 
