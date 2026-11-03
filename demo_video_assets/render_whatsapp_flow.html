@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { background: #0b141a; color: #e9edef; font-family: system-ui, -apple-system, sans-serif; }
+.wa-bg { background-color: #0b141a; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 20px 20px; }
+.bubble-in { background-color: #202c33; border-radius: 0.5rem 0.5rem 0.5rem 0; }
+.bubble-out { background-color: #005c4b; border-radius: 0.5rem 0.5rem 0 0.5rem; }
+</style>
+</head>
+<body class="w-[1920px] h-[1080px] p-10 flex flex-col justify-between overflow-hidden wa-bg">
+  <div class="flex items-center justify-between border-b border-slate-800 pb-5">
+    <div class="flex items-center space-x-4">
+      <div class="w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center text-3xl text-slate-900 font-bold shadow-lg shadow-emerald-500/20">📱</div>
+      <div>
+        <h1 class="text-3xl font-bold text-white">Meta WhatsApp Cloud API (v21.0 Production Pipeline)</h1>
+        <p class="text-slate-400 text-sm">Official WABA ID: 1370739925032027 • Phone ID: 1213113635214047 • Zero Typing Required</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-3">
+      <span class="px-4 py-2 rounded-full bg-[#005c4b] text-emerald-300 text-sm font-semibold flex items-center">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-2 animate-ping"></span> WEBHOOK ACTIVE: 200 OK
+      </span>
+    </div>
+  </div>
+
+  <!-- WhatsApp Chat Container -->
+  <div class="max-w-4xl mx-auto w-full my-auto space-y-6">
+    <!-- Message 1: Incoming Audio Note -->
+    <div class="flex justify-start">
+      <div class="bubble-in p-4 max-w-lg shadow-lg">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">▶</div>
+          <!-- Simulated Audio Waveform -->
+          <div class="flex items-center space-x-1 h-6">
+            <span class="w-1 h-3 bg-emerald-400 rounded-full"></span>
+            <span class="w-1 h-5 bg-emerald-400 rounded-full"></span>
+            <span class="w-1 h-2 bg-emerald-400 rounded-full"></span>
+            <span class="w-1 h-6 bg-emerald-400 rounded-full"></span>
+            <span class="w-1 h-4 bg-emerald-400 rounded-full"></span>
+            <span class="w-1 h-5 bg-emerald-400 rounded-full"></span>
+            <span class="w-1 h-2 bg-emerald-400 rounded-full"></span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">0:14 / ta-IN Voice Note</span>
+        </div>
+        <div class="mt-2 text-xs text-slate-300 italic border-t border-slate-700/60 pt-2">
+          "வணக்கம், என் நிலத்துல கூட்டு பட்டா இருக்கு, தனி பட்டாவா மாற்ற மனு வேண்டும்."
+        </div>
+      </div>
+    </div>
+
+    <!-- Message 2: SIA Agent Voice & Legal Guidance -->
+    <div class="flex justify-end">
+      <div class="bubble-out p-4 max-w-lg shadow-lg space-y-3">
+        <div class="text-sm font-bold text-emerald-200">🏛️ மக்கள் Agent AI (SIA)</div>
+        <p class="text-xs text-slate-100 leading-relaxed">
+          வணக்கம் திரு. சுப்பிரமணியன் அவர்களே! தங்களின் சோழவந்தான் புல எண் 142/3A நிலத்திற்கு தமிழ்நாடு வருவாய் நிலை ஆணை (RSO 31) படி தனி பட்டா மனு தயாராகியுள்ளது.
+        </p>
+        <div class="p-3 bg-black/30 rounded border border-emerald-500/30 text-xs">
+          <div class="font-bold text-emerald-300">📄 Petition_d13dc39e_Vadipatti_Tahsildar.pdf</div>
+          <div class="text-[10px] text-slate-300">142 KB • Court-Ready Barcode Document</div>
+        </div>
+        <div class="text-[10px] text-emerald-200 text-right">06:48 AM • ✓✓ DELIVERED</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-800 pt-4">
+    <div>Meta AI Developer Hackathon 2026 • WhatsApp Autonomous Action Loop</div>
+    <div class="font-mono text-emerald-400">END-TO-END LATENCY (VOICE IN -> PDF OUT): 4.1 SECONDS</div>
+  </div>
+</body>
+</html>
