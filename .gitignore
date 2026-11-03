@@ -25,3 +25,10 @@ temp_*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Backups and scratch patches
+*.bak*
+*.tmp
+patch_telemetry_route.py
+patch_clean_ui_modals.py
+apply_meta_hackathon_upgrades.py

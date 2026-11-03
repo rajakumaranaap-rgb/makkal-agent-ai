@@ -1,8 +1,3 @@
-> 🎥 **Official 3-Minute Meta Hackathon Demo Video:** [https://youtu.be/GRHfeQ4uBsU](https://youtu.be/GRHfeQ4uBsU)
-
-
-[![SIA Meta Hackathon Official 3-Min Demo Video](https://img.shields.io/badge/YouTube-Watch%20Official%203--Min%20Demo%20Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/GRHfeQ4uBsU)
-
 # 🏛️ SIA (Super-Intelligent Assistant) / Namma Ooru SuperApp (மக்கள் AI)
 ### *Sovereign Multimodal Vernacular AI for 800M+ Citizens across Rural & Semi-Urban India*
 **Official Submission for the Meta AI Developer Hackathon 2026 — Indie Developer Track ($150,000 USD Target) & Baseten Open-Weight Prize ($10,000 USD Target)**
@@ -24,6 +19,7 @@ All demonstration videos have been produced in 1080p Full HD with studio-quality
 
 | Demo Video Track | Resolution / Duration | Live YouTube Watch URL | Focus & Judge Demonstration |
 | :--- | :--- | :--- | :--- |
+| 🌟 **Official 3-Minute Live Screenrecording & App Walkthrough** | 1080p Full HD (4:27) | [**Watch on YouTube: youtu.be/mjPHCK0o8oo**](https://youtu.be/mjPHCK0o8oo) | **The Definitive Hackathon Live App Walkthrough:** 100% Real Browser Screenshots from D:\metascreens! Real WhatsApp PIN 7890 login, dual-sync authenticated workstation, and end-to-end demonstrations across all 12 sovereign services + Baseten Meta Model APIs. |
 | 🌟 **HD Master Submission Video (Large Letters & Human Voice)** | 1080p Full HD (3:15) | [**Watch on YouTube: youtu.be/epS4Y2cz2dM**](https://youtu.be/epS4Y2cz2dM) | **Definitive Re-Mastered Hackathon Entry:** Big, crisp, bold typography (Nirmala UI, Tamil Unicode), humanised studio voiceover (`en-IN-NeerjaExpressiveNeural`), real WhatsApp Web desktop session (`+91 824 881 8077` ⇄ `+91 63810 29380`) with ride OTP `6395`, and live Web App Co-Pilot reflection across all 7 services. |
 | 🌟 **Official 3-Minute Master Submission Video** | 1080p Full HD (3:20) | [**Watch on YouTube: youtu.be/dIl6rfefeQY**](https://youtu.be/dIl6rfefeQY) | **The Definitive 4-Act Hackathon Entry:** 1) Bharat dilemma & full AWS/Baseten tech-stack, 2) Real live Web App access across all 7 services, 3) Real WhatsApp Web desktop live interaction with OTP `6395`, 4) Grand Prize winning closing metrics. |
 | 📱 **Real User WhatsApp Web Live Demo** | 1080p Full HD (2:55) | [**Watch on YouTube: youtu.be/QqhD4W_5o_Q**](https://youtu.be/QqhD4W_5o_Q) | **100% Real Live User Experience:** Active user session `@PoongavanamMaster (You)` (`+91 824 881 8077`) interacting with Meta Cloud API bot `+91 63810 29380`, using interactive buttons (`நம்ம ஆட்டோ`), and getting instant AI responses. |
@@ -149,6 +145,7 @@ graph TD
 
 | Meta AI Technology | Model Identifier | Functional Mission in SIA / Namma Ooru SuperApp | Output Modality & Artifact |
 | :--- | :--- | :--- | :--- |
+| 🌟 **Official 3-Minute Live Screenrecording & App Walkthrough** | 1080p Full HD (4:27) | [**Watch on YouTube: youtu.be/mjPHCK0o8oo**](https://youtu.be/mjPHCK0o8oo) | **The Definitive Hackathon Live App Walkthrough:** 100% Real Browser Screenshots from D:\metascreens! Real WhatsApp PIN 7890 login, dual-sync authenticated workstation, and end-to-end demonstrations across all 12 sovereign services + Baseten Meta Model APIs. |
 | **Meta Llama 3.3 70B** | `llama-3.3-70b-versatile` / `muse-wonder-1.0` | Autonomous ReAct supervisor: zero-shot intent routing, multi-turn state machines, and legal/statutory deliberation. | Structured Tool Calls & Tamil Advice |
 | **Meta Llama 3.2 11B Vision** | `llama-3.2-11b-vision-instruct` | Computer vision diagnosis: segments paddy leaf lesions, audits handwritten grocery slips, and OCRs registration deeds. | Bounding Boxes, Mask Overlays & JSON |
 | **Meta Whisper Large v3** | `whisper-large-v3` / `seamless-m4t` | Regional acoustic modeling: transcribes rural Tamil dialects (Madurai, Kongu, Delta) with <3% Word Error Rate. | Normalized Vernacular Text |
