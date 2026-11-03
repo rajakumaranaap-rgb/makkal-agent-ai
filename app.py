@@ -6040,3 +6040,79 @@ async def safety_guard_audit_endpoint(request: Request):
         return JSONResponse(content=res)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+# ==============================================================================
+# OFFICIAL MLA / MP / COLLECTOR 1-CLICK PETITION FORWARDER ENDPOINTS
+# ==============================================================================
+
+@app.post("/api/petition/create-and-forward")
+async def create_and_forward_petition_endpoint(req: Request):
+    """
+    Generates an official MLA / MP / Collector grievance petition PDF
+    and builds 1-Click Multi-Channel Forwarding links (WhatsApp to MLA/MP, Any WhatsApp Mobile, Telegram, Email, and Copy-Paste text).
+    """
+    try:
+        body = await req.json()
+        user_text = body.get("user_text", "")
+        sender_phone = body.get("sender_phone", "6381029380")
+        applicant_name = body.get("applicant_name")
+        district_hint = body.get("district_hint")
+        village_hint = body.get("village_hint")
+
+        from mla_mp_petition_forwarder import create_and_forward_petition
+        res = create_and_forward_petition(
+            user_text=user_text,
+            sender_phone=sender_phone,
+            applicant_name=applicant_name,
+            district_hint=district_hint,
+            village_hint=village_hint
+        )
+        return JSONResponse(content=res)
+    except Exception as e:
+        logger.error(f"[PETITION FORWARDER ERROR] {e}", exc_info=True)
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@app.get("/api/petition/authorities")
+async def get_petition_authorities_endpoint():
+    """
+    Returns the comprehensive directory of 234 MLAs, 39 Lok Sabha MPs, and 38 District Collectors
+    for seamless UI dropdown selection and auto-mapping.
+    """
+    try:
+        from mla_directory import ASSEMBLY_CONSTITUENCIES, DISTRICT_COLLECTORS
+        from central_services_directory import TN_LOK_SABHA_MPS
+
+        return JSONResponse(content={
+            "status": "success",
+            "districts_count": len(DISTRICT_COLLECTORS),
+            "mlas_count": len(ASSEMBLY_CONSTITUENCIES),
+            "mps_count": len(TN_LOK_SABHA_MPS),
+            "districts": list(DISTRICT_COLLECTORS.keys()),
+            "mlas": [
+                {
+                    "ac_no": ac["ac_no"],
+                    "name_ta": ac["name_ta"],
+                    "name_en": ac["name_en"],
+                    "district": ac["district"],
+                    "district_ta": ac.get("district_ta", ac["district"]),
+                    "mla_name_ta": ac["mla_name_ta"],
+                    "mla_name_en": ac["mla_name_en"],
+                    "email": ac["email"],
+                    "whatsapp": ac["whatsapp"]
+                }
+                for ac in ASSEMBLY_CONSTITUENCIES
+            ],
+            "mps": TN_LOK_SABHA_MPS
+        })
+    except Exception as e:
+        logger.error(f"[PETITION AUTHORITIES ERROR] {e}", exc_info=True)
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@app.post("/api/document/audit")
+async def document_audit_alias_endpoint(file: UploadFile = File(...)):
+    """Alias for /api/audit-document for seamless UI file uploads."""
+    return await audit_document_endpoint(file=file)
+

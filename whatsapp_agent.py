@@ -2346,11 +2346,12 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                     "status": "processed",
 
                     "handler": "agriculture_agronomy_engine",
-
                     "sender": sender_phone,
-
-                    "interactive_id": interactive_id
-
+                    "interactive_id": interactive_id,
+                    "reply": reply_text if 'reply_text' in locals() and reply_text else (m["body_text"] if 'm' in locals() and 'body_text' in m else ""),
+                    "reply_text": reply_text if 'reply_text' in locals() and reply_text else (m["body_text"] if 'm' in locals() and 'body_text' in m else ""),
+                    "button_objs": m["buttons"] if 'm' in locals() and 'buttons' in m else [],
+                    "buttons": m["buttons"] if 'm' in locals() and 'buttons' in m else []
                 }
 
 
@@ -2426,13 +2427,11 @@ def process_incoming_whatsapp_message(payload: Dict[str, Any]) -> Dict[str, Any]
                     "status": "processed",
 
                     "handler": "whatsapp_education_course",
-
                     "sender": sender_phone,
-
                     "course_id": c_id,
-
-                    "day": day_num
-
+                    "day": day_num,
+                    "reply": reply_text if 'reply_text' in locals() and reply_text else "",
+                    "reply_text": reply_text if 'reply_text' in locals() and reply_text else ""
                 }
 
 
