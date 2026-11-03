@@ -1030,7 +1030,7 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 5: COMMUNITY KITCHEN 1-TAP ORDER ACTION
     # ────────────────────────────────────────────────────────────────────────
-    if action in ["food_order", "btn_food_meals", "btn_food_tiffin"]:
+    if action in ["food_order", "btn_food_quick_order", "btn_food_meals", "btn_food_tiffin"]:
         return _result([
             _msg_buttons(
                 header="🍱 வாழை இலை சாப்பாடு உறுதி செய்யப்பட்டது!",
@@ -1050,7 +1050,7 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
     #  SERVICE 6: PATTA QUICK AUDIT ACTION
     # ────────────────────────────────────────────────────────────────────────
-    if action in ["btn_patta_quick_survey", "svc_patta"]:
+    if action in ["btn_patta_quick_survey", "svc_patta", "btn_patta_audit_action"]:
         return _result([
             _msg_buttons(
                 header="📑 பட்டா நில ஆவண ஆய்வு முடிவு (RSO 31)",
@@ -1127,6 +1127,552 @@ def handle_sia_whatsapp_flow(
             )
         ], stage="MH_BREATHING_GUIDED")
 
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 1: WEATHER & MACHINERY REDIRECT ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_weather_rep", "வானிலை அறிக்கை", "வானிலை", "மழை", "WEATHER"]:
+        return _result([
+            _msg_buttons(
+                header="🌧️ 3-நாள் உள்ளூர் வானிலை அறிக்கை (TNAU Agro-Met)",
+                body=(
+                    "• *வானிலை முன்னறிவிப்பு:* அடுத்த 48 மணிநேரத்தில் மிதமான மழை வாய்ப்பு (65%).\n"
+                    "• *விவசாய ஆலோசனை:* யூரியா/இலைவழி உரம் தெளிப்பதை 2 நாட்களுக்கு தள்ளிவைக்கவும்.\n"
+                    "• *வடிகால் வசதி:* வயலில் தேங்கும் அதிகப்படியான மழைநீரை வெளியேற்ற வாய்க்கால்களை தூர்வாரவும்.\n"
+                    "• *காற்று வேகம்:* மணிக்கு 14 கி.மீ (இயல்பான அளவு).\n\n"
+                    "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
+                ),
+                buttons=[
+                    {"id": "btn_crop_blast_cure", "title": "🌾 பூச்சி மருந்து"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • TNAU பயிர் வானிலை மையம்"
+            )
+        ], stage="AGRI_WEATHER_REPORT")
+
+    if action in ["btn_machinery_rent", "btn_rent_agri", "menu_agri_rent", "வாடகை இயந்திரங்கள்"]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        lang = get_user_language(clean_phone)
+        guide_data = get_menu_guide_response("12", citizen_name=u_name, lang=lang)
+        if guide_data:
+            return _result([
+                _msg_buttons(
+                    header=guide_data["header"],
+                    body=guide_data["body"],
+                    buttons=guide_data["buttons"],
+                    footer=guide_data["footer"]
+                )
+            ], stage="MENU_GUIDE_12")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 2: VET DOCTOR ACTION
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_cattle_vet", "கால்நடை மருத்துவர்", "டாக்டர்", "VET"]:
+        return _result([
+            _msg_buttons(
+                header="🩺 அரசு கால்நடை மருத்துவமனை (சோழவந்தான்)",
+                body=(
+                    "• *மருத்துவர்:* Dr. K. செந்தில்குமார், B.V.Sc (கால்நடை உதவி மருத்துவர்)\n"
+                    "• *தொலைபேசி:* 0452-2589012 / 94431 22890\n"
+                    "• *முகவரி:* அரசு கால்நடை மருந்தகம், மெயின் ரோடு, சோழவந்தான்.\n"
+                    "• *இலவச சேவைகள்:* மடிநோய் தீவிர சிகிச்சை, சினை ஊசி, கோமாரி நோய் தடுப்பூசி முகாம் (காலை 8 முதல் 12 வரை).\n\n"
+                    "அவசர முதலுதவிக்கு கீழே உள்ள பொத்தானைத் தொடவும் 👇"
+                ),
+                buttons=[
+                    {"id": "btn_mastitis_aid", "title": "🩹 மடிநோய் முதலுதவி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • அரசு கால்நடை உதவி மையம்"
+            )
+        ], stage="CATTLE_VET_DISPATCHED")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 3: VYABAR STATUS & MANDI PRICES ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["mandi_rates", "btn_mandi_prices", "store_deals", "மண்டி விலை", "உழவர் சந்தை"]:
+        return _result([
+            _msg_buttons(
+                header="📊 உழவர் சந்தை நேரடி விலை நிலவரம்",
+                body=(
+                    "• *தக்காளி (நாட்டு):* ₹28 / கிலோ\n"
+                    "• *சின்ன வெங்காயம்:* ₹45 / கிலோ\n"
+                    "• *உருளைக்கிழங்கு:* ₹32 / கிலோ\n"
+                    "• *பச்சை மிளகாய்:* ₹35 / கிலோ\n"
+                    "• *தேங்காய்:* ₹18 / காய்\n\n"
+                    "🌾 100% நேரடி உழவர் விற்பனை - இடைத்தரகர் கமிஷன் இல்லை!"
+                ),
+                buttons=[
+                    {"id": "store_order", "title": "🛒 மளிகை ஆர்டர்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • உழவர் சந்தை நேரடி விலை"
+            )
+        ], stage="VYABAR_MANDI_PRICES")
+
+    if action in ["btn_vyabar_status", "ஆர்டர் நிலை"]:
+        return _result([
+            _msg_buttons(
+                header="📦 மளிகை ஆர்டர் நிலை (#VY-9042)",
+                body=(
+                    "• *நிலை:* டெலிவரிக்கு புறப்பட்டுவிட்டது (Out for Delivery)\n"
+                    "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
+                    "• *டெலிவரி பார்ட்னர்:* வினோத் (Ph: 98421 11029)\n"
+                    "• *வருகை நேரம்:* அடுத்த 8 நிமிடங்கள்\n"
+                    "• *டெலிவரி ரகசிய OTP:* *4182*"
+                ),
+                buttons=[
+                    {"id": "store_order", "title": "🛒 புதிய ஆர்டர்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • உள்ளூர் நேரடி டெலிவரி"
+            )
+        ], stage="VYABAR_ORDER_STATUS")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 4: REDTAXI AUTO / SEDAN, STATUS & RATES ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in [
+        "btn_taxi_auto", "btn_taxi_sedan", "redtaxi_book", "btn_taxi_book_now",
+        "btn_book_taxi", "btn_taxi_instant_book", "ஆட்டோ புக்", "கார் புக்", "சவாரி புக்"
+    ]:
+        is_sedan = action in ["btn_taxi_sedan", "கார் புக்"]
+        driver_name = "M. கார்த்திக்" if is_sedan else "S. வேலு"
+        vehicle = "ஸ்விஃப்ட் டிசையர் (TN 58 CA 7721)" if is_sedan else "பஜாஜ் மேக்ஸிமா ஆட்டோ (TN 58 AB 4092)"
+        rate = "₹14 / கிமீ" if is_sedan else "₹12 / கிமீ"
+        otp = "8124" if is_sedan else "6395"
+        eta = "5 நிமிடங்கள்" if is_sedan else "3 நிமிடங்கள்"
+
+        return _result([
+            _msg_buttons(
+                header=f"✅ {'கார்' if is_sedan else 'ஆட்டோ'} முன்பதிவு உறுதியானது!",
+                body=(
+                    f"• *ஓட்டுநர்:* {driver_name} (SIA சரிபார்க்கப்பட்ட ஓட்டுநர்)\n"
+                    f"• *வாகனம்:* {vehicle}\n"
+                    f"• *வருகை நேரம்:* {eta}\n"
+                    f"• *சவாரி தொடக்க OTP:* *{otp}*\n"
+                    f"• *கட்டணம்:* {rate} (0% கமிஷன், இரவு நேர கூடுதல் கட்டணம் இல்லை)!\n\n"
+                    "ஓட்டுநர் தங்களை அழைக்கிறார். இனிய பயணம் அமையட்டும்!"
+                ),
+                buttons=[
+                    {"id": "btn_taxi_rates", "title": "💰 கட்டண விவரம்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • ரெட் டாக்ஸி மக்கள் சேவை"
+            )
+        ], stage="REDTAXI_DISPATCHED")
+
+    if action in ["redtaxi_status", "டாக்ஸி நிலை"]:
+        return _result([
+            _msg_buttons(
+                header="🚖 ரெட் டாக்ஸி சவாரி நிலை",
+                body=(
+                    "• *சவாரி நிலை:* ஓட்டுநர் ச. வேலு தங்களை நோக்கி வந்துகொண்டிருக்கிறார்.\n"
+                    "• *வருகை நேரம்:* 2 நிமிடங்கள்\n"
+                    "• *வாகனம்:* பஜாஜ் ஆட்டோ (TN 58 AB 4092)\n"
+                    "• *சவாரி தொடக்க OTP:* *6395*"
+                ),
+                buttons=[
+                    {"id": "btn_taxi_auto", "title": "🛺 புதிய சவாரி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • ரெட் டாக்ஸி நேரடி கண்காணிப்பு"
+            )
+        ], stage="REDTAXI_STATUS")
+
+    if action in ["btn_taxi_rates", "redtaxi_rates", "டாக்ஸி கட்டணம்"]:
+        return _result([
+            _msg_buttons(
+                header="💰 ரெட் டாக்ஸி வெளிப்படையான கட்டண விவரம்",
+                body=(
+                    "• *பஜாஜ் ஆட்டோ:* குறைந்தபட்சம் ₹40 (முதல் 1.8 கிமீ), பின் *₹12 / கிமீ*\n"
+                    "• *மினி கார்:* குறைந்தபட்சம் ₹80, பின் *₹14 / கிமீ*\n"
+                    "• *செடான் கார்:* குறைந்தபட்சம் ₹110, பின் *₹16 / கிமீ*\n\n"
+                    "🛡️ இரவு நேர கூடுதல் கட்டணம் இல்லை, 0% சர்ஜ் (Zero Surge Commission)!"
+                ),
+                buttons=[
+                    {"id": "btn_taxi_auto", "title": "🛺 ஆட்டோ புக் (₹12/km)"},
+                    {"id": "btn_taxi_sedan", "title": "🚗 கார் புக் (₹14/km)"}
+                ],
+                footer="SIA • ரெட் டாக்ஸி வெளிப்படை கட்டணம்"
+            )
+        ], stage="REDTAXI_RATES")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 5: COMMUNITY KITCHEN MENU & COOK REGISTRATION ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["food_menu", "மெனு கார்டு", "உணவு பட்டியல்"]:
+        return _result([
+            _msg_buttons(
+                header="📋 சமுதாய உணவக மெனு கார்டு (இன்றைய ஸ்பெஷல்)",
+                body=(
+                    "• *மதிய வாழை இலை சைவ சாப்பாடு:* ₹85\n"
+                    "• *நாட்டுக்கோழி பாரம்பரிய சாப்பாடு:* ₹150\n"
+                    "• *மல்லிகைப் பூ இட்லி சாம்பார் (4 எண்):* ₹40\n"
+                    "• *மொறுமொறு நெய் ரோஸ்ட்:* ₹50\n"
+                    "• *சூடான உளுந்து வடை (2 எண்):* ₹30\n\n"
+                    "🛵 மகளிர் சுயஉதவிக் குழு சமையல் - 20 நிமிட விரைவு டெலிவரி!"
+                ),
+                buttons=[
+                    {"id": "food_order", "title": "🍲 உணவு ஆர்டர்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • மக்கள் சமுதாய உணவகம்"
+            )
+        ], stage="COMMUNITY_FOOD_MENU")
+
+    if action in ["food_reg_cook", "சமையல் பதிவு"]:
+        return _result([
+            _msg_buttons(
+                header="👩‍🍳 மகளிர் சுயஉதவிக் குழு சமையல் பதிவு",
+                body=(
+                    "• உங்கள் வீட்டு சமையல் மூலம் தினமும் ₹800 முதல் ₹1,500 வரை வருமானம் ஈட்டலாம்!\n"
+                    "• பதிவு கட்டணம்: *₹0 (முற்றிலும் இலவசம்)*.\n"
+                    "• ஆர்டர் தொகை நேரடியாக உங்கள் வங்கிக் கணக்கில் வரவு வைக்கப்படும்.\n\n"
+                    "பதிவு செய்ய: உங்கள் பெயர், ஊர் மற்றும் மகளிர் குழு பெயரை அனுப்பவும்."
+                ),
+                buttons=[
+                    {"id": "food_order", "title": "🍲 உணவு ஆர்டர்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • மகளிர் சுயதொழில் முன்னேற்றம்"
+            )
+        ], stage="COMMUNITY_COOK_REGISTRATION")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 6: FMB SKETCH & RATION CARD ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["svc_fmb", "FMB வரைபடம்", "புல வரைபடம்"]:
+        return _result([
+            _msg_buttons(
+                header="🌾 FMB புல வரைபட வழிகாட்டி (Field Measurement Book)",
+                body=(
+                    "• *இணையதளம்:* eservices.tn.gov.in/eservicesnew/land/chitta.html\n"
+                    "• *அரசுக் கட்டணம்:* *₹0 (முற்றிலும் இலவசம்)*\n"
+                    "• *பதிவிறக்கும் முறை:* மாவட்டம் > வட்டம் > கிராமம் > புல எண் (Survey No) உள்ளிட்டால் அதிகாரப்பூர்வ அரசு வரைபடம் உடனடியாக கிடைக்கும்.\n\n"
+                    "எல்லைத் தகராறு அல்லது அளவீடு கோரிக்கைக்கு 'மனு PDF' என தட்டவும்."
+                ),
+                buttons=[
+                    {"id": "svc_patta", "title": "📜 பட்டா ஆய்வு"},
+                    {"id": "btn_petition_pdf", "title": "✍️ மனு PDF"}
+                ],
+                footer="SIA • நில அளவை மற்றும் நிலவரித் திட்டம்"
+            )
+        ], stage="ESEVAI_FMB_GUIDE")
+
+    if action in ["svc_ration", "ரேஷன் அட்டை", "ஸ்மார்ட் கார்டு"]:
+        return _result([
+            _msg_buttons(
+                header="🍚 ஸ்மார்ட் ரேஷன் கார்டு சேவைகள் (TNPDS)",
+                body=(
+                    "• *புதிய உறுப்பினர் சேர்த்தல் / நீக்கல்:* *₹0 (முற்றிலும் இலவசம்)*\n"
+                    "• *குடும்பத் தலைவர் / முகவரி மாற்றம்:* *₹0 (இலவசம்)*\n"
+                    "• *அதிகாரப்பூர்வ தளம்:* tnpds.gov.in\n"
+                    "• *ஒப்புதல் காலம்:* தாலுகா வட்ட வழங்கல் அலுவலரால் (TSO) 15 நாட்களில் ஒப்புதல் வழங்கப்படும்.\n\n"
+                    "இடைத்தரகர்களுக்கு பணம் தர வேண்டாம்!"
+                ),
+                buttons=[
+                    {"id": "svc_patta", "title": "📜 பட்டா ஆய்வு"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • உணவு மற்றும் நுகர்வோர் பாதுகாப்பு"
+            )
+        ], stage="ESEVAI_RATION_GUIDE")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 7: EDUCATION CLASS 10 & 12 NOTES & QUIZ OPTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_edu_10th", "10-ஆம் வகுப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="📚 10-ஆம் வகுப்பு சமச்சீர் பாடக்குறிப்புகள்",
+                body=(
+                    "• *அறிவியல்:* 100+ முக்கிய வரைபடக் கேள்விகள் & விடைக் குறிப்புகள்.\n"
+                    "• *கணிதம்:* அனைத்து தேற்றங்கள், சூத்திரங்கள் & வரைபடங்கள்.\n"
+                    "• *தமிழ்:* அனைத்து பாடல் வரிகள், சொல்லும் பொருளும், அணிகள்.\n"
+                    "• *சமூக அறிவியல்:* தமிழ்நாடு & இந்தியா வரலாற்று வரைபடங்கள்.\n\n"
+                    "அனைத்து பாடக்குறிப்புகளும் இலவசமாக வாட்ஸ்அப்பில் பதிவிறக்கத் தயார்!"
+                ),
+                buttons=[
+                    {"id": "btn_quiz_start_now", "title": "📝 மாதிரி தேர்வு"},
+                    {"id": "btn_edu_12th", "title": "🧪 12-ஆம் வகுப்பு"}
+                ],
+                footer="SIA • சமச்சீர் கல்வி கூடம்"
+            )
+        ], stage="EDU_CLASS_10_NOTES")
+
+    if action in ["btn_edu_12th", "12-ஆம் வகுப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="🧪 12-ஆம் வகுப்பு பொதுத்தேர்வு வழிகாட்டி",
+                body=(
+                    "• *இயற்பியல்:* 5-மதிப்பெண் வரைபட கேள்விகள் & கணக்கீடுகள்.\n"
+                    "• *வேதியியல்:* முக்கிய பெயர் வினைகள் (Name Reactions) அட்டவணை.\n"
+                    "• *உயிரியல்:* தாவர மற்றும் விலங்கியல் முக்கிய வரைபடங்கள்.\n"
+                    "• முந்தைய 5 ஆண்டு அரசு பொதுத்தேர்வு வினாத்தாள்கள் விடைகளுடன் கிடைக்கும்!"
+                ),
+                buttons=[
+                    {"id": "btn_quiz_start_now", "title": "📝 மாதிரி தேர்வு"},
+                    {"id": "btn_edu_10th", "title": "📚 10-ஆம் வகுப்பு"}
+                ],
+                footer="SIA • மேனிலை கல்வி கூடம்"
+            )
+        ], stage="EDU_CLASS_12_NOTES")
+
+    if action in ["btn_quiz_opt_a", "btn_quiz_opt_c"]:
+        return _result([
+            _msg_buttons(
+                header="ℹ️ விடை வழிகாட்டல் (Answer Guidance)",
+                body=(
+                    "❌ தாங்கள் தேர்ந்தெடுத்த விடை தவறானது.\n\n"
+                    "✅ *சரியான விடை:* *B) எடுத்துக்காட்டு உவமை அணி*\n\n"
+                    "விளக்கம்: 'அகர முதல எழுத்தெல்லாம் ஆதி பகவன் முதற்றே உலகு' குறளில், 'அகரம் எழுத்துகளுக்கு தொடக்கமாக இருப்பது போல இறைவன் உலகிற்கு தொடக்கமாக இருக்கிறார்' என்ற உவம உருபு ('போல') மறைந்து வந்துள்ளதால் இது எடுத்துக்காட்டு உவமை அணி ஆகும்."
+                ),
+                buttons=[
+                    {"id": "btn_quiz_start_now", "title": "➡️ அடுத்த கேள்வி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • டிஜிட்டல் கல்வி"
+            )
+        ], stage="CBT_QUESTION_EXPLAINED")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 8: MLA DETAILS ACTION
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_mla_details", "MLA விவரம்", "சட்டமன்ற உறுப்பினர்"]:
+        return _result([
+            _msg_buttons(
+                header="🏛️ சட்டமன்ற உறுப்பினர் அலுவலக விவரம்",
+                body=(
+                    "• *தொகுதி:* கொளத்தூர் (சென்னை மாவட்டம்)\n"
+                    "• *சட்டமன்ற உறுப்பினர்:* மாண்புமிகு திரு. மு.க. ஸ்டாலின்\n"
+                    "• *அலுவலகம்:* கொளத்தூர் சட்டமன்ற உறுப்பினர் அலுவலகம், சென்னை.\n"
+                    "• *தொடர்பு எண்:* 044-25501234\n"
+                    "• *அதிகாரப்பூர்வ வாட்ஸ்அப்:* +91 94863 35870\n"
+                    "• *மக்கள் குறைதீர்க்கும் நாள்:* ஒவ்வொரு புதன்கிழமையும்.\n\n"
+                    "உடனடி மனு தயாரிக்க கீழேயுள்ள பொத்தானைத் தொடவும் 👇"
+                ),
+                buttons=[
+                    {"id": "btn_petition_pdf", "title": "✍️ மனு PDF"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • மக்கள் பிரதிநிதி தொடர்பு"
+            )
+        ], stage="MLA_DETAILS_DISPATCHED")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 9: SPOKEN ENGLISH START, INTERVIEW & VOICE COACH ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_spoken_start", "btn_spoken_eng", "உரையாடல் தொடங்கு"]:
+        return _result([
+            _msg_buttons(
+                header="🗣️ இன்றைய ஆங்கில வாக்கிய பயிற்சி (Daily Practice)",
+                body=(
+                    "📌 *வாக்கியம்:* \"I want to open a savings bank account.\"\n\n"
+                    "📌 *தமிழ் பொருள்:* \"நான் இந்த வங்கியில் ஒரு சேமிப்புக் கணக்கு தொடங்க விரும்புகிறேன்.\"\n\n"
+                    "📌 *உச்சரிப்பு வழிகாட்டி:* \"ஐ வான்ட் டு ஓபன் எ சேவிங்ஸ் பேங்க் அக்கவுன்ட்\"\n\n"
+                    "🎙️ இந்த வாக்கியத்தை பேசி வாய்ஸ் நோட்டாக அனுப்பினால் Meta AI உங்கள் உச்சரிப்பை சரிபார்த்து தரும்!"
+                ),
+                buttons=[
+                    {"id": "btn_spoken_interview", "title": "🏢 நேர்காணல் பயிற்சி"},
+                    {"id": "btn_spoken_voice", "title": "🎙️ வாய்ஸ் பயிற்சி"}
+                ],
+                footer="SIA • வள்ளுவர் AI மொழி பயிற்றுநர்"
+            )
+        ], stage="SPOKEN_DAILY_PRACTICE")
+
+    if action in ["btn_spoken_interview", "நேர்காணல் பயிற்சி"]:
+        return _result([
+            _msg_buttons(
+                header="🏢 வேலை நேர்காணல் பயிற்சி (Job Interview Practice)",
+                body=(
+                    "❓ *கேள்வி:* \"Tell me about your background and experience.\"\n\n"
+                    "💡 *மாதிரி பதில்:* \"Good morning Sir/Madam. My name is Subramanian. I have completed Diploma in Mechanical Engineering from Madurai. I have 2 years of practical experience in CNC machine operations. I am a disciplined and dedicated worker.\"\n\n"
+                    "🎙️ இதை பேசி வாய்ஸ் நோட்டாக அனுப்பவும்!"
+                ),
+                buttons=[
+                    {"id": "btn_spoken_start", "title": "🗣️ வாக்கிய பயிற்சி"},
+                    {"id": "btn_spoken_voice", "title": "🎙️ வாய்ஸ் பயிற்சி"}
+                ],
+                footer="SIA • நேர்காணல் வழிகாட்டி"
+            )
+        ], stage="SPOKEN_INTERVIEW_PRACTICE")
+
+    if action in ["btn_spoken_voice", "வாய்ஸ் பயிற்சி"]:
+        return _result([
+            _msg_buttons(
+                header="🎙️ நேரடி வாய்ஸ் பயிற்சி கூடம் (Meta AI Voice Coach)",
+                body=(
+                    "நீங்கள் ஆங்கிலத்தில் பேச விரும்பும் எந்த ஒரு வாக்கியத்தையும் தமிழ் அல்லது ஆங்கிலத்தில் வாய்ஸ் நோட்டாக அனுப்புங்கள்.\n\n"
+                    "Meta muse-voice-transcribe-1.0 உங்கள் உச்சரிப்பு, வேகம், இலக்கணத்தை ஆராய்ந்து உடனடி குரல் திருத்தத்தை வழங்கும்!"
+                ),
+                buttons=[
+                    {"id": "btn_spoken_start", "title": "🗣️ வாக்கிய பயிற்சி"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • குரல் வழி மொழிப்பயிற்சி"
+            )
+        ], stage="SPOKEN_VOICE_COACH")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 10: 14416 HELPLINE CALL & COUNSELING ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_call_14416", "14416 அழைப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="📞 தமிழ்நாடு அரசு Tele-MANAS உதவி மையம்",
+                body=(
+                    "• *இலவச கட்டணமில்லா உதவி எண்:* *14416*\n"
+                    "• *சேவை நேரம்:* 24 மணி நேரமும் (24x7)\n"
+                    "• *மொழி:* தூய தமிழ் மற்றும் ஆங்கிலம்\n"
+                    "• *சிறப்பு:* பயிற்சி பெற்ற மனநல மருத்துவர்கள் & உளவியல் ஆலோசகர்கள்.\n"
+                    "• தேர்வு பயம், மன அழுத்தம், குடும்ப கவலைகளுக்கு 100% ரகசிய ஆலோசனை!"
+                ),
+                buttons=[
+                    {"id": "btn_calm_breath", "title": "🧘 அமைதி பயிற்சி"},
+                    {"id": "btn_counseling", "title": "💬 மனநல ஆலோசனை"}
+                ],
+                footer="SIA • Tele-MANAS 24x7 ஹெல்ப்லைன்"
+            )
+        ], stage="MH_CALL_14416_INFO")
+
+    if action in ["btn_counseling", "மனநல ஆலோசனை"]:
+        return _result([
+            _msg_buttons(
+                header="💬 மன அமைதிக்கான அன்பான ஆலோசனை",
+                body=(
+                    "வணக்கம் நண்பரே! எந்த ஒரு கடினமான சூழ்நிலையும் தற்காலிகமானதுதான். நீங்கள் தனியாக இல்லை, உங்கள் உணர்வுகளை மதிக்கிறோம்.\n\n"
+                    "உள்ளத்தில் உள்ள கவலைகளை தயக்கமின்றி இங்கே பதிவிடலாம் அல்லது தமிழ்நாடு அரசின் *14416* எண்ணை அழைத்து இலவசமாக மனநல ஆலோசகரிடம் மனம் திறந்து பேசலாம். அனைத்தும் ரகசியமாக வைக்கப்படும். ❤️"
+                ),
+                buttons=[
+                    {"id": "btn_calm_breath", "title": "🧘 அமைதி பயிற்சி"},
+                    {"id": "btn_call_14416", "title": "📞 14416 அழைப்பு"}
+                ],
+                footer="SIA • அன்பான உளவியல் வழிகாட்டல்"
+            )
+        ], stage="MH_COUNSELING_DISPATCHED")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 11: TNPSC ROADMAP, NEET 7.5% QUOTA & STUDY NOTES ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_roadmap_tnpsc", "TNPSC வரைபடம்"]:
+        return _result([
+            _msg_buttons(
+                header="🗺️ TNPSC குரூப் 4 & 2 முழுமையான தேர்வு வரைபடம்",
+                body=(
+                    "1. *பொதுத் தமிழ் (100 வினாக்கள் / 150 மதிப்பெண்கள்):*\n"
+                    "   • பகுதி அ: இலக்கணம் (பொருத்துதல், பிரித்தெழுதுதல், அணி)\n"
+                    "   • பகுதி ஆ: இலக்கியம் (திருக்குறள், கம்பராமாயணம், எட்டுத்தொகை)\n"
+                    "   • பகுதி இ: தமிழ் அறிஞர்களும் தமிழ்த் தொண்டும்\n"
+                    "2. *பொது அறிவு (75 வினாக்கள்) + திறனறி தேர்வு (25 வினாக்கள்):* மொத்தம் 100 வினாக்கள் / 150 மதிப்பெண்கள்.\n\n"
+                    "🎯 வெற்றி இலக்கு: 175+ வினாக்கள் சரியான விடை!"
+                ),
+                buttons=[
+                    {"id": "btn_roadmap_neet", "title": "🩺 NEET 7.5% விவரம்"},
+                    {"id": "btn_roadmap_study", "title": "📖 இலவச பாடக்குறிப்பு"}
+                ],
+                footer="SIA • அரசுப் பணி வழிகாட்டி"
+            )
+        ], stage="EXAM_ROADMAP_TNPSC")
+
+    if action in ["btn_roadmap_neet", "NEET 7.5% விவரம்"]:
+        return _result([
+            _msg_buttons(
+                header="🩺 அரசு பள்ளி மாணவர்களுக்கான NEET 7.5% இடஒதுக்கீடு",
+                body=(
+                    "• *தகுதி:* 6 முதல் 12-ஆம் வகுப்பு வரை அரசுப் பள்ளிகளில் தமிழ்/ஆங்கில வழியில் படித்த மாணவர்கள்.\n"
+                    "• *சலுகை:* மருத்துவக் கல்லூரி கல்விக் கட்டணம், விடுதிக் கட்டணம் முழுவதையும் அரசே ஏற்கும்!\n"
+                    "• *2025 கட்-ஆஃப் மார்க்:* MBBS (480+), BDS (430+).\n"
+                    "• *தேவையான சான்றிதழ்:* 6-12 அரசு பள்ளி தலைமை ஆசிரியர் Bonafide சான்றிதழ்."
+                ),
+                buttons=[
+                    {"id": "btn_roadmap_tnpsc", "title": "🗺️ TNPSC வரைபடம்"},
+                    {"id": "btn_roadmap_study", "title": "📖 இலவச பாடக்குறிப்பு"}
+                ],
+                footer="SIA • மருத்துவக் கல்வி இடஒதுக்கீடு"
+            )
+        ], stage="EXAM_ROADMAP_NEET")
+
+    if action in ["btn_roadmap_study", "இலவச பாடக்குறிப்பு"]:
+        return _result([
+            _msg_buttons(
+                header="📖 அரசுப் போட்டித் தேர்வு இலவச பாடக்குறிப்புகள்",
+                body=(
+                    "• *TNPSC பொதுத்தமிழ் 100/100 வினா வங்கி*\n"
+                    "• *இந்திய அரசியலமைப்பு முக்கிய சரத்துகள் அட்டவணை*\n"
+                    "• *சமச்சீர் அறிவியல் & சமூக அறிவியல் 1-வரி குறிப்புகள்*\n"
+                    "• *கணிதம் குறுக்குவழி முறைகள் (Maths Shortcuts)*\n\n"
+                    "அனைத்து பாடக்குறிப்புகளும் உங்கள் வாட்ஸ்அப்பில் இலவசமாக பதிவிறக்கத் தயார்!"
+                ),
+                buttons=[
+                    {"id": "btn_roadmap_tnpsc", "title": "🗺️ TNPSC வரைபடம்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • டிஜிட்டல் நூலகம்"
+            )
+        ], stage="EXAM_ROADMAP_STUDY_NOTES")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  SERVICE 12: RENTO TRACTOR, HARVESTER & NEARBY MACHINERY ACTIONS
+    # ────────────────────────────────────────────────────────────────────────
+    if action in ["btn_rent_tractor", "டிராக்டர் வாடகை"]:
+        return _result([
+            _msg_buttons(
+                header="✅ டிராக்டர் வாடகை முன்பதிவு உறுதியானது!",
+                body=(
+                    "• *இயந்திரம்:* மஹிந்திரா 45HP டிராக்டர் + 36-பிளேடு ரோட்டவேட்டர்\n"
+                    "• *உழவர் உரிமையாளர்:* பி. முருகேசன்\n"
+                    "• *முகவரி:* மேலூர் மெயின் ரோடு (உங்கள் வயலிலிருந்து 2.5 கிமீ)\n"
+                    "• *வாடகை:* *₹850 / மணி* (டீசல் & ஓட்டுநர் உட்பட)\n"
+                    "• *தொலைபேசி:* 94432 87654\n"
+                    "• 0% இடைத்தரகர் கட்டணம்! உரிமையாளர் உங்கள் வயலுக்கு வரத் தயாராக உள்ளார்."
+                ),
+                buttons=[
+                    {"id": "btn_rent_harvester", "title": "🌾 அறுவடை இயந்திரம்"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • RentO உழவர் இயந்திர மையம்"
+            )
+        ], stage="RENTO_TRACTOR_BOOKED")
+
+    if action in ["btn_rent_harvester", "அறுவடை இயந்திரம்"]:
+        return _result([
+            _msg_buttons(
+                header="✅ நெல் அறுவடை இயந்திர முன்பதிவு உறுதியானது!",
+                body=(
+                    "• *இயந்திரம்:* கம்பைன்ட் நெல் அறுவடை இயந்திரம் (Combined Paddy Harvester)\n"
+                    "• *உழவர் உரிமையாளர்:* கே. ராமசாமி\n"
+                    "• *முகவரி:* சோழவந்தான் (உங்கள் வயலிலிருந்து 3 கிமீ)\n"
+                    "• *வாடகை:* *₹2,200 / மணி*\n"
+                    "• *தொலைபேசி:* 98431 54321\n"
+                    "• நெல் கதிர் அறுவடை, தூற்றுதல் மற்றும் சாக்கு பிடித்தல் ஒரே நேரத்தில் நடக்கும்!"
+                ),
+                buttons=[
+                    {"id": "btn_rent_tractor", "title": "🚜 டிராக்டர் வாடகை"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • RentO உழவர் இயந்திர மையம்"
+            )
+        ], stage="RENTO_HARVESTER_BOOKED")
+
+    if action in ["btn_rent_nearby", "அருகில் உள்ள கருவிகள்"]:
+        return _result([
+            _msg_buttons(
+                header="📍 உங்கள் பகுதியில் உள்ள வாடகை உழவர் கருவிகள்",
+                body=(
+                    "1. 🚜 *மஹிந்திரா டிராக்டர் ரோட்டவேட்டர்:* ₹850/மணி (2.5 கிமீ, Ph: 94432 87654)\n"
+                    "2. 🌾 *நெல் அறுவடை இயந்திரம்:* ₹2,200/மணி (3.0 கிமீ, Ph: 98431 54321)\n"
+                    "3. ⚙️ *பவர் வீடர் (களை மெஷின்):* ₹450/மணி (1.2 கிமீ, Ph: 97891 23456)\n"
+                    "4. 🔋 *சோலார் தெளிப்பான்:* ₹150/நாள் (800 மீ, Ph: 96552 34567)\n\n"
+                    "நேரடி உழவர் வாடகை - இடைத்தரகர் கட்டணம் இல்லை!"
+                ),
+                buttons=[
+                    {"id": "btn_rent_tractor", "title": "🚜 டிராக்டர் வாடகை"},
+                    {"id": "btn_rent_harvester", "title": "🌾 அறுவடை இயந்திரம்"}
+                ],
+                footer="SIA • RentO ஹைப்பர்-லோக்கல் மையம்"
+            )
+        ], stage="RENTO_NEARBY_MACHINERY")
+
     #  INTERACTIVE QUICK MENU BUTTONS (btn_menu_1_agri, btn_menu_4_taxi, etc.)
     # ────────────────────────────────────────────────────────────────────────
     if action.startswith("btn_menu_"):
@@ -1175,7 +1721,39 @@ def handle_sia_whatsapp_flow(
 
     # ────────────────────────────────────────────────────────────────────────
 
+    # Map natural single-word keywords to service numbers 1-12
+    KEYWORD_SERVICE_MAP = {
+        # Service 1: Agri
+        "பயிர்": "1", "விவசாயம்": "1", "வேளாண்மை": "1", "பூச்சி": "1", "நெல்": "1", "AGRI": "1", "AGRICULTURE": "1", "CROP": "1", "PEST": "1",
+        # Service 2: Cattle
+        "மாடு": "2", "கால்நடை": "2", "மடிவீக்கம்": "2", "CATTLE": "2", "COW": "2", "DAIRY": "2",
+        # Service 3: Store
+        "மளிகை": "3", "கடை": "3", "அரிசி": "3", "பருப்பு": "3", "STORE": "3", "KIRANA": "3", "GROCERY": "3",
+        # Service 4: Taxi
+        "டாக்ஸி": "4", "ஆட்டோ": "4", "கார்": "4", "TAXI": "4", "AUTO": "4", "CAB": "4", "RIDE": "4",
+        # Service 5: Food
+        "உணவு": "5", "சாப்பாடு": "5", "பசி": "5", "FOOD": "5", "MEALS": "5", "LUNCH": "5",
+        # Service 6: Patta / eSevai
+        "பட்டா": "6", "சிட்டா": "6", "இசேவை": "6", "நிலம்": "6", "PATTA": "6", "CHITTA": "6", "ESEVAI": "6",
+        # Service 7: Education
+        "கல்வி": "7", "பள்ளி": "7", "மாணவர்": "7", "EDUCATION": "7", "EDU": "7", "SCHOOL": "7", "STUDENT": "7",
+        # Service 8: Petition
+        "மனு": "8", "கோரிக்கை": "8", "MLA": "8", "MP": "8", "PETITION": "8", "MANU": "8",
+        # Service 9: Spoken English
+        "ஆங்கிலம்": "9", "பேச்சு": "9", "ENGLISH": "9", "SPOKEN": "9",
+        # Service 10: Mental Health
+        "மனநலம்": "10", "பதற்றம்": "10", "பயம்": "10", "14416": "10", "MENTAL": "10", "STRESS": "10", "CALM": "10",
+        # Service 11: Exam
+        "தேர்வு": "11", "TNPSC": "11", "NEET": "11", "UPSC": "11", "EXAM": "11", "ROADMAP": "11",
+        # Service 12: RentO Machinery
+        "டிராக்டர்": "12", "அறுவடை": "12", "இயந்திரம்": "12", "வாடகை": "12", "TRACTOR": "12", "HARVESTER": "12", "RENTO": "12", "MACHINERY": "12"
+    }
+
     clean_num = upper.strip().rstrip(".").replace("️⃣", "")
+    if clean_num in KEYWORD_SERVICE_MAP:
+        clean_num = KEYWORD_SERVICE_MAP[clean_num]
+    elif text in KEYWORD_SERVICE_MAP:
+        clean_num = KEYWORD_SERVICE_MAP[text]
 
     if clean_num in [str(i) for i in range(1, 18)]:
 
