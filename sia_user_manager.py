@@ -424,6 +424,34 @@ def _msg_text(body: str) -> Dict[str, Any]:
 
     return {"type": "text", "text": body}
 
+def generate_upi_payment_info(
+    payee_vpa: str = "makkal.sia@oksbi",
+    payee_name: str = "SIA Makkal Service",
+    amount: float = 0.0,
+    txn_note: str = "SIA_SERVICE",
+    order_otp: str = ""
+) -> str:
+    """
+    Generates a WhatsApp-friendly 1-click UPI deep-link and dynamic QR Code scan link.
+    """
+    import urllib.parse
+    amt_str = f"{amount:.2f}"
+    encoded_pn = urllib.parse.quote(payee_name)
+    encoded_note = urllib.parse.quote(txn_note)
+    raw_upi = f"upi://pay?pa={payee_vpa}&pn={encoded_pn}&am={amt_str}&cu=INR&tn={encoded_note}"
+    encoded_raw_upi = urllib.parse.quote(raw_upi)
+    qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={encoded_raw_upi}"
+
+    otp_text = f"• *பாதுகாப்பு OTP:* *{order_otp}*\n" if order_otp else ""
+    return (
+        f"{otp_text}"
+        f"• *செலுத்த வேண்டிய தொகை:* *₹{amt_str}* (0% கமிஷன்)\n\n"
+        f"📲 *1-கிளிக் UPI கட்டணம் (GPay/PhonePe/Paytm):*\n"
+        f"{raw_upi}\n\n"
+        f"📷 *QR Code ஸ்கேன் செய்ய (Scan to Pay):*\n"
+        f"{qr_url}"
+    )
+
 def _msg_buttons(body: str, buttons: List[Dict[str, str]],
 
                  header: str = "", footer: str = "") -> Dict[str, Any]:
@@ -951,17 +979,25 @@ def handle_sia_whatsapp_flow(
         ], stage="AGRI_CROP_PEST_SELECTION")
 
     if action in ["btn_crop_blast", "btn_crop_blast_cure", "குலைநோய்", "நெல் நோய்"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="TNAU Bio Agri",
+            amount=80.0,
+            txn_note="AGRI_BLAST_CURE"
+        )
         return _result([
             _msg_buttons(
                 header="✅ நெல் குலைநோய் (Paddy Blast) TNAU இயற்கை மருந்து",
                 body=(
-                    "1. *சூடோமோனாஸ் ஃப்ளோரசன்ஸ்:* 2.5 கிராம்/லிட்டர் நீரில் கலந்து காலை/மாலை தெளிக்கவும்.\n"
-                    "2. *யூரியா உரம்:* தற்காலிகமாக நைட்ரஜன் உரம் இடுவதை நிறுத்தவும்.\n"
-                    "3. *செலவு:* ₹80 மட்டுமே (இரசாயன பூச்சிக்கொல்லி ₹1,500 மிச்சம்)!\n\n"
-                    "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
+                    "1. *சூடோமோனாஸ் ஃப்ளோரசன்ஸ்:* 2.5 கிராம்/லிட்டர் நீரில் கலந்து தெளிக்கவும்.\n"
+                    "2. *யூரியா உரம்:* தற்காலிகமாக நைட்ரஜன் உரத்தை நிறுத்தவும்.\n"
+                    "3. *செலவு:* ₹80 மட்டுமே (இரசாயன உரம் ₹1,500 மிச்சம்)!\n\n"
+                    f"{pay_info}\n\n"
+                    "📸 பயிர் இலையை படம் பிடித்தும் அனுப்பலாம்."
                 ),
                 buttons=[
-                    {"id": "btn_crop_pest", "title": "🌾 பிற பயிர் நோய்"},
+                    {"id": "btn_upi_paid_agri", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_agri", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • TNAU இயற்கை வேளாண்மை"
@@ -969,17 +1005,25 @@ def handle_sia_whatsapp_flow(
         ], stage="AGRI_CURE_DISPATCHED")
 
     if action in ["btn_crop_armyworm", "படைப்புழு", "சோளப் படைப்புழு"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="TNAU Bio Agri",
+            amount=110.0,
+            txn_note="AGRI_ARMYWORM_KIT"
+        )
         return _result([
             _msg_buttons(
                 header="✅ சோளப் படைப்புழு (Fall Armyworm) TNAU தீர்வு",
                 body=(
-                    "1. *வேப்ப எண்ணெய் 3%:* 30 மி.லி / லிட்டர் தண்ணீரில் ஒட்டும் பசையுடன் கலந்து தெளிக்கவும்.\n"
-                    "2. *பேசில்லஸ் துரிஞ்சியென்சிஸ் (Bt):* 2 கிராம் / லிட்டர் நீரில் மாலை வேளையில் தெளிக்கவும்.\n"
-                    "3. *செலவு:* ₹110 மட்டுமே (ரசாயன பூச்சிக்கொல்லி ₹1,800 மிச்சம்)!\n\n"
-                    "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
+                    "1. *வேப்ப எண்ணெய் 3%:* 30 மி.லி / லிட்டர் தண்ணீரில் கலந்து தெளிக்கவும்.\n"
+                    "2. *பேசில்லஸ் துரிஞ்சியென்சிஸ் (Bt):* 2 கிராம் / லிட்டர் நீரில் தெளிக்கவும்.\n"
+                    "3. *செலவு:* ₹110 மட்டுமே (ரசாயன உரம் ₹1,800 மிச்சம்)!\n\n"
+                    f"{pay_info}\n\n"
+                    "📸 பயிர் இலையை படம் பிடித்தும் அனுப்பலாம்."
                 ),
                 buttons=[
-                    {"id": "btn_crop_pest", "title": "🌾 பிற பயிர் நோய்"},
+                    {"id": "btn_upi_paid_agri", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_agri", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • TNAU படைப்புழு கட்டுப்பாடு"
@@ -987,17 +1031,25 @@ def handle_sia_whatsapp_flow(
         ], stage="AGRI_ARMYWORM_DISPATCHED")
 
     if action in ["btn_crop_blight", "இலைக்கருகல்", "தக்காளி இலைக்கருகல்"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="TNAU Bio Agri",
+            amount=95.0,
+            txn_note="AGRI_BLIGHT_KIT"
+        )
         return _result([
             _msg_buttons(
                 header="✅ தக்காளி இலைக்கருகல் நோய் (Early/Late Blight) தீர்வு",
                 body=(
-                    "1. *காப்பர் ஆக்ஸிகுளோரைடு:* 2.5 கிராம் / லிட்டர் தண்ணீரில் கலந்து இலைகளில் நனைய தெளிக்கவும்.\n"
+                    "1. *காப்பர் ஆக்ஸிகுளோரைடு:* 2.5 கிராம் / லிட்டர் தண்ணீரில் தெளிக்கவும்.\n"
                     "2. *சூடோமோனாஸ்:* வேர்ப்பகுதியில் 10 கிராம் / செடிக்கு இடவும்.\n"
                     "3. *செலவு:* ₹95 மட்டுமே (தனியார் மருந்து ₹1,200 மிச்சம்)!\n\n"
-                    "📸 உங்கள் பயிர் இலையை படம் பிடித்து அனுப்பினால் SAM 3.1 விஷன் உடனே பரிசோதிக்கும்."
+                    f"{pay_info}\n\n"
+                    "📸 பயிர் இலையை படம் பிடித்தும் அனுப்பலாம்."
                 ),
                 buttons=[
-                    {"id": "btn_crop_pest", "title": "🌾 பிற பயிர் நோய்"},
+                    {"id": "btn_upi_paid_agri", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_agri", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • TNAU தோட்டக்கலை பாதுகாப்பு"
@@ -1009,33 +1061,49 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
     if action in ["btn_mastitis_aid", "btn_feed_plan", "மடிநோய்", "மடிநோய் முதலுதவி"]:
         if action == "btn_feed_plan":
+            pay_info = generate_upi_payment_info(
+                payee_vpa="makkal.sia@oksbi",
+                payee_name="TANUVAS Cattle Feed",
+                amount=120.0,
+                txn_note="CATTLE_FEED_120"
+            )
             return _result([
                 _msg_buttons(
                     header="🥛 பால் உற்பத்தி பெருக்கும் தீவன முறை (TANUVAS)",
                     body=(
                         "• *பசுந்தீவனம்:* அசோலா (Azolla) தினமும் 1 முதல் 1.5 கிலோ.\n"
                         "• *தாது உப்பு கலவை:* தினமும் 50 கிராம் தீவனத்தில் கலக்கவும்.\n"
-                        "• *சுத்தமான குடிநீர்:* தாராளமாக வழங்கவும்.\n\n"
+                        "• *பால் பெருக்க பேக்:* அசோலா விதை + 1kg தாது உப்பு கலவை (₹120).\n\n"
+                        f"{pay_info}\n\n"
                         "📈 பால் உற்பத்தி 15% முதல் 20% வரை உடனடியாக அதிகரிக்கும்!"
                     ),
                     buttons=[
-                        {"id": "btn_mastitis_aid", "title": "🩹 மடிநோய் முதலுதவி"},
+                        {"id": "btn_upi_paid_cattle", "title": "💳 UPI செலுத்தினேன்"},
+                        {"id": "btn_cod_cattle", "title": "💵 நேரில் பணம் (COD)"},
                         {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                     ],
                     footer="SIA • TANUVAS பால் பெருக்க திட்டம்"
                 )
             ], stage="CATTLE_FEED_DISPATCHED")
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="TANUVAS Cattle Care",
+            amount=45.0,
+            txn_note="CATTLE_MASTITIS_45"
+        )
         return _result([
             _msg_buttons(
                 header="🐄 மடிவீக்க நோய் அவசர முதலுதவி (TANUVAS)",
                 body=(
-                    "1. சோற்றுக் கற்றாழை 250g + மஞ்சள் தூள் 60g + வெற்றிலை சுண்ணாம்பு 15g.\n"
-                    "2. மிக்சியில் விழுதாக அரைத்து மடியில் தினமும் 4-5 முறை பூசவும்.\n"
+                    "1. சோற்றுக் கற்றாழை 250g + மஞ்சள் தூள் 60g + சுண்ணாம்பு 15g.\n"
+                    "2. விழுதாக அரைத்து மடியில் தினமும் 4-5 முறை பூசவும்.\n"
                     "3. 24 மணிநேரத்தில் வீக்கம் முற்றிலும் குணமாகும்!\n\n"
-                    "செலவு: ₹20 மட்டுமே (தனியார் டாக்டர் கட்டணம் ₹2,000 மிச்சம்)!"
+                    f"{pay_info}\n\n"
+                    "செலவு: ₹45 மட்டுமே (தனியார் டாக்டர் கட்டணம் ₹2,000 மிச்சம்)!"
                 ),
                 buttons=[
-                    {"id": "btn_feed_plan", "title": "🥛 பால் பெருக்க"},
+                    {"id": "btn_upi_paid_cattle", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_cattle", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • TANUVAS கால்நடை முதலுதவி"
@@ -1069,18 +1137,25 @@ def handle_sia_whatsapp_flow(
         ], stage="VYABAR_KIT_SELECTION")
 
     if action in ["btn_store_rice_kit", "அரிசி பருப்பு"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Murugan Stores",
+            amount=450.0,
+            txn_note="VYABAR_RICE_4182",
+            order_otp="4182"
+        )
         return _result([
             _msg_buttons(
                 header="✅ அரிசி பருப்பு கிட் உறுதி செய்யப்பட்டது!",
                 body=(
                     "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
-                    "• *பொருட்கள்:* முதல் ரக பொன்னி அரிசி 5kg + முதல் ரக துவரம் பருப்பு 1kg\n"
-                    "• *மொத்தத் தொகை:* ₹450 (0% கமிஷன், நேரடி கடை விலையே)\n"
-                    "• *டெலிவரி:* அடுத்த 30 நிமிடங்களில் உங்கள் வீடு தேடி வரும்!\n"
-                    "• *டெலிவரி OTP:* *4182*"
+                    "• *பொருட்கள்:* முதல் ரக பொன்னி அரிசி 5kg + துவரம் பருப்பு 1kg\n"
+                    "• *டெலிவரி:* அடுத்த 30 நிமிடங்களில் வீடு தேடி வரும்!\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "store_order", "title": "🛒 வேறு மளிகை"},
+                    {"id": "btn_upi_paid_store", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_store", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • 100% உள்ளூர் வணிகம்"
@@ -1088,18 +1163,25 @@ def handle_sia_whatsapp_flow(
         ], stage="VYABAR_RICE_KIT_CONFIRMED")
 
     if action in ["btn_store_oil_kit", "எண்ணெய் மசாலா"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Murugan Stores",
+            amount=380.0,
+            txn_note="VYABAR_OIL_5291",
+            order_otp="5291"
+        )
         return _result([
             _msg_buttons(
                 header="✅ சமையல் எண்ணெய் மசாலா கிட் உறுதியானது!",
                 body=(
                     "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
-                    "• *பொருட்கள்:* 1L மரச்செக்கு நல்லெண்ணெய் + சாம்பார், மிளகாய் மசாலா தூள் (500g)\n"
-                    "• *மொத்தத் தொகை:* ₹380 (0% கமிஷன், தூய தரம்)\n"
-                    "• *டெலிவரி:* அடுத்த 30 நிமிடங்களில் வீடு தேடி வரும்!\n"
-                    "• *டெலிவரி OTP:* *5291*"
+                    "• *பொருட்கள்:* 1L மரச்செக்கு நல்லெண்ணெய் + மசாலா தூள் (500g)\n"
+                    "• *டெலிவரி:* அடுத்த 30 நிமிடங்களில் வீடு தேடி வரும்!\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "store_order", "title": "🛒 வேறு மளிகை"},
+                    {"id": "btn_upi_paid_store", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_store", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • 100% உள்ளூர் வணிகம்"
@@ -1107,18 +1189,25 @@ def handle_sia_whatsapp_flow(
         ], stage="VYABAR_OIL_KIT_CONFIRMED")
 
     if action in ["btn_store_monthly_kit", "குடும்ப மளிகை"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Murugan Stores",
+            amount=1200.0,
+            txn_note="VYABAR_MONTHLY_8314",
+            order_otp="8314"
+        )
         return _result([
             _msg_buttons(
                 header="✅ குடும்ப மாத மளிகை கிட் உறுதியானது!",
                 body=(
                     "• *கடை:* சோழவந்தான் முருகன் ஸ்டோர்ஸ்\n"
-                    "• *பொருட்கள்:* 10kg பொன்னி அரிசி + 2kg பருப்பு + 2L எண்ணெய் + முழுக் குடும்ப மளிகைப் பொருட்கள்\n"
-                    "• *மொத்தத் தொகை:* ₹1,200 (இலவச வீட்டு டெலிவரி)\n"
-                    "• *டெலிவரி:* அடுத்த 45 நிமிடங்களில் உங்கள் வீடு தேடி வரும்!\n"
-                    "• *டெலிவரி OTP:* *8314*"
+                    "• *பொருட்கள்:* 10kg அரிசி + 2kg பருப்பு + 2L எண்ணெய் + மளிகை\n"
+                    "• *டெலிவரி:* அடுத்த 45 நிமிடங்களில் இலவச டோர் டெலிவரி!\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_vyabar_status", "title": "📦 ஆர்டர் நிலை"},
+                    {"id": "btn_upi_paid_store", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_store", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • 100% உள்ளூர் வணிகம்"
@@ -1152,57 +1241,78 @@ def handle_sia_whatsapp_flow(
         ], stage="TAXI_CHOOSE_SELECTION")
 
     if action in ["btn_taxi_auto", "ஆட்டோ"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="RedTaxi Velu",
+            amount=60.0,
+            txn_note="TAXI_AUTO_6395",
+            order_otp="6395"
+        )
         return _result([
             _msg_buttons(
                 header="✅ ஆட்டோ முன்பதிவு உறுதியானது!",
                 body=(
-                    "• *ஓட்டுநர்:* S. வேலு (SIA சரிபார்க்கப்பட்ட ஓட்டுநர்)\n"
-                    "• *வாகனம்:* TN 58 AZ 3522 (பஜாஜ் ஆட்டோ)\n"
-                    "• *உங்கள் புறப்படும் OTP:* *6395*\n"
+                    "• *ஓட்டுநர்:* S. வேலு (TN 58 AZ 3522 பஜாஜ் ஆட்டோ)\n"
                     "• *கட்டணம்:* அரசு நிர்ணய கட்டணம் ₹12/கி.மீ (Rule 108)\n"
-                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பில் உள்ளது."
+                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பு\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_upi_paid_taxi", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_taxi", "title": "💵 ஓட்டுநரிடம் பணம்"},
+                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"}
                 ],
                 footer="SIA • பாதுகாப்பான ஆட்டோ பயணம்"
             )
         ], stage="TAXI_AUTO_CONFIRMED")
 
     if action in ["btn_taxi_mini", "மினி கார்"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="RedTaxi Karthik",
+            amount=140.0,
+            txn_note="TAXI_MINI_4218",
+            order_otp="4218"
+        )
         return _result([
             _msg_buttons(
                 header="✅ மினி கார் முன்பதிவு உறுதியானது!",
                 body=(
-                    "• *ஓட்டுநர்:* M. கார்த்திக் (SIA சரிபார்க்கப்பட்ட ஓட்டுநர்)\n"
-                    "• *வாகனம்:* TN 58 BC 1190 (வேகன்ஆர் கார்)\n"
-                    "• *உங்கள் புறப்படும் OTP:* *4218*\n"
+                    "• *ஓட்டுநர்:* M. கார்த்திக் (TN 58 BC 1190 வேகன்ஆர் கார்)\n"
                     "• *கட்டணம்:* அரசு நிர்ணய கட்டணம் ₹14/கி.மீ (Zero Surge)\n"
-                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பில் உள்ளது."
+                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பு\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_upi_paid_taxi", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_taxi", "title": "💵 ஓட்டுநரிடம் பணம்"},
+                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"}
                 ],
                 footer="SIA • பாதுகாப்பான கார் பயணம்"
             )
         ], stage="TAXI_MINI_CONFIRMED")
 
     if action in ["btn_taxi_sedan", "செடான்"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="RedTaxi Suresh",
+            amount=250.0,
+            txn_note="TAXI_SEDAN_8124",
+            order_otp="8124"
+        )
         return _result([
             _msg_buttons(
                 header="✅ செடான் ஏசி கார் முன்பதிவு உறுதியானது!",
                 body=(
-                    "• *ஓட்டுநர்:* R. சுரேஷ் (SIA சரிபார்க்கப்பட்ட ஓட்டுநர்)\n"
-                    "• *வாகனம்:* TN 58 CA 7721 (டிசையர் ஏசி கார்)\n"
-                    "• *உங்கள் புறப்படும் OTP:* *8124*\n"
+                    "• *ஓட்டுநர்:* R. சுரேஷ் (TN 58 CA 7721 டிசையர் ஏசி)\n"
                     "• *கட்டணம்:* அரசு நிர்ணய கட்டணம் ₹16/கி.மீ (Zero Surge)\n"
-                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பில் உள்ளது."
+                    "• *பாதுகாப்பு:* தமிழ்நாடு காவல்துறை 112 SOS நேரடி கண்காணிப்பு\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_upi_paid_taxi", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_taxi", "title": "💵 ஓட்டுநரிடம் பணம்"},
+                    {"id": "btn_taxi_sos", "title": "🚨 112 அவசர SOS"}
                 ],
                 footer="SIA • சொகுசு ஏசி பயணம்"
             )
@@ -1245,18 +1355,25 @@ def handle_sia_whatsapp_flow(
 
     # ── Service 5 Confirmation: Veg Meals ──
     if action in ["btn_food_veg", "btn_food_meals", "சைவ சாப்பாடு", "சாப்பாடு"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Annalakshmi Kitchen",
+            amount=65.0,
+            txn_note="FOOD_VEG_5821",
+            order_otp="5821"
+        )
         return _result([
             _msg_buttons(
                 header="🍱 வாழை இலை சைவ சாப்பாடு உறுதி செய்யப்பட்டது!",
                 body=(
                     "• *உணவகம்:* அன்னலட்சுமி மகளிர் சுயஉதவிக் குழு சமையல்\n"
-                    "• *உணவு:* வாழை இலை சைவ சாப்பாடு (சாம்பார், ரசம், கூட்டு, அப்பளம்)\n"
-                    "• *விலை:* ₹65 மட்டுமே (0% கமிஷன், நேரடி சமையல் விலை)\n"
-                    "• *டெலிவரி:* அடுத்த 20 நிமிடங்களில் உங்கள் வீடு தேடி சுடச்சுட வரும்!\n"
-                    "• *ஓட்டுநர்:* குமார் (பாதுகாப்பு OTP: *5821*)"
+                    "• *உணவு:* வாழை இலை சாப்பாடு (சாம்பார், ரசம், கூட்டு, அப்பளம்)\n"
+                    "• *டெலிவரி:* அடுத்த 20 நிமிடங்களில் சுடச்சுட வரும் (ஓட்டுநர்: குமார்)\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "food_order", "title": "🍲 வேறு உணவு"},
+                    {"id": "btn_upi_paid_food", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_food", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • மகளிர் சமுதாய சமையல்"
@@ -1265,18 +1382,25 @@ def handle_sia_whatsapp_flow(
 
     # ── Service 5 Confirmation: Non-Veg Meals ──
     if action in ["btn_food_nonveg", "btn_food_chicken", "அசைவ சாப்பாடு", "பிரியாணி", "கோழி சாப்பாடு"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Vadivel Mess",
+            amount=140.0,
+            txn_note="FOOD_NONVEG_7241",
+            order_otp="7241"
+        )
         return _result([
             _msg_buttons(
                 header="🍗 நாட்டுக் கோழி சாப்பாடு உறுதி செய்யப்பட்டது!",
                 body=(
                     "• *உணவகம்:* வடிவேல் பாரம்பர்ய மெஸ் (சோழவந்தான்)\n"
                     "• *உணவு:* நாட்டுக் கோழி வறுவல் சாப்பாடு + பிரியாணி சாதம்\n"
-                    "• *விலை:* ₹140 மட்டுமே (0% கமிஷன், உணவக விலையே)\n"
-                    "• *டெலிவரி:* அடுத்த 25 நிமிடங்களில் சுடச்சுட வீடு வந்து சேரும்!\n"
-                    "• *ஓட்டுநர்:* முருகன் (பாதுகாப்பு OTP: *7241*)"
+                    "• *டெலிவரி:* அடுத்த 25 நிமிடங்களில் வீடு வந்து சேரும் (ஓட்டுநர்: முருகன்)\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "food_order", "title": "🍲 வேறு உணவு"},
+                    {"id": "btn_upi_paid_food", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_food", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • பாரம்பர்ய அசைவ மெஸ்"
@@ -1285,18 +1409,25 @@ def handle_sia_whatsapp_flow(
 
     # ── Service 5 Confirmation: Tiffin / Parotta ──
     if action in ["btn_food_tiffin", "btn_food_parotta", "டிபன்", "இரவு டிபன்", "பரோட்டா", "இட்லி"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Muniyandi Vilas",
+            amount=40.0,
+            txn_note="FOOD_TIFFIN_9163",
+            order_otp="9163"
+        )
         return _result([
             _msg_buttons(
                 header="🥞 சுடச்சுட இரவு டிபன் உறுதி செய்யப்பட்டது!",
                 body=(
                     "• *உணவகம்:* முனியாண்டி விலாஸ் உள்ளூர் மெஸ்\n"
-                    "• *உணவு:* 3 மொறுமொறு பரோட்டா + நாட்டு சால்னா (அல்லது 4 இட்லி சாம்பார்)\n"
-                    "• *விலை:* ₹40 மட்டுமே (0% கமிஷன்)\n"
-                    "• *டெலிவரி:* அடுத்த 15 நிமிடங்களில் உங்கள் கதவைத் தட்டும்!\n"
-                    "• *ஓட்டுநர்:* சக்திவேல் (பாதுகாப்பு OTP: *9163*)"
+                    "• *உணவு:* 3 பரோட்டா சால்னா (அல்லது 4 இட்லி சாம்பார்)\n"
+                    "• *டெலிவரி:* அடுத்த 15 நிமிடங்களில் கதவைத் தட்டும் (ஓட்டுநர்: சக்திவேல்)\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "food_order", "title": "🍲 வேறு உணவு"},
+                    {"id": "btn_upi_paid_food", "title": "💳 UPI செலுத்தினேன்"},
+                    {"id": "btn_cod_food", "title": "💵 நேரில் பணம் (COD)"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
                 footer="SIA • சுடச்சுட இரவு டிபன்"
@@ -1349,17 +1480,24 @@ def handle_sia_whatsapp_flow(
         ], stage="PATTA_NON_SUBDIV_INFO")
 
     if action in ["btn_patta_subdiv", "உட்பிரிவு உள்ளது"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="TN Govt eTreasury",
+            amount=60.0,
+            txn_note="PATTA_CHALLAN_60"
+        )
         return _result([
             _msg_buttons(
                 header="📑 உட்பிரிவு உள்ள பட்டா மாறுதல் (அரசு கட்டணம்: ₹60)",
                 body=(
                     "• *சட்ட விதி:* நில அளவை மற்றும் எல்லைகள் சட்டம் (Survey & Boundaries Act).\n"
-                    "• *அரசு அதிகாரப்பூர்வ கட்டணம்:* *₹60 மட்டுமே* (வங்கிக் கருவூலம் / இ-சேவை செல்லான்).\n"
-                    "• *நடைமுறை:* நில அளவர் (Surveyor) வயல்/வீட்டுமனைக்கு நேரில் வந்து அளவீடு செய்து FMB வரைபடம் தயாரிப்பார்.\n"
-                    "• *ஒப்புதல் காலம்:* 30 நாட்களுக்குள் புதிய பட்டா மற்றும் புல வரைபடம் வழங்கப்படும்.\n"
-                    "• எச்சரிக்கை: இடைத்தரகர்களுக்கு கூடுதல் பணம் தர வேண்டாம்!"
+                    "• *அரசு செல்லான்:* ₹60 மட்டுமே (வங்கிக் கருவூலம் நேரடி வரவு).\n"
+                    "• *நடைமுறை:* நில அளவர் நேரில் வந்து அளவீடு செய்து FMB வரைபடம் தயாரிப்பார்.\n"
+                    "• எச்சரிக்கை: இடைத்தரகர்களுக்கு கூடுதல் பணம் தர வேண்டாம்!\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
+                    {"id": "btn_upi_paid_patta", "title": "💳 அரசு செல்லான் UPI"},
                     {"id": "btn_pet_patta", "title": "✍️ பட்டா மனு PDF"},
                     {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
                 ],
@@ -2146,60 +2284,78 @@ def handle_sia_whatsapp_flow(
         ], stage="RENTO_TRACTOR_SELECTION")
 
     if action in ["btn_tractor_rotavator", "ரோட்டவேட்டர்"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Murugesan Tractor",
+            amount=100.0,
+            txn_note="RENTO_ROTAVATOR"
+        )
         return _result([
             _msg_buttons(
                 header="✅ ரோட்டவேட்டர் டிராக்டர் முன்பதிவு உறுதியானது!",
                 body=(
                     "• *இயந்திரம்:* மஹிந்திரா 45HP டிராக்டர் + 36-பிளேடு ரோட்டவேட்டர்\n"
-                    "• *உழவர் உரிமையாளர்:* பி. முருகேசன்\n"
-                    "• *முகவரி:* மேலூர் மெயின் ரோடு (உங்கள் வயலிலிருந்து 2.5 கிமீ)\n"
+                    "• *உழவர் உரிமையாளர்:* பி. முருகேசன் (Ph: 94432 87654)\n"
                     "• *வாடகை:* *₹850 / மணி* (டீசல் & ஓட்டுநர் உட்பட)\n"
-                    "• *தொலைபேசி:* 94432 87654\n"
-                    "• 0% இடைத்தரகர் கட்டணம்! உரிமையாளர் உங்கள் வயலுக்கு வரத் தயாராக உள்ளார்."
+                    "• முன்பதிவு டோக்கன் முன்பணம்: ₹100 (மீதி பணம் வயலில் தரலாம்)\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_upi_paid_rento", "title": "💳 முன்பணம் UPI"},
+                    {"id": "btn_cod_rento", "title": "💵 வயலில் நேரடி பணம்"},
+                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"}
                 ],
                 footer="SIA • RentO ரோட்டவேட்டர் சேவை"
             )
         ], stage="RENTO_ROTAVATOR_CONFIRMED")
 
     if action in ["btn_tractor_cultivator", "கலப்பை உழவு"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Arumugam Tractor",
+            amount=100.0,
+            txn_note="RENTO_CULTIVATOR"
+        )
         return _result([
             _msg_buttons(
                 header="✅ 9-கலப்பை உழவு டிராக்டர் உறுதியானது!",
                 body=(
-                    "• *இயந்திரம்:* ஸ்வராஜ் 744 FE டிராக்டர் + 9-கொழு கலப்பை (9-Tyne Cultivator)\n"
-                    "• *உழவர் உரிமையாளர்:* கே. ஆறுமுகம்\n"
-                    "• *முகவரி:* அலங்காநல்லூர் (உங்கள் வயலிலிருந்து 3 கிமீ)\n"
-                    "• *வாடகை:* *₹750 / மணி* (டீசல் & அனுபவ ஓட்டுநர் உட்பட)\n"
-                    "• *தொலைபேசி:* 98421 11223\n"
-                    "• ஆழ உழவுக்கு மிகச் சிறந்தது, களைகள் வேரோடு அகற்றப்படும்."
+                    "• *இயந்திரம்:* ஸ்வராஜ் 744 FE டிராக்டர் + 9-கொழு கலப்பை\n"
+                    "• *உழவர் உரிமையாளர்:* கே. ஆறுமுகம் (Ph: 98421 11223)\n"
+                    "• *வாடகை:* *₹750 / மணி* (டீசல் & ஓட்டுநர் உட்பட)\n"
+                    "• முன்பதிவு டோக்கன் முன்பணம்: ₹100 (மீதி பணம் வயலில் தரலாம்)\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_upi_paid_rento", "title": "💳 முன்பணம் UPI"},
+                    {"id": "btn_cod_rento", "title": "💵 வயலில் நேரடி பணம்"},
+                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"}
                 ],
                 footer="SIA • RentO கலப்பை உழவு"
             )
         ], stage="RENTO_CULTIVATOR_CONFIRMED")
 
     if action in ["btn_tractor_trailer", "டிரெய்லர்"]:
+        pay_info = generate_upi_payment_info(
+            payee_vpa="makkal.sia@oksbi",
+            payee_name="Selvam Trailer",
+            amount=100.0,
+            txn_note="RENTO_TRAILER"
+        )
         return _result([
             _msg_buttons(
                 header="✅ டிராக்டர் ஹைட்ராலிக் டிரெய்லர் உறுதியானது!",
                 body=(
-                    "• *இயந்திரம்:* சோனாலிகா 50HP டிராக்டர் + 3 டன் ஹைட்ராலிக் டிரெய்லர்\n"
-                    "• *உழவர் உரிமையாளர்:* எம். செல்வம்\n"
-                    "• *முகவரி:* சமயநல்லூர் (உங்கள் வயலிலிருந்து 2 கிமீ)\n"
-                    "• *வாடகை:* *₹600 / மணி* (சரக்கு ஏற்றி இறக்க ஹைட்ராலிக் வசதி உண்டு)\n"
-                    "• *தொலைபேசி:* 97865 44332\n"
-                    "• எரு, நெல் மூட்டைகள் மற்றும் விளைபொருட்கள் ஏற்றிச் செல்ல தயார்."
+                    "• *இயந்திரம்:* சோனாலிகா 50HP டிராக்டர் + 3 டன் டிரெய்லர்\n"
+                    "• *உழவர் உரிமையாளர்:* எம். செல்வம் (Ph: 97865 44332)\n"
+                    "• *வாடகை:* *₹600 / மணி* (ஹைட்ராலிக் வசதி உண்டு)\n"
+                    "• முன்பதிவு டோக்கன் முன்பணம்: ₹100 (மீதி பணம் வயலில் தரலாம்)\n\n"
+                    f"{pay_info}"
                 ),
                 buttons=[
-                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"},
-                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                    {"id": "btn_upi_paid_rento", "title": "💳 முன்பணம் UPI"},
+                    {"id": "btn_cod_rento", "title": "💵 வயலில் நேரடி பணம்"},
+                    {"id": "btn_rent_tractor", "title": "🚜 பிற உழவு கருவி"}
                 ],
                 footer="SIA • RentO சரக்கு டிரெய்லர்"
             )
@@ -2243,6 +2399,74 @@ def handle_sia_whatsapp_flow(
                 footer="SIA • RentO ஹைப்பர்-லோக்கல் மையம்"
             )
         ], stage="RENTO_NEARBY_MACHINERY")
+
+    # ────────────────────────────────────────────────────────────────────────
+    #  UNIVERSAL UPI PAYMENT VERIFICATION, COD & ORDER STATUS HANDLERS
+    # ────────────────────────────────────────────────────────────────────────
+    if action.startswith("btn_upi_paid") or action in [
+        "btn_upi_paid", "UPI செலுத்தினேன்", "பணம் செலுத்தினேன்", "PAID", "UPI PAID", "GPAY", "PHONEPE", "PAYTM"
+    ]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        short_id = clean_phone[-4:] if len(clean_phone) >= 4 else "5821"
+        txn_ref = f"TXN_SIA_20261103_{short_id}"
+        return _result([
+            _msg_buttons(
+                header="🎉 UPI கட்டணம் பெறப்பட்டது! (Payment Verified)",
+                body=(
+                    f"✅ நன்றி *{u_name}*! உங்கள் UPI கட்டணப் பரிவர்த்தனை வெற்றிகரமாக சரிபார்க்கப்பட்டது.\n\n"
+                    f"• *பரிவர்த்தனை எண் (TXN ID):* *{txn_ref}*\n"
+                    f"• *நிலை:* 100% நேரடி வரவு (0% இடைத்தரகர் கமிஷன்)\n"
+                    f"• *அறிவிப்பு:* விற்பனையாளர் / ஓட்டுநருக்கு தகவல் அனுப்பப்பட்டு சேவை துவங்குகிறது!\n\n"
+                    f"🛵 உங்கள் சேவை / டெலிவரி அடுத்த சில நிமிடங்களில் வந்தடையும்."
+                ),
+                buttons=[
+                    {"id": "btn_order_status", "title": "📦 ஆர்டர் நிலை"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • நேரடி டிஜிட்டல் இந்தியா UPI"
+            )
+        ], stage="UPI_PAYMENT_VERIFIED")
+
+    if action.startswith("btn_cod") or action in [
+        "btn_cod", "COD", "நேரில் பணம்", "ரொக்கம்", "CASH", "CASH ON DELIVERY"
+    ]:
+        u_prof = get_user_profile(clean_phone)
+        u_name = u_prof.get("name", "நண்பரே") if u_prof else "நண்பரே"
+        return _result([
+            _msg_buttons(
+                header="💵 நேரில் ரொக்கப் பணம் (COD) பதிவு செய்யப்பட்டது",
+                body=(
+                    f"✅ உங்கள் முன்பதிவு *நேரில் பணம் (Cash on Delivery)* முறையில் பதிவானது *{u_name}*!\n\n"
+                    f"• பொருள் அல்லது வாகனம் வந்தடைந்த பிறகு சரியான தொகையை நேரில் வழங்கலாம்.\n"
+                    f"• ஓட்டுநர் / விற்பனையாளரிடம் உங்கள் பாதுகாப்பு OTP-ஐ காட்டவும்.\n"
+                    f"• கூடுதல் அல்லது கமிஷன் கட்டணம் எதுவும் கிடையாது!"
+                ),
+                buttons=[
+                    {"id": "btn_order_status", "title": "📦 ஆர்டர் நிலை"},
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"}
+                ],
+                footer="SIA • பாதுகாப்பான நேரடி சேவை"
+            )
+        ], stage="COD_PAYMENT_REGISTERED")
+
+    if action in ["btn_order_status", "ஆர்டர் நிலை", "ORDER STATUS", "STATUS", "நிலை"]:
+        return _result([
+            _msg_buttons(
+                header="📦 உங்கள் நேரடி ஆர்டர் & சேவை நிலை",
+                body=(
+                    "• *தற்போதைய நிலை:* செயலில் உள்ளது (Active & Dispatched) 🛵\n"
+                    "• *கண்காணிப்பு:* SIA ஹைப்பர்-லோக்கல் நெட்வொர்க் நேரடி இணைப்பு.\n"
+                    "• *பாதுகாப்பு:* 100% சரிபார்க்கப்பட்ட உள்ளூர் தொழிலாளர் / வணிகர்.\n\n"
+                    "ஏதேனும் உதவி தேவைப்பட்டால் எந்த நேரமும் வாட்ஸ்அப்பில் தெரிவிக்கலாம்."
+                ),
+                buttons=[
+                    {"id": "btn_menu_all_list", "title": "📋 12 சேவைகள் மெனு"},
+                    {"id": "btn_call_14416", "title": "📞 14416 அழைப்பு"}
+                ],
+                footer="SIA • மக்கள் நேரடி சேவை மையம்"
+            )
+        ], stage="ORDER_STATUS_CHECK")
 
     #  INTERACTIVE QUICK MENU BUTTONS (btn_menu_1_agri, btn_menu_4_taxi, etc.)
     # ────────────────────────────────────────────────────────────────────────

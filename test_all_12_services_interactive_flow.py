@@ -7,39 +7,39 @@ test_phone = "+919876543210"
 base_url = "https://example.com"
 
 test_scenarios = [
-    # ── Service 1: Crop Pest Selection & Blast Bio-Cure ──
+    # ── Service 1: Crop Pest Selection & Blast Bio-Cure with UPI ──
     ("Service 1 Choice Prompt", "btn_crop_pest", "AGRI_CROP_PEST_SELECTION", ["btn_crop_blast", "btn_crop_armyworm", "btn_crop_blight"]),
-    ("Service 1 Blast Cure", "btn_crop_blast", "AGRI_CURE_DISPATCHED", ["btn_crop_pest", "btn_menu_all_list"]),
-    ("Service 1 Armyworm Cure", "btn_crop_armyworm", "AGRI_ARMYWORM_DISPATCHED", ["btn_crop_pest", "btn_menu_all_list"]),
-    ("Service 1 Blight Cure", "btn_crop_blight", "AGRI_BLIGHT_DISPATCHED", ["btn_crop_pest", "btn_menu_all_list"]),
+    ("Service 1 Blast Cure UPI", "btn_crop_blast", "AGRI_CURE_DISPATCHED", ["btn_upi_paid_agri", "btn_cod_agri"]),
+    ("Service 1 Armyworm Cure UPI", "btn_crop_armyworm", "AGRI_ARMYWORM_DISPATCHED", ["btn_upi_paid_agri", "btn_cod_agri"]),
+    ("Service 1 Blight Cure UPI", "btn_crop_blight", "AGRI_BLIGHT_DISPATCHED", ["btn_upi_paid_agri", "btn_cod_agri"]),
 
-    # ── Service 2: Cattle Mastitis Herbal Aid ──
-    ("Service 2 Mastitis Cure", "btn_mastitis_aid", "CATTLE_MASTITIS_DISPATCHED", ["btn_feed_plan", "btn_menu_all_list"]),
-    ("Service 2 Milk Booster", "btn_feed_plan", "CATTLE_FEED_DISPATCHED", ["btn_mastitis_aid", "btn_menu_all_list"]),
+    # ── Service 2: Cattle Mastitis Herbal Aid & Feed with UPI ──
+    ("Service 2 Mastitis Cure UPI", "btn_mastitis_aid", "CATTLE_MASTITIS_DISPATCHED", ["btn_upi_paid_cattle", "btn_cod_cattle"]),
+    ("Service 2 Milk Booster UPI", "btn_feed_plan", "CATTLE_FEED_DISPATCHED", ["btn_upi_paid_cattle", "btn_cod_cattle"]),
     ("Service 2 Emergency Vet", "btn_vet_doc", "CATTLE_VET_DISPATCHED", ["btn_mastitis_aid", "btn_menu_all_list"]),
 
-    # ── Service 3: Vyabar Local Store Kit Selection & Confirmation ──
+    # ── Service 3: Vyabar Local Store Kit Selection & Confirmation with UPI ──
     ("Service 3 Choice Prompt", "store_order", "VYABAR_KIT_SELECTION", ["btn_store_rice_kit", "btn_store_oil_kit", "btn_store_monthly_kit"]),
-    ("Service 3 Rice Kit Confirm", "btn_store_rice_kit", "VYABAR_RICE_KIT_CONFIRMED", ["store_order", "btn_menu_all_list"]),
-    ("Service 3 Oil Kit Confirm", "btn_store_oil_kit", "VYABAR_OIL_KIT_CONFIRMED", ["store_order", "btn_menu_all_list"]),
-    ("Service 3 Monthly Kit Confirm", "btn_store_monthly_kit", "VYABAR_MONTHLY_KIT_CONFIRMED", ["btn_vyabar_status", "btn_menu_all_list"]),
+    ("Service 3 Rice Kit Confirm UPI", "btn_store_rice_kit", "VYABAR_RICE_KIT_CONFIRMED", ["btn_upi_paid_store", "btn_cod_store"]),
+    ("Service 3 Oil Kit Confirm UPI", "btn_store_oil_kit", "VYABAR_OIL_KIT_CONFIRMED", ["btn_upi_paid_store", "btn_cod_store"]),
+    ("Service 3 Monthly Kit Confirm UPI", "btn_store_monthly_kit", "VYABAR_MONTHLY_KIT_CONFIRMED", ["btn_upi_paid_store", "btn_cod_store"]),
 
-    # ── Service 4: RedTaxi Vehicle Selection & Dispatch ──
+    # ── Service 4: RedTaxi Vehicle Selection & Dispatch with UPI ──
     ("Service 4 Choice Prompt", "btn_book_taxi", "TAXI_CHOOSE_SELECTION", ["btn_taxi_auto", "btn_taxi_mini", "btn_taxi_sedan"]),
-    ("Service 4 Auto Confirm", "btn_taxi_auto", "TAXI_AUTO_CONFIRMED", ["btn_taxi_sos", "btn_menu_all_list"]),
-    ("Service 4 Mini Confirm", "btn_taxi_mini", "TAXI_MINI_CONFIRMED", ["btn_taxi_sos", "btn_menu_all_list"]),
-    ("Service 4 Sedan Confirm", "btn_taxi_sedan", "TAXI_SEDAN_CONFIRMED", ["btn_taxi_sos", "btn_menu_all_list"]),
+    ("Service 4 Auto Confirm UPI", "btn_taxi_auto", "TAXI_AUTO_CONFIRMED", ["btn_upi_paid_taxi", "btn_cod_taxi"]),
+    ("Service 4 Mini Confirm UPI", "btn_taxi_mini", "TAXI_MINI_CONFIRMED", ["btn_upi_paid_taxi", "btn_cod_taxi"]),
+    ("Service 4 Sedan Confirm UPI", "btn_taxi_sedan", "TAXI_SEDAN_CONFIRMED", ["btn_upi_paid_taxi", "btn_cod_taxi"]),
 
-    # ── Service 5: Community Kitchen Food Selection & Orders ──
+    # ── Service 5: Community Kitchen Food Selection & Orders with UPI ──
     ("Service 5 Choice Prompt", "food_order", "FOOD_CHOOSE_SELECTION", ["btn_food_veg", "btn_food_nonveg", "btn_food_tiffin"]),
-    ("Service 5 Veg Meals Confirm", "btn_food_veg", "FOOD_VEG_CONFIRMED", ["food_order", "btn_menu_all_list"]),
-    ("Service 5 Nonveg Confirm", "btn_food_nonveg", "FOOD_NONVEG_CONFIRMED", ["food_order", "btn_menu_all_list"]),
-    ("Service 5 Tiffin Confirm", "btn_food_tiffin", "FOOD_TIFFIN_CONFIRMED", ["food_order", "btn_menu_all_list"]),
+    ("Service 5 Veg Meals Confirm UPI", "btn_food_veg", "FOOD_VEG_CONFIRMED", ["btn_upi_paid_food", "btn_cod_food"]),
+    ("Service 5 Nonveg Confirm UPI", "btn_food_nonveg", "FOOD_NONVEG_CONFIRMED", ["btn_upi_paid_food", "btn_cod_food"]),
+    ("Service 5 Tiffin Confirm UPI", "btn_food_tiffin", "FOOD_TIFFIN_CONFIRMED", ["btn_upi_paid_food", "btn_cod_food"]),
 
-    # ── Service 6: Patta Audit & Subdivision Options ──
+    # ── Service 6: Patta Audit & Subdivision Options with Govt Challan UPI ──
     ("Service 6 Choice Prompt", "svc_patta", "PATTA_SURVEY_AUDITED", ["btn_patta_non_subdiv", "btn_patta_subdiv", "btn_pet_patta"]),
     ("Service 6 Non-Subdiv Guide", "btn_patta_non_subdiv", "PATTA_NON_SUBDIV_INFO", ["btn_pet_patta", "btn_menu_all_list"]),
-    ("Service 6 Subdiv Guide", "btn_patta_subdiv", "PATTA_SUBDIV_INFO", ["btn_pet_patta", "btn_menu_all_list"]),
+    ("Service 6 Subdiv Challan UPI", "btn_patta_subdiv", "PATTA_SUBDIV_INFO", ["btn_upi_paid_patta", "btn_pet_patta"]),
     ("Service 6 Patta Petition PDF", "btn_pet_patta", "PETITION_GENERATED_DISPATCHED", ["btn_petition_pdf", "btn_menu_all_list"]),
 
     # ── Service 7: CBT Quiz Subject Selection & Questions ──
@@ -72,18 +72,18 @@ test_scenarios = [
     ("Service 11 Maths Formulas", "btn_notes_maths", "EXAM_NOTES_MATHS_DELIVERED", ["btn_roadmap_study", "btn_menu_all_list"]),
     ("Service 11 Science Facts", "btn_notes_science", "EXAM_NOTES_SCIENCE_DELIVERED", ["btn_roadmap_study", "btn_menu_all_list"]),
 
-    # ── Service 12: RentO Farm Machinery Attachment Selection ──
+    # ── Service 12: RentO Farm Machinery Attachment Selection with Token UPI ──
     ("Service 12 Implement Prompt", "btn_rent_tractor", "RENTO_TRACTOR_SELECTION", ["btn_tractor_rotavator", "btn_tractor_cultivator", "btn_tractor_trailer"]),
-    ("Service 12 Rotavator Confirm", "btn_tractor_rotavator", "RENTO_ROTAVATOR_CONFIRMED", ["btn_rent_tractor", "btn_menu_all_list"]),
-    ("Service 12 Cultivator Confirm", "btn_tractor_cultivator", "RENTO_CULTIVATOR_CONFIRMED", ["btn_rent_tractor", "btn_menu_all_list"]),
-    ("Service 12 Trailer Confirm", "btn_tractor_trailer", "RENTO_TRAILER_CONFIRMED", ["btn_rent_tractor", "btn_menu_all_list"]),
+    ("Service 12 Rotavator Advance UPI", "btn_tractor_rotavator", "RENTO_ROTAVATOR_CONFIRMED", ["btn_upi_paid_rento", "btn_cod_rento"]),
+    ("Service 12 Cultivator Advance UPI", "btn_tractor_cultivator", "RENTO_CULTIVATOR_CONFIRMED", ["btn_upi_paid_rento", "btn_cod_rento"]),
+    ("Service 12 Trailer Advance UPI", "btn_tractor_trailer", "RENTO_TRAILER_CONFIRMED", ["btn_upi_paid_rento", "btn_cod_rento"]),
 ]
 
 passed = 0
 failed = 0
 
 print("=" * 80)
-print("  AUDITING ALL 12 SERVICES INTERACTIVE MULTI-CHOICE ARCHITECTURE")
+print("  AUDITING ALL 12 SERVICES INTERACTIVE MULTI-CHOICE & UPI PAYMENT ARCHITECTURE")
 print("=" * 80)
 
 for name, action_input, expected_stage, expected_buttons in test_scenarios:
@@ -131,4 +131,4 @@ print("=" * 80)
 print(f"RESULT: {passed}/{len(test_scenarios)} PASSED ({passed*100/len(test_scenarios):.1f}%), {failed} FAILED")
 print("=" * 80)
 if failed == 0:
-    print("ALL 12 SERVICES PERFECTLY OPTIMIZED! 100% WhatsApp Compliant.")
+    print("ALL 12 SERVICES PERFECTLY OPTIMIZED WITH UPI PAYMENTS! 100% WhatsApp Compliant.")

@@ -1255,6 +1255,12 @@ def _dispatch_sia_messages(sender_phone: str, messages: list) -> None:
                 filename=msg.get("filename", "Petition.pdf"),
                 caption=msg.get("caption", "")
             )
+        elif msg_type == "image":
+            send_whatsapp_image(
+                to_number=sender_phone,
+                image_url=msg.get("image_url", ""),
+                caption=msg.get("caption", "")
+            )
         else:
             send_whatsapp_message(sender_phone, msg.get("text", ""))
 
