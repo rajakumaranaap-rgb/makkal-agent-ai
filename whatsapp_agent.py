@@ -1248,8 +1248,14 @@ def _dispatch_sia_messages(sender_phone: str, messages: list) -> None:
 
             )
 
+        elif msg_type == "document":
+            send_whatsapp_document(
+                to_number=sender_phone,
+                document_url=msg.get("document_url", ""),
+                filename=msg.get("filename", "Petition.pdf"),
+                caption=msg.get("caption", "")
+            )
         else:
-
             send_whatsapp_message(sender_phone, msg.get("text", ""))
 
 
