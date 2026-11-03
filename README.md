@@ -1,3 +1,8 @@
+> 🎥 **Official 3-Minute Meta Hackathon Demo Video:** [https://youtu.be/GRHfeQ4uBsU](https://youtu.be/GRHfeQ4uBsU)
+
+
+[![SIA Meta Hackathon Official 3-Min Demo Video](https://img.shields.io/badge/YouTube-Watch%20Official%203--Min%20Demo%20Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/GRHfeQ4uBsU)
+
 # 🏛️ SIA (Super-Intelligent Assistant) / Namma Ooru SuperApp (மக்கள் AI)
 ### *Sovereign Multimodal Vernacular AI for 800M+ Citizens across Rural & Semi-Urban India*
 **Official Submission for the Meta AI Developer Hackathon 2026 — Indie Developer Track ($150,000 USD Target) & Baseten Open-Weight Prize ($10,000 USD Target)**
