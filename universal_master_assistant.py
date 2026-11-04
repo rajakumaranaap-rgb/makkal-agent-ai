@@ -187,63 +187,116 @@ GROUNDING DIRECTIVE (MANDATORY):
 # -----------------------------------------------------------------------------
 # 3. MASTER MENU FORMATTER FOR WHATSAPP & WEB
 # -----------------------------------------------------------------------------
-def format_whatsapp_master_menu() -> Dict[str, Any]:
+def format_whatsapp_master_menu(lang: str = "en") -> Dict[str, Any]:
     """
     Constructs the official SIA Master Services Menu for WhatsApp interactive messaging.
+    Defaults to English for international judges and general queries, with full Tamil script support.
     """
-    body_text = (
-        "🌟 *வணக்கம்! நான் SIA (மக்கள் AI - Super Intelligent Assistant)*\n"
-        "தமிழ்நாடு மக்களுக்கான முழுமையான டிஜிட்டல் உதவியாளர்.\n"
-        "இடைத்தரகர் இல்லாத, 0% கமிஷன் கொண்ட அனைத்து சேவைகளும் உங்கள் விரல் நுனியில்!\n\n"
-        "━━━━━━━━━━━━━━━━━━━━\n"
-        "🏛️ *SIA முக்கிய சேவைகள் பட்டியல்:*\n"
-        "━━━━━━━━━━━━━━━━━━━━\n"
-        "1️⃣ *அரசு சேவைகள்:* பட்டா, ரேஷன், ஆதார், RTI, மகளிர் உரிமை\n"
-        "2️⃣ *குறைதீர்ப்பு மனு:* MLA / MP-க்கு நேரடி PDF மனு & வாட்ஸ்அப் பகிர்வு\n"
-        "3️⃣ *பள்ளி கல்வி:* 1-12 வகுப்பு டியூஷன், ஹோம்வொர்க், வரைபடங்கள்\n"
-        "4️⃣ *போட்டித் தேர்வுகள்:* NEET, JEE, TNPSC, UPSC ஆன்லைன் CBT தேர்வு & சான்றிதழ்\n"
-        "5️⃣ *டிஜிட்டல் விவசாயம்:* இலை படம் அனுப்பி பயிர் நோய் கண்டறிதல் & உழவன் உதவி\n"
-        "6️⃣ *ஹைப்பர்-லோக்கல் வாடகை:* பைக், ஆட்டோ, டிராக்டர், அறுவடை, கொத்தனார் (0% கமிஷன்)\n"
-        "7️⃣ *கூட்டாளர் பதிவு:* ஓட்டுநர் & இயந்திர உரிமையாளர்கள் நேரடி பதிவு\n"
-        "8️⃣ *மக்கள் பெட்டகம்:* வரவு செலவு கணக்கு & PIN '7890' ரகசிய பெட்டகம்\n"
-        "9️⃣ *பங்குச்சந்தை:* போடோ குவாண்ட் நிஃப்டி & முதலீட்டு வழிகாட்டி\n"
-        "🔟 *காலை செய்திகள்:* 18 முக்கிய செய்திகள் & AIR வானொலி ஆடியோ\n"
-        "1️⃣1️⃣ *பேச்சு ஆங்கிலம் & மனநலம்:* Tele-MANAS 14416 தேர்வு பயம் ஆலோசனை\n"
-        "1️⃣2️⃣ *வாழ்த்து போஸ்டர்:* சினிமா & பண்டிகை போஸ்டர் உருவாக்கம்\n1️⃣3️⃣ *வீட்டு உணவு & மெஸ்:* வாழை இலை சாப்பாடு, இட்லி, தோசை (0% கமிஷன்)\n1️⃣4️⃣ *மளிகை & அங்காடி:* பின்கோடு மளிகை கடை, பிக் பாஸ்கெட் போன்ற பொருட்கள் (30 நிமிடம்)\n1️⃣5️⃣ *கடன் & பத்திரங்கள்:* கூட்டுறவு கடன், கந்துவட்டி தடுப்பு (12%-18%), அடமான பத்திரம்\n1️⃣6️⃣ *காயலான் & ஸ்கிராப்:* பழைய இரும்பு, பித்தளை, தாமிரம், பேட்டரிக்கு நேரடி ரொக்கம்\n1️⃣7️⃣ *கால்நடை & தானிய ஏலம்:* உழவர் நேரடி மாடு, ஆடு, நெல் மூட்டை விற்பனை ஏலம்\n"
-        "━━━━━━━━━━━━━━━━━━━━\n"
-        "💡 *நீங்கள் செய்ய வேண்டியது:* உங்கள் தேவையை எளிய தமிழில் தட்டச்சு செய்யுங்கள் அல்லது கீழே உள்ள பொத்தானை கிளிக் செய்யுங்கள்!"
-    )
+    if lang == "en":
+        body_text = (
+            "🌟 *Welcome to SIA (Makkal AI — Super Intelligent Assistant)*\n"
+            "Your Sovereign Digital Companion for Tamil Nadu citizens & evaluators.\n"
+            "0% Middleman Exploitation • 100% Direct Official Access at your fingertips!\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "🏛️ *SIA Complete Master Services (17 Sovereign Desks):*\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "1️⃣ *Civic Governance:* Patta Chitta (Free ₹0), EC (₹0/₹30), Ration, RTI (₹10), KMUT (₹1000/mo), Free EB\n"
+            "2️⃣ *MLA / MP Petitions:* Voice/Text to PDF & 1-Click WhatsApp Dispatch to all 234 MLAs & 39 MPs\n"
+            "3️⃣ *School Tuition:* Classes 1-12 Samacheer/CBSE, Ray Diagrams, Math Homework Solver\n"
+            "4️⃣ *Competitive Exams:* NEET, JEE, TNPSC, UPSC Online CBT Mock Test & Tamper-proof SVG Certificate\n"
+            "5️⃣ *Smart Agriculture:* Meta SAM 3.1 Crop Disease Diagnostics, TNAU Norms & Live Mandi Prices\n"
+            "6️⃣ *Hyperlocal Rentals:* Bike Taxi, Auto, Tractor, Harvester, Masons (0% Commission, Direct UPI)\n"
+            "7️⃣ *Partner Registration:* Drivers & Equipment Owners Instant WhatsApp Enrollment\n"
+            "8️⃣ *Citizen Life Vault:* Daily Expense Ledger, Contacts, Proofs & PIN '7890' Secret Vault\n"
+            "9️⃣ *Share Market:* Boto Quant NIFTY / Options / Stocks Analytics & SEBI Rules\n"
+            "🔟 *Daily Morning News:* 18 Top Stories & All India Radio (AIR) Audio Bulletin\n"
+            "1️⃣1️⃣ *Spoken English & Mental Health:* Fluency Coaching & Tele-MANAS 14416 Counseling\n"
+            "1️⃣2️⃣ *Civic Greetings & Media:* Custom Leader & Festival Greeting Posters\n"
+            "1️⃣3️⃣ *Community Kitchens:* Authentic Meals & Food Delivery (0% Commission)\n"
+            "1️⃣4️⃣ *Local Kirana Stores:* Pincode Grocery Order & 30-min Delivery\n"
+            "1️⃣5️⃣ *Credit & Legal Deeds:* Cooperative Credit, Anti-Usury (12%-18% cap), Mortgage\n"
+            "1️⃣6️⃣ *Scrap & Recyclables:* Fair Cash for Brass, Copper, Iron & Batteries\n"
+            "1️⃣7️⃣ *Livestock & Produce Auction:* Direct Cow, Goat, and Paddy Auctions\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "💡 *How to Use:* Ask any question in English, send a document photo, or tap an action button below!"
+        )
+        buttons = [
+            {"id": "menu_civic", "title": "🏛️ Govt Schemes"},
+            {"id": "menu_rentals", "title": "🛵 Rentals & Gigs"},
+            {"id": "menu_exams", "title": "🎯 Online CBT Test"}
+        ]
+        return {
+            "header_text": "🌟 SIA AI — Master Guide",
+            "body_text": body_text,
+            "footer_text": "SIA Makkal AI • Meta AI Hackathon 2026",
+            "buttons": buttons
+        }
+    else:
+        body_text = (
+            "🌟 *வணக்கம்! நான் SIA (மக்கள் AI - Super Intelligent Assistant)*\n"
+            "தமிழ்நாடு மக்களுக்கான முழுமையான டிஜிட்டல் உதவியாளர்.\n"
+            "இடைத்தரகர் இல்லாத, 0% கமிஷன் கொண்ட அனைத்து சேவைகளும் உங்கள் விரல் நுனியில்!\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "🏛️ *SIA முக்கிய சேவைகள் பட்டியல்:*\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "1️⃣ *அரசு சேவைகள்:* பட்டா, ரேஷன், ஆதார், RTI, மகளிர் உரிமை\n"
+            "2️⃣ *குறைதீர்ப்பு மனு:* MLA / MP-க்கு நேரடி PDF மனு & வாட்ஸ்அப் பகிர்வு\n"
+            "3️⃣ *பள்ளி கல்வி:* 1-12 வகுப்பு டியூஷன், ஹோம்வொர்க், வரைபடங்கள்\n"
+            "4️⃣ *போட்டித் தேர்வுகள்:* NEET, JEE, TNPSC, UPSC ஆன்லைன் CBT தேர்வு & சான்றிதழ்\n"
+            "5️⃣ *டிஜிட்டல் விவசாயம்:* இலை படம் அனுப்பி பயிர் நோய் கண்டறிதல் & உழவன் உதவி\n"
+            "6️⃣ *ஹைப்பர்-லோக்கல் வாடகை:* பைக், ஆட்டோ, டிராக்டர், அறுவடை, கொத்தனார் (0% கமிஷன்)\n"
+            "7️⃣ *கூட்டாளர் பதிவு:* ஓட்டுநர் & இயந்திர உரிமையாளர்கள் நேரடி பதிவு\n"
+            "8️⃣ *மக்கள் பெட்டகம்:* வரவு செலவு கணக்கு & PIN '7890' ரகசிய பெட்டகம்\n"
+            "9️⃣ *பங்குச்சந்தை:* போடோ குவாண்ட் நிஃப்டி & முதலீட்டு வழிகாட்டி\n"
+            "🔟 *காலை செய்திகள்:* 18 முக்கிய செய்திகள் & AIR வானொலி ஆடியோ\n"
+            "1️⃣1️⃣ *பேச்சு ஆங்கிலம் & மனநலம்:* Tele-MANAS 14416 தேர்வு பயம் ஆலோசனை\n"
+            "1️⃣2️⃣ *வாழ்த்து போஸ்டர்:* சினிமா & பண்டிகை போஸ்டர் உருவாக்கம்\n1️⃣3️⃣ *வீட்டு உணவு & மெஸ்:* வாழை இலை சாப்பாடு, இட்லி, தோசை (0% கமிஷன்)\n1️⃣4️⃣ *மளிகை & அங்காடி:* பின்கோடு மளிகை கடை, பிக் பாஸ்கெட் போன்ற பொருட்கள் (30 நிமிடம்)\n1️⃣5️⃣ *கடன் & பத்திரங்கள்:* கூட்டுறவு கடன், கந்துவட்டி தடுப்பு (12%-18%), அடமான பத்திரம்\n1️⃣6️⃣ *காயலான் & ஸ்கிராப்:* பழைய இரும்பு, பித்தளை, தாமிரம், பேட்டரிக்கு நேரடி ரொக்கம்\n1️⃣7️⃣ *கால்நடை & தானிய ஏலம்:* உழவர் நேரடி மாடு, ஆடு, நெல் மூட்டை விற்பனை ஏலம்\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "💡 *நீங்கள் செய்ய வேண்டியது:* உங்கள் தேவையை எளிய தமிழில் தட்டச்சு செய்யுங்கள் அல்லது கீழே உள்ள பொத்தானை கிளிக் செய்யுங்கள்!"
+        )
+        buttons = [
+            {"id": "menu_civic", "title": "🏛️ அரசு சேவைகள்"},
+            {"id": "menu_rentals", "title": "🛵 பைக் / வாடகை"},
+            {"id": "menu_exams", "title": "🎯 மாதிரி தேர்வுகள்"}
+        ]
+        return {
+            "header_text": "🌟 SIA மக்கள் AI — முழு வழிகாட்டி",
+            "body_text": body_text,
+            "footer_text": "SIA Makkal AI • Meta AI Hackathon 2026",
+            "buttons": buttons
+        }
 
-    buttons = [
-        {"id": "menu_civic", "title": "🏛️ அரசு சேவைகள்"},
-        {"id": "menu_rentals", "title": "🛵 பைக் / வாடகை"},
-        {"id": "menu_exams", "title": "🎯 மாதிரி தேர்வுகள்"}
-    ]
 
-    return {
-        "header_text": "🌟 SIA மக்கள் AI — முழு வழிகாட்டி",
-        "body_text": body_text,
-        "footer_text": "SIA Makkal AI • Meta AI Hackathon 2026",
-        "buttons": buttons
-    }
-
-
-def format_text_master_menu() -> str:
+def format_text_master_menu(lang: str = "en") -> str:
     """
     Plain text version of the master menu for standard text replies and web chat.
     """
-    menu = format_whatsapp_master_menu()
-    sample_cmds = (
-        "\n\n💬 *உதாரண கட்டளைகள் (Sample Commands):*\n"
-        "• `625214 பைக் வேணும்` — சோழவந்தான் பைக் வாடகை\n"
-        "• `613001 நெல் அறுவடை இயந்திரம்` — தஞ்சாவூர் அறுவடை இயந்திரம்\n"
-        "• `TNPSC குரூப் 4 மாதிரி தேர்வு` — 5 வினாக்கள் ஆன்லைன் தேர்வு\n"
-        "• `வரவு ₹20000 / செலவு ₹450` — வரவு செலவு கணக்கு பதிவு\n"
-        "• `ரகசிய பெட்டகம் 7890` — ஆவணப் பெட்டகத்தை திறக்க\n"
-        "• `காலை வணக்கம்` — இன்றைய 18 செய்திகள் & AIR செய்தி ஒலி\n"
-        "• `பதிவு ஓட்டுநர் பாலு பைக் 625214 9840112233` — ஓட்டுநர் பதிவு\n"
-        f"🌐 இணைய தளம்: {PUBLIC_BASE_URL}"
-    )
+    menu = format_whatsapp_master_menu(lang=lang)
+    if lang == "en":
+        sample_cmds = (
+            "\n\n💬 *Sample Quick Commands (English & Pincode):*\n"
+            "• `625214 need a bike taxi` — Sholavandan bike rental\n"
+            "• `613001 rent paddy harvester` — Thanjavur combined harvester\n"
+            "• `TNPSC Group 4 mock test` — 5 questions online CBT quiz with certificate\n"
+            "• `Credit ₹20000 / Expense ₹450` — Instant personal ledger recording\n"
+            "• `Secret vault 7890` — Unlock encrypted confidential records\n"
+            "• `Morning news` — Today's 18 top headlines & AIR audio broadcast\n"
+            "• `Register driver Ramesh bike 625214 9840112233` — Instant partner registration\n"
+            "• `Tell me about COVID-19 in English` — Symptoms, vaccination & helplines\n"
+            f"🌐 Web Portal: {PUBLIC_BASE_URL}"
+        )
+    else:
+        sample_cmds = (
+            "\n\n💬 *உதாரண கட்டளைகள் (Sample Commands):*\n"
+            "• `625214 பைக் வேணும்` — சோழவந்தான் பைக் வாடகை\n"
+            "• `613001 நெல் அறுவடை இயந்திரம்` — தஞ்சாவூர் அறுவடை இயந்திரம்\n"
+            "• `TNPSC குரூப் 4 மாதிரி தேர்வு` — 5 வினாக்கள் ஆன்லைன் தேர்வு\n"
+            "• `வரவு ₹20000 / செலவு ₹450` — வரவு செலவு கணக்கு பதிவு\n"
+            "• `ரகசிய பெட்டகம் 7890` — ஆவணப் பெட்டகத்தை திறக்க\n"
+            "• `காலை வணக்கம்` — இன்றைய 18 செய்திகள் & AIR செய்தி ஒலி\n"
+            "• `பதிவு ஓட்டுநர் பாலு பைக் 625214 9840112233` — ஓட்டுநர் பதிவு\n"
+            f"🌐 இணைய தளம்: {PUBLIC_BASE_URL}"
+        )
     return menu["body_text"] + sample_cmds
 
 

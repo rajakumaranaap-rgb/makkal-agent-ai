@@ -28389,6 +28389,20 @@ window.openJudgesTourModal = function(stepIdx = 0) {
 
 
 
+            // Refresh trained query cards and tabs
+            const tabAll = document.getElementById('qtab_all');
+            const tabMarket = document.getElementById('qtab_market');
+            const tabEnglish = document.getElementById('qtab_english');
+            const tabWellness = document.getElementById('qtab_wellness');
+            if (tabAll) tabAll.innerText = (lang === 'en') ? '🌟 All Queries (23)' : '🌟 அனைத்து வினாக்கள் (23)';
+            if (tabMarket) tabMarket.innerText = (lang === 'en') ? '📈 Stock Market (2)' : '📈 பங்குச்சந்தை (2)';
+            if (tabEnglish) tabEnglish.innerText = (lang === 'en') ? '🗣️ Spoken English (2)' : '🗣️ பேச்சு ஆங்கிலம் (2)';
+            if (tabWellness) tabWellness.innerText = (lang === 'en') ? '🧘 Health & Wellness (3)' : '🧘 மாணவர் மனநலம் (3)';
+            
+            if (typeof renderTrainedQueryCards === 'function') {
+                renderTrainedQueryCards('all');
+            }
+
             showAuthBanner((lang === 'en') ? '🌐 Language switched to English' : '🌐 மொழி தமிழாக மாற்றப்பட்டது');
 
 
@@ -34314,7 +34328,8 @@ function toggleCrmVoiceInput() {
             model: "Meta SAM 3.1 & Llama 3.3",
             title_ta: "வாழை இலை மஞ்சள் நோய் & தீர்வு",
             title_en: "Banana Leaf Disease & Organic Cure",
-            query: "வாழை இலை மஞ்சள் நிறமாக மாறுகிறது தீர்வு என்ன?",
+                        query_en: "Paddy crop blast disease treatment and fertilizer advisory",
+query: "வாழை இலை மஞ்சள் நிறமாக மாறுகிறது தீர்வு என்ன?",
             desc_en: "Triggers SAM 3.1 plant pathology vision & TNAU organic biopesticide treatment",
             badge_color: "emerald"
         },
@@ -34327,7 +34342,8 @@ function toggleCrmVoiceInput() {
             model: "Meta Llama 3.3 70B",
             title_ta: "நெல் குலைநோய் & தக்காளி மண்டி விலை",
             title_en: "Paddy Blast Cure & Mandi Benchmark",
-            query: "நெல் குலைநோய் மருந்து மற்றும் தக்காளி மண்டி விலை என்ன?",
+                        query_en: "Paddy blast medicine and today tomato mandi benchmark prices",
+query: "நெல் குலைநோய் மருந்து மற்றும் தக்காளி மண்டி விலை என்ன?",
             desc_en: "Bilingual agri-cure protocol with live APMC mandi wholesale price comparison",
             badge_color: "emerald"
         },
@@ -34353,7 +34369,8 @@ function toggleCrmVoiceInput() {
             model: "TNeGA e-Sevai Bridge",
             title_ta: "பட்டா பெயர் மாற்றம் முறை & அரசு கட்டணம்",
             title_en: "Patta Transfer Process & Legal Fee",
-            query: "பட்டா பெயர் மாற்றம் செய்ய அரசு கட்டணம் எவ்வளவு?",
+                        query_en: "What is the procedure and statutory fee to subdivide joint patta to individual patta under RSO 31?",
+query: "பட்டா பெயர் மாற்றம் செய்ய அரசு கட்டணம் எவ்வளவு?",
             desc_en: "Step-by-step TNeGA guide verifying legal ₹60 government fees vs broker exploitation",
             badge_color: "amber"
         },
@@ -34366,7 +34383,8 @@ function toggleCrmVoiceInput() {
             model: "Meta Llama 3.3",
             title_ta: "மகளிர் உரிமைத் தொகை ₹1000 தகுதி",
             title_en: "Kalaignar Magalir Urimai Thogai ₹1000",
-            query: "மகளிர் உரிமைத் தொகை ₹1000 தகுதி மற்றும் விண்ணப்பிக்கும் முறை",
+                        query_en: "Kalaignar Magalir Urimai Thogai Rs 1000 eligibility and application procedure",
+query: "மகளிர் உரிமைத் தொகை ₹1000 தகுதி மற்றும் விண்ணப்பிக்கும் முறை",
             desc_en: "Complete eligibility criteria, required documents, and appeal process",
             badge_color: "amber"
         },
@@ -34379,7 +34397,8 @@ function toggleCrmVoiceInput() {
             model: "Pincode Routing Engine",
             title_ta: "45HP டிராக்டர் உழவு வாடகை முன்பதிவு",
             title_en: "45HP Tractor Plowing Rental Dispatch",
-            query: "625214 டிராக்டர் வாடகைக்கு வேணும்",
+                        query_en: "625214 need 45HP tractor for plowing 2 acres farm in Sholavandan",
+query: "625214 டிராக்டர் வாடகைக்கு வேணும்",
             desc_en: "Direct booking of nearby Mahindra 575 DI tractor with 0% commission & 4-digit OTP",
             badge_color: "teal"
         },
@@ -34418,7 +34437,8 @@ function toggleCrmVoiceInput() {
             model: "Meta Llama 3.3 & Mermaid",
             title_ta: "10-ஆம் வகுப்பு ஒளிவிலகல் & ஸ்நெல் விதி",
             title_en: "Class 10 Optics Snell's Law & Diagram",
-            query: "10-ஆம் வகுப்பு இயற்பியல்: ஒளிவிலகல் ஸ்நெல் விதி வரைபடம்",
+                        query_en: "Class 10 Optics Snell law of refraction with step-by-step ray diagram",
+query: "10-ஆம் வகுப்பு இயற்பியல்: ஒளிவிலகல் ஸ்நெல் விதி வரைபடம்",
             desc_en: "Renders interactive KaTeX formula and Mermaid ray diagram for Samacheer Kalvi",
             badge_color: "indigo"
         },
@@ -34444,7 +34464,8 @@ function toggleCrmVoiceInput() {
             model: "CBT Assessment Engine",
             title_ta: "TNPSC குரூப் 4 மாதிரி தேர்வு தொடங்கு",
             title_en: "Launch TNPSC Group 4 Live CBT Exam",
-            query: "TNPSC குரூப் 4 மாதிரி தேர்வு தொடங்கு",
+                        query_en: "TNPSC Group 4 General Tamil and Indian Constitution 5 mock test questions",
+query: "TNPSC குரூப் 4 மாதிரி தேர்வு தொடங்கு",
             desc_en: "Generates interactive 5-question MCQ test with timer, scoring, and cryptographic certificate",
             badge_color: "purple"
         },
@@ -34470,7 +34491,8 @@ function toggleCrmVoiceInput() {
             model: "Sovereign Legal Engine",
             title_ta: "குடிநீர் குழாய் பழுது புகார் மனு தயாரிப்பு",
             title_en: "Drinking Water Pipeline Leak Petition",
-            query: "குடிநீர் குழாய் பழுது புகார் மனு வேண்டும்",
+                        query_en: "Draft official MLA grievance petition for drinking water pipeline repairs in Sholavandan",
+query: "குடிநீர் குழாய் பழுது புகார் மனு வேண்டும்",
             desc_en: "Generates sealed bilingual PDF petition with survey coordinates, legal sections, and MLA WhatsApp forward",
             badge_color: "rose"
         },
@@ -34496,7 +34518,8 @@ function toggleCrmVoiceInput() {
             model: "Sovereign Ledger Engine",
             title_ta: "வரவு செலவு கணக்கு & இருப்பு நிலை",
             title_en: "Daily Expense Ledger & Net Balance",
-            query: "வரவு செலவு கணக்கு காட்டவும்",
+                        query_en: "Show my daily expense ledger, cashflow balance, and monthly budget summary",
+query: "வரவு செலவு கணக்கு காட்டவும்",
             desc_en: "Fetches air-gapped citizen cashflow ledger, categorized expenses, and emergency budget stats",
             badge_color: "amber"
         },
@@ -34522,7 +34545,8 @@ function toggleCrmVoiceInput() {
             model: "Boto Quant AI",
             title_ta: "நிஃப்டி PCR & ரிலையன்ஸ் டெக்னிக்கல்",
             title_en: "Nifty Spot PCR & Reliance Technicals",
-            query: "இன்றைய நிஃப்டி PCR மற்றும் ரிலையன்ஸ் டெக்னிக்கல் அனாலிசிஸ்",
+                        query_en: "What is today Nifty Put-Call Ratio PCR and Reliance technical analysis with SEBI rules?",
+query: "இன்றைய நிஃப்டி PCR மற்றும் ரிலையன்ஸ் டெக்னிக்கல் அனாலிசிஸ்",
             desc_en: "Fetches live Nifty Put-Call Ratio (PCR 1.32), RSI, EMA 20/50, and SEBI-compliant risk bounds",
             badge_color: "cyan"
         },
@@ -34548,7 +34572,8 @@ function toggleCrmVoiceInput() {
             model: "Meta Llama 3.3 Coach",
             title_ta: "வங்கி உரையாடல் பேச்சு ஆங்கில பயிற்சி",
             title_en: "Bank Account Opening English Coach",
-            query: "ஆங்கிலம் பேச கத்துக்கணும் Spoken English",
+                        query_en: "I want to learn Spoken English for opening a bank account and talking to manager",
+query: "ஆங்கிலம் பேச கத்துக்கணும் Spoken English",
             desc_en: "Interactive conversational practice with bilingual Tamil transliteration and grammar breakdown",
             badge_color: "sky"
         },
@@ -34565,7 +34590,21 @@ function toggleCrmVoiceInput() {
             desc_en: "Personalized candidate pitch coaching tailored for rural graduates attending IT/BPO interviews",
             badge_color: "sky"
         },
-        {
+                {
+            id: "q_covid_1",
+            category: "wellness",
+            cat_ta: "சுகாதாரம் & கோவிட்",
+            cat_en: "Health & COVID-19",
+            icon: "🏥",
+            model: "Meta Llama 3.3 Clinical",
+            title_ta: "கோவிட்-19 அறிகுறிகள் & அரசு உதவி எண்கள்",
+            title_en: "COVID-19 Symptoms, Vaccines & Emergency Helplines",
+            query: "கோவிட்-19 தடுப்பு முறைகள் மற்றும் 104 அரசு உதவி எண் விவரம்",
+            query_en: "Tell me about COVID-19 prevention, symptoms, CoWIN vaccines, and 104/108 emergency helplines in English",
+            desc_en: "Comprehensive clinical advisory, RT-PCR testing, vaccination guidelines, and 104/108/14416 toll-free helplines",
+            badge_color: "emerald"
+        },
+{
             id: "q_wellness_1",
             category: "wellness",
             cat_ta: "மனநலம்",
@@ -34574,7 +34613,8 @@ function toggleCrmVoiceInput() {
             model: "Tele-MANAS Coach",
             title_ta: "தேர்வு பயம் போக்க 4-7-8 சுவாச பயிற்சி",
             title_en: "Exam Anxiety Relief & 4-7-8 Breathing",
-            query: "தேர்வு பயமா இருக்கு மன அழுத்தம் போக்க 4-7-8 சுவாச பயிற்சி",
+                        query_en: "How to perform 4-7-8 breathing relaxation technique for exam anxiety and stress relief?",
+query: "தேர்வு பயமா இருக்கு மன அழுத்தம் போக்க 4-7-8 சுவாச பயிற்சி",
             desc_en: "Guided parasympathetic relaxation protocol scientifically proven to reduce cortisol during exam stress",
             badge_color: "violet"
         },
@@ -34600,7 +34640,8 @@ function toggleCrmVoiceInput() {
             model: "Vyabar Commerce Engine",
             title_ta: "பொன்னி அரிசி & பருப்பு மளிகை ஆர்டர்",
             title_en: "Ponni Rice & Dal Grocery Order",
-            query: "மளிகை சாமான்கள் வாங்கணும் பொன்னி அரிசி பருப்பு வேணும்",
+                        query_en: "Order 5kg Ponni rice and 1kg toor dal from local Kirana store with zero-commission UPI link",
+query: "மளிகை சாமான்கள் வாங்கணும் பொன்னி அரிசி பருப்பு வேணும்",
             desc_en: "Instantly creates local kirana store basket with live bill total and zero-commission UPI link",
             badge_color: "yellow"
         },
@@ -34613,7 +34654,8 @@ function toggleCrmVoiceInput() {
             model: "AIR Regional News Bridge",
             title_ta: "இன்றைய முக்கிய செய்திகள் & AIR வானொலி",
             title_en: "Morning News Digest & AIR Radio Audio",
-            query: "காலை வணக்கம் இன்றைய முக்கிய செய்திகள்",
+                        query_en: "What are today morning headlines in Tamil Nadu and AIR Akashvani Tamil news broadcast?",
+query: "காலை வணக்கம் இன்றைய முக்கிய செய்திகள்",
             desc_en: "Synthesizes 10 top Tamil Nadu headlines + 5 national stories with AIR Tamil audio bulletin link",
             badge_color: "orange"
         }
@@ -34633,13 +34675,19 @@ function toggleCrmVoiceInput() {
         }
 
         grid.innerHTML = filtered.map(item => {
-            const safeQuery = item.query.replace(/'/g, "\\'");
+            const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+            const displayTitle = isEn ? item.title_en : item.title_ta;
+            const subTitle = isEn ? item.title_ta : item.title_en;
+            const displayCat = isEn ? (item.cat_en || item.cat_ta) : item.cat_ta;
+            const displayQuery = (isEn && item.query_en) ? item.query_en : item.query;
+            const safeQuery = displayQuery.replace(/'/g, "\\'");
+            const runBtnLabel = isEn ? "⚡ Run / Test" : "⚡ சோதிக்க (Run)";
             return `
                 <div class="p-3.5 bg-slate-900/90 hover:bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-xl space-y-2.5 transition shadow group flex flex-col justify-between">
                     <div class="space-y-2">
                         <div class="flex items-center justify-between gap-1.5 text-[10px]">
                             <span class="px-2 py-0.5 rounded-md font-bold bg-${item.badge_color}-950 text-${item.badge_color}-300 border border-${item.badge_color}-500/30 flex items-center gap-1">
-                                <span>${item.icon}</span> <span>${item.cat_ta}</span>
+                                <span>${item.icon}</span> <span>${displayCat}</span>
                             </span>
                             <span class="font-mono text-slate-400 text-[9px] bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">
                                 ${item.model}
@@ -34648,15 +34696,15 @@ function toggleCrmVoiceInput() {
 
                         <div>
                             <h4 class="font-bold text-xs text-slate-100 group-hover:text-purple-300 transition leading-snug">
-                                ${item.title_ta}
+                                ${displayTitle}
                             </h4>
                             <p class="text-[10px] text-slate-400 font-mono">
-                                ${item.title_en}
+                                ${subTitle}
                             </p>
                         </div>
 
                         <div class="p-2 bg-slate-950/80 rounded-lg border border-slate-800/80 text-[11px] text-amber-200/90 font-medium leading-relaxed font-sans">
-                            "${item.query}"
+                            "${displayQuery}"
                         </div>
 
                         <p class="text-[10px] text-slate-400 leading-tight">
@@ -34666,7 +34714,7 @@ function toggleCrmVoiceInput() {
 
                     <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between gap-1.5 text-[11px]">
                         <button onclick="runTrainedQueryById('${item.id}')" class="flex-1 py-1.5 px-2.5 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white font-bold rounded-lg shadow transition cursor-pointer flex items-center justify-center gap-1 active:scale-95 text-[10px]">
-                            <span>⚡ சோதிக்க (Run)</span> <span>➔</span>
+                            <span>${runBtnLabel}</span> <span>➔</span>
                         </button>
                         <button onclick="loadQueryIntoEditor('${safeQuery}', '${item.category}')" title="Load into editor to customize" class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition cursor-pointer text-[10px]">
                             ✏️
@@ -34917,13 +34965,18 @@ function toggleCrmVoiceInput() {
         }
     }
 
-    // Auto-render on load
+    // Auto-render on load with English as Default for Judges
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
+            try {
+                if (typeof applyLanguage === 'function') {
+                    applyLanguage('en');
+                }
+            } catch(e) {}
             if (typeof renderTrainedQueryCards === 'function') {
                 renderTrainedQueryCards('all');
             }
-        }, 300);
+        }, 200);
     });
 
 

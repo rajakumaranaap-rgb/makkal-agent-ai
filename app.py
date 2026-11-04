@@ -1645,13 +1645,9 @@ async def chat_endpoint(req: ChatRequest):
 
 
         lang_instruction = (
-
-            "Reply primarily in simple, clear spoken Tamil."
-
+            "Reply primarily in simple, clear pure Tamil script."
             if req.language == "ta"
-
-            else "Reply in clear, accessible English with Tamil government scheme terms in brackets."
-
+            else "Reply in clear, professional, highly structured English with bold headers, bullet points, exact statutory government fees, and actionable step-by-step next steps."
         )
 
 

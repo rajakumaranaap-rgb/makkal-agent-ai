@@ -651,7 +651,7 @@ def get_user_language(clean_phone: str) -> str:
     user = get_user_profile(clean)
     if user and user.get("language"):
         return user["language"]
-    return "ta"
+    return "en"
 
 def set_user_language(clean_phone: str, lang: str):
     """Saves language preference in-memory and in persistent user registry."""
@@ -815,7 +815,7 @@ def handle_sia_whatsapp_flow(
         ], stage="NUDGE_WAITING")
 
     if action.lower() in ["btn_nudge_menu", "btn_menu_all_list", "btn_master_menu", "restart_menu", "மீண்டும் தொடங்கு", "முதன்மை மெனு", "menu", "மெனு"] or upper in ["RESTART", "RESTART MENU", "RESET MENU", "முதன்மை மெனு", "MENU", "மெனு"]:
-        return _send_welcome(clean_phone)
+        return _send_welcome(clean_phone, lang='ta' if bool(__import__('re').search(r'[\u0B80-\u0BFF]', text)) else None)
 
     if action.lower() in ["btn_nudge_close", "close_session", "முடிக்க", "வெளியேறு"] or upper in ["CLOSE", "QUIT", "EXIT", "முடிக்க"]:
         from whatsapp_auth_manager import terminate_session_by_whatsapp
@@ -2733,7 +2733,7 @@ def handle_sia_whatsapp_flow(
 
     if is_greeting:
 
-        return _send_welcome(clean_phone)
+        return _send_welcome(clean_phone, lang='ta' if bool(__import__('re').search(r'[\u0B80-\u0BFF]', text)) else None)
 
     # ────────────────────────────────────────────────────────────────────────
 
@@ -2742,7 +2742,7 @@ def handle_sia_whatsapp_flow(
     # ────────────────────────────────────────────────────────────────────────
 
     if action in ("btn_services", "btn_menu", "btn_menu_restart"):
-        return _send_welcome(clean_phone)
+        return _send_welcome(clean_phone, lang='ta' if bool(__import__('re').search(r'[\u0B80-\u0BFF]', text)) else None)
 
     # ────────────────────────────────────────────────────────────────────────
 
@@ -2812,9 +2812,10 @@ def handle_sia_whatsapp_flow(
 
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _send_welcome(clean_phone: str) -> Dict[str, Any]:
-    """Welcome message returning the simplified pictorial menu in pure Tamil script / English."""
-    lang = get_user_language(clean_phone)
+def _send_welcome(clean_phone: str, lang: str = None) -> Dict[str, Any]:
+    """Welcome message returning the simplified pictorial menu in English (default) or pure Tamil script."""
+    if not lang:
+        lang = get_user_language(clean_phone)
     user = get_user_profile(clean_phone)
     name = user.get("name", "நண்பரே") if user else ("Citizen" if lang == "en" else "நண்பரே")
     menu = get_simplified_pictorial_menu(name, lang=lang)
@@ -3353,7 +3354,7 @@ def _handle_onboarding_step(
 
     ONBOARDING_STAGES.pop(clean_phone, None)
 
-    return _send_welcome(clean_phone)
+    return _send_welcome(clean_phone, lang='ta' if bool(__import__('re').search(r'[\u0B80-\u0BFF]', text)) else None)
 
 # ══════════════════════════════════════════════════════════════════════════════
 
