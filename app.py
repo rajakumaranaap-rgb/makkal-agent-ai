@@ -3542,9 +3542,9 @@ async def whatsapp_sim_endpoint(payload: Dict[str, Any]):
 
 
 
-    sender_phone = payload.get("sender_phone", SIA_OFFICIAL_NUMBER)
+    sender_phone = payload.get("sender_phone") or payload.get("phone") or SIA_OFFICIAL_NUMBER
 
-    message_text = payload.get("message_text", "Hi SIA")
+    message_text = payload.get("message_text") or payload.get("message") or "Hi SIA" 
 
     msg_type = payload.get("msg_type", "text")
 
