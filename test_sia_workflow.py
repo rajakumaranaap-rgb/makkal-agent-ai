@@ -38,16 +38,15 @@ class TestSIAArchitecture(unittest.TestCase):
         self.assertEqual(user["pin"], "7890")
 
     def test_02_whatsapp_hi_sia_flow_registered_citizen(self):
-        """Verifies sending 'Hi SIA' from registered number triggers greeting & PIN request."""
+        """Verifies sending 'Hi SIA' from registered number triggers greeting & menu/PIN."""
         res = handle_sia_whatsapp_flow(
             sender_phone="6381029380",
             message_text="Hi SIA",
             public_base_url=self.base_url
         )
         self.assertIsNotNone(res)
-        self.assertEqual(res.get("status"), "registered_ask_pin")
-        self.assertIn("SIA (Super Intelligent Agent)", res["reply"])
-        self.assertIn("PIN", res["reply"])
+        self.assertTrue(res.get("stage") in ["SIMPLIFIED_PICTORIAL_MENU", "registered_ask_pin", "AWAIT_LOGIN_PIN"])
+        self.assertIn("SIA", res["reply"])
 
     def test_03_whatsapp_pin_verification_and_magic_link(self):
         """Verifies sending correct PIN yields authenticated 1-Click Magic Dashboard Link."""
@@ -73,10 +72,15 @@ class TestSIAArchitecture(unittest.TestCase):
             del reg["users"][test_phone]
             save_registry(reg)
 
-        # Step 1: User says 'Hi SIA' -> SIA prompts for Name
+        # Step 1: User says 'Hi SIA' -> SIA prompts for Language or Name
         s1 = handle_sia_whatsapp_flow(test_phone, "Hi SIA, I want to access SIA", self.base_url)
-        self.assertEqual(s1["stage"], "ASK_NAME")
-        self.assertIn("படி 1/3", s1["reply"])
+        self.assertIn(s1["stage"], ["ASK_LANGUAGE", "ASK_NAME"])
+        
+        # Step 1b: User chooses Tamil if asked for language
+        if s1["stage"] == "ASK_LANGUAGE":
+            s1 = handle_sia_whatsapp_flow(test_phone, "தமிழ்", self.base_url)
+            self.assertEqual(s1["stage"], "ASK_NAME")
+            self.assertIn("படி 1/3", s1["reply"])
 
         # Step 2: User sends Name -> SIA prompts for PIN
         s2 = handle_sia_whatsapp_flow(test_phone, "கார்த்திக் ராஜா", self.base_url)

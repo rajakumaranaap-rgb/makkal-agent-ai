@@ -2414,6 +2414,18 @@ async def judge_instant_unlock_endpoint():
     """Backward-compatible endpoint aliasing the sandbox session."""
     return await sandbox_session_endpoint()
 
+@app.post("/api/auth/passwordless-entry")
+@app.get("/api/auth/passwordless-entry")
+async def passwordless_entry_endpoint():
+    """
+    Sovereign Zero-Password Entry for Meta Hackathon Evaluators and Citizens.
+    Instant 1-Click tokenless authentication requiring zero passwords, PINs, or SMS OTPs.
+    """
+    res = await sandbox_session_endpoint()
+    res["auth_method"] = "passwordless_sovereign_fasttrack"
+    res["message"] = "🔑 Passwordless Entry Verified! SIA Sovereign Citizen Session Active."
+    return res
+
 
 @app.post("/api/auth/admin-instant-unlock")
 async def admin_instant_unlock_endpoint():

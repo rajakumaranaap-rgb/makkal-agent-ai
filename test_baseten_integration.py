@@ -4,8 +4,9 @@ import base64
 import requests
 from pathlib import Path
 from whatsapp_agent import handle_text_query
+from test_client_helper import get_test_client
 
-BASE_URL = "http://127.0.0.1:8001"
+requests, BASE_URL = get_test_client("http://127.0.0.1:8001")
 
 print("=" * 70)
 print("🏆 META AI HACKATHON 2026 — BASETEN MUSE SPARK OPEN LIVE TEST SUITE")

@@ -8,8 +8,9 @@ Comprehensive Test Suite for Super-Intelligent Tamil Nadu Use Cases:
 import sys
 import io
 import requests
+from test_client_helper import get_test_client
 
-BASE_URL = "http://127.0.0.1:8001"
+requests, BASE_URL = get_test_client("http://127.0.0.1:8001")
 
 print("=" * 75)
 print("🏆 TESTING SUPER-INTELLIGENT TAMIL NADU USE CASES")

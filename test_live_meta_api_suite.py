@@ -5,8 +5,9 @@ Live verification script for Meta Model API & Domain Training endpoints on FastA
 import sys
 import json
 import requests
+from test_client_helper import get_test_client
 
-BASE_URL = "http://127.0.0.1:8001"
+requests, BASE_URL = get_test_client("http://127.0.0.1:8001")
 
 def test_endpoints():
     print("=" * 60)

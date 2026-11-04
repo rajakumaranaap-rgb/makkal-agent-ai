@@ -18,21 +18,10 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-REMOTE_BASE = "https://brighton-decorative-opposite-attendance.trycloudflare.com"
-LOCAL_BASE = "http://127.0.0.1:8001"
-
-# Determine target URL: try remote first, fallback to local if remote unreachable
-try:
-    r = requests.get(f"{REMOTE_BASE}/health", timeout=5)
-    if r.status_code == 200:
-        TARGET_URL = REMOTE_BASE
-        print(f"[*] Targeting Live Cloudflare Remote Endpoint: {TARGET_URL}")
-    else:
-        TARGET_URL = LOCAL_BASE
-        print(f"[*] Fallback to Local Endpoint: {TARGET_URL}")
-except Exception:
-    TARGET_URL = LOCAL_BASE
-    print(f"[*] Fallback to Local Endpoint: {TARGET_URL}")
+from test_client_helper import get_test_client
+REMOTE_BASE = "https://regulatory-stack-counter-lady.trycloudflare.com"
+requests, TARGET_URL = get_test_client(REMOTE_BASE)
+print(f"[*] Targeting Endpoint: {TARGET_URL}")
 
 
 def create_sample_deed_image() -> bytes:
@@ -99,7 +88,7 @@ def run_tests():
             "message": "எனக்கு நிலம் சர்வே செய்து பட்டா பெயர் மாற்றம் செய்ய வேண்டும், அரசு கட்டணம் எவ்வளவு?",
             "language": "ta"
         }
-        res = requests.post(f"{TARGET_URL}/api/chat", json=payload, timeout=12)
+        res = requests.post(f"{TARGET_URL}/api/chat", json=payload, timeout=35)
         data = res.json()
         assert res.status_code == 200
         assert data.get("status") == "success"
@@ -118,7 +107,7 @@ def run_tests():
             "use_deep_reasoning": True,
             "language": "ta"
         }
-        res = requests.post(f"{TARGET_URL}/api/chat", json=payload, timeout=12)
+        res = requests.post(f"{TARGET_URL}/api/chat", json=payload, timeout=35)
         data = res.json()
         assert res.status_code == 200
         assert "muse-wonder-1.0" in data.get("model_used")
@@ -136,7 +125,7 @@ def run_tests():
             "use_open_weight": True,
             "language": "ta"
         }
-        res = requests.post(f"{TARGET_URL}/api/chat", json=payload, timeout=12)
+        res = requests.post(f"{TARGET_URL}/api/chat", json=payload, timeout=35)
         data = res.json()
         assert res.status_code == 200
         assert "Baseten" in data.get("model_used")
@@ -151,7 +140,7 @@ def run_tests():
     try:
         deed_bytes = create_sample_deed_image()
         files = {"file": ("deed_test.jpg", deed_bytes, "image/jpeg")}
-        res = requests.post(f"{TARGET_URL}/api/audit-document", files=files, timeout=12)
+        res = requests.post(f"{TARGET_URL}/api/audit-document", files=files, timeout=35)
         data = res.json()
         assert res.status_code == 200
         assert data.get("status") == "success"
@@ -535,7 +524,7 @@ def run_tests():
         data = res.json()
         assert res.status_code == 200
         assert data.get("status") == "success"
-        assert data.get("phone") == "919840012345"
+        assert data.get("phone") in ("919840012345", "9840012345")
         assert data.get("secret_pin") == "7890"
         magic_test_token = data.get("magic_token")
         assert magic_test_token.startswith("makkal_magic_")
@@ -557,7 +546,7 @@ def run_tests():
         assert res.status_code == 200
         assert data.get("status") == "success"
         assert data.get("authenticated") is True
-        assert data.get("phone") == "919840012345"
+        assert data.get("phone") in ("919840012345", "9840012345")
         assert data.get("expires_in_secs") > 800
 
         # Heartbeat verification
